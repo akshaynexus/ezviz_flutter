@@ -98,10 +98,17 @@ class EzvizClient {
 
     final url = (_areaDomain ?? EzvizConstants.baseUrl) + path;
 
+    // Convert all values to strings for form-encoded data
+    final stringBody = <String, String>{'accessToken': _accessToken!};
+
+    for (final entry in body.entries) {
+      stringBody[entry.key] = entry.value.toString();
+    }
+
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {'accessToken': _accessToken!, ...body},
+      body: stringBody,
     );
 
     if (response.statusCode == 200) {
