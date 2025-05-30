@@ -1,3 +1,50 @@
+## 1.0.3
+
+### 🔐 Enhanced Live Streaming with Password Support
+- **New Password Parameter**: Added `password` parameter to `LiveService.getPlayAddress()` method for encrypted devices
+- **Automatic Encryption Handling**: New `getPlayAddressWithPassword()` method that automatically handles encryption errors
+- **Intuitive API**: `password` parameter serves as an alias for the `code` parameter, making it more developer-friendly
+- **Multiple Protocol Support**: Enhanced documentation for RTMP, HLS, FLV, and WebRTC protocols
+
+### 🚀 New Features
+- **`LiveService.getPlayAddressWithPassword()`**: Automatically tries without password first, then retries with password on encryption errors
+- **Enhanced Error Handling**: Better handling of error code 60019 (encryption enabled, parameter code is empty)
+- **Flexible Authentication**: Support for both `code` and `password` parameters (password takes precedence)
+- **Protocol & Quality Options**: Clear documentation for all supported streaming protocols and quality levels
+
+### 📚 Documentation & Examples
+- **Comprehensive Examples**: Updated `live_service_example.dart` with multiple scenarios:
+  - Basic live streaming (no encryption)
+  - Encrypted device streaming with passwords
+  - Automatic encryption handling
+  - Multiple devices with different passwords
+  - Different protocols (RTMP, HLS, FLV, WebRTC) and quality settings
+- **Error Handling Guide**: Helper functions demonstrating proper error handling for common scenarios
+- **Parameter Documentation**: Detailed explanations for all LiveService parameters
+
+### 🔧 Developer Experience Improvements
+- **Intuitive Parameter Names**: `password` parameter for better code readability
+- **Smart Fallback Logic**: Automatic retry mechanism for encrypted devices
+- **Error Code Mapping**: Clear error handling for device encryption, offline devices, and invalid serials
+- **Multi-Device Support**: Examples showing how to handle multiple devices with different encryption settings
+
+### 📺 Streaming Protocol Support
+- **Protocol 0**: RTMP streaming
+- **Protocol 1**: HLS streaming (recommended for web/mobile)
+- **Protocol 2**: FLV streaming  
+- **Protocol 3**: WebRTC streaming (lowest latency)
+
+### 🎯 Quality Level Support
+- **Quality 0**: Smooth (optimized for bandwidth)
+- **Quality 1**: HD (720p)
+- **Quality 2**: Ultra HD (1080p)
+
+### 🛠️ Technical Details
+- Enhanced `LiveService` class with backward compatibility
+- Improved error detection for encryption-related issues (error 60019)
+- Better parameter validation and fallback handling
+- Comprehensive example coverage for real-world usage scenarios
+
 ## 1.0.2
 
 ### 🐛 Bug Fixes
