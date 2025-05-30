@@ -5,7 +5,7 @@ A comprehensive Flutter/Dart library for seamless integration with the EZVIZ Cam
 ## Features
 
 *   **Modern Dart Implementation**: Null-safe, asynchronous, and follows Dart best practices.
-*   **Robust Authentication**: Automatic handling of access token fetching and refreshing.
+*   **Flexible Authentication**: Support for both direct access token authentication and automatic token fetching via app credentials.
 *   **Comprehensive Service Coverage**:
     *   `AuthService`: Handles authentication.
     *   `DeviceService`: Manage devices (add, delete, edit), fetch device/camera lists and information, control device functions (defence mode, encryption, timezone, audio, PIR, etc.), and utilize V3 APIs (fill light, working modes).
@@ -26,11 +26,13 @@ A comprehensive Flutter/Dart library for seamless integration with the EZVIZ Cam
 
 *   Flutter SDK: Ensure you have Flutter installed.
 *   Dart SDK: Included with Flutter.
-*   An EZVIZ Developer Account: You\'ll need an `appKey` and `appSecret` from the [EZVIZ Open Platform](https://open.ezviz.com/) (replace with actual link if known).
+*   An EZVIZ Developer Account: You'll need either:
+    *   An access token (recommended) OR
+    *   An `appKey` and `appSecret` from the [EZVIZ Open Platform](https://open.ezviz.com/)
 
 ### Installation
 
-1.  Add this to your package\'s `pubspec.yaml` file:
+1.  Add this to your package's `pubspec.yaml` file:
 
     ```yaml
     dependencies:
@@ -49,27 +51,82 @@ A comprehensive Flutter/Dart library for seamless integration with the EZVIZ Cam
     import 'package:ezviz_flutter/ezviz_flutter.dart';
     ```
 
+## Authentication Options
+
+The EZVIZ Flutter SDK supports two authentication methods:
+
+### Method 1: Direct Access Token (Recommended)
+
+If you already have an access token, this is the fastest and recommended approach:
+
+```dart
+import 'package:ezviz_flutter/ezviz_flutter.dart';
+
+void main() async {
+  // Initialize with access token
+  final client = EzvizClient(
+    accessToken: 'your_access_token_here',
+    areaDomain: 'your_area_domain_here', // Optional
+  );
+
+  final deviceService = DeviceService(client);
+  
+  try {
+    final deviceListResponse = await deviceService.getDeviceList(pageSize: 5);
+    print('Device list: $deviceListResponse');
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+```
+
+### Method 2: App Key + Secret Authentication
+
+The library will automatically obtain and manage access tokens:
+
+```dart
+import 'package:ezviz_flutter/ezviz_flutter.dart';
+
+void main() async {
+  // Initialize with app credentials
+  final client = EzvizClient(
+    appKey: 'your_app_key_here',
+    appSecret: 'your_app_secret_here',
+  );
+
+  final deviceService = DeviceService(client);
+  
+  try {
+    // First API call will automatically authenticate
+    final deviceListResponse = await deviceService.getDeviceList(pageSize: 5);
+    print('Device list: $deviceListResponse');
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+```
+
 ## Basic Usage
 
 ```dart
 import 'package:ezviz_flutter/ezviz_flutter.dart';
 
-// IMPORTANT: Replace with your actual App Key and App Secret
-const String myAppKey = 'YOUR_APP_KEY';
-const String myAppSecret = 'YOUR_APP_SECRET';
-
 void main() async {
-  // 1. Initialize the EZVIZ Client
-  // The client handles authentication automatically.
-  final client = EzvizClient(appKey: myAppKey, appSecret: myAppSecret);
+  // Choose your authentication method
+  final client = EzvizClient(
+    // Option 1: Direct access token (recommended)
+    accessToken: 'your_access_token',
+    areaDomain: 'your_area_domain', // Optional
+    
+    // Option 2: App credentials (alternative)
+    // appKey: 'your_app_key',
+    // appSecret: 'your_app_secret',
+  );
 
-  // 2. Initialize the service you want to use
   final deviceService = DeviceService(client);
 
   try {
-    // 3. Call API methods
     print('Fetching device list...');
-    // The first call to any service method will trigger authentication if needed.
     final deviceListResponse = await deviceService.getDeviceList(pageSize: 5);
 
     if (deviceListResponse['code'] == '200') {
@@ -89,7 +146,6 @@ void main() async {
     print('Authentication failed: ${e.message} (Code: ${e.code})');
   } on EzvizApiException catch (e) {
     print('EZVIZ API Error: ${e.message} (Code: ${e.code})');
-    // You can access the original response if needed: e.response
   } catch (e) {
     print('An unexpected error occurred: $e');
   }
@@ -98,28 +154,52 @@ void main() async {
 
 ## API Credentials and Configuration
 
-To use the library, examples, and tests, you need to provide your EZVIZ `appKey` and `appSecret`.
+### For Direct Library Usage
 
-*   **For direct library usage**: Pass them to the `EzvizClient` constructor.
-*   **For running example apps and tests**:
-    Modify the `example/api_config.dart` file with your credentials and relevant device serial numbers:
+Choose one of these authentication methods:
 
-    ```dart
-    // example/api_config.dart
-    class ApiConfig {
-      static const String appKey = 'YOUR_ACTUAL_APP_KEY';
-      static const String appSecret = 'YOUR_ACTUAL_APP_SECRET';
+```dart
+// Method 1: Access Token (Recommended)
+final client = EzvizClient(
+  accessToken: 'your_access_token',
+  areaDomain: 'your_area_domain', // Optional
+);
 
-      static const String exampleDeviceSerial = 'YOUR_TEST_DEVICE_SERIAL';
-      static const String examplePtzDeviceSerial = 'YOUR_PTZ_DEVICE_SERIAL';
-      static const String exampleA1HubSerial = 'YOUR_A1_HUB_SERIAL';
-      static const String exampleLinkedDetectorSerial = 'YOUR_LINKED_DETECTOR_SERIAL';
-      // ... and other necessary config for RAM accounts, etc.
-      static const String mainAccountAppKey = 'YOUR_MAIN_ACCOUNT_APP_KEY_FOR_RAM_OPS';
-      static const String mainAccountAppSecret = 'YOUR_MAIN_ACCOUNT_APP_SECRET_FOR_RAM_OPS';
-    }
-    ```
-    **IMPORTANT**: Do not commit your actual keys and secrets to public repositories. Use environment variables or a gitignored configuration file for production applications.
+// Method 2: App Credentials
+final client = EzvizClient(
+  appKey: 'your_app_key',
+  appSecret: 'your_app_secret',
+);
+```
+
+### For Running Examples and Tests
+
+Modify the `example/api_config.dart` file with your credentials:
+
+```dart
+// example/api_config.dart
+class ApiConfig {
+  // Authentication Option 1: Use appKey and appSecret (API will get access token)
+  static const String appKey = 'YOUR_APP_KEY';
+  static const String appSecret = 'YOUR_APP_SECRET';
+
+  // Authentication Option 2: Use access token directly (recommended if you have it)
+  static const String accessToken = 'YOUR_ACCESS_TOKEN';
+  static const String areaDomain = 'YOUR_AREA_DOMAIN'; // Optional
+
+  // Device configuration for examples
+  static const String exampleDeviceSerial = 'YOUR_TEST_DEVICE_SERIAL';
+  static const String examplePtzDeviceSerial = 'YOUR_PTZ_DEVICE_SERIAL';
+  static const String exampleA1HubSerial = 'YOUR_A1_HUB_SERIAL';
+  static const String exampleLinkedDetectorSerial = 'YOUR_LINKED_DETECTOR_SERIAL';
+  
+  // For RAM account operations
+  static const String mainAccountAppKey = 'YOUR_MAIN_ACCOUNT_APP_KEY_FOR_RAM_OPS';
+  static const String mainAccountAppSecret = 'YOUR_MAIN_ACCOUNT_APP_SECRET_FOR_RAM_OPS';
+}
+```
+
+**IMPORTANT**: Do not commit your actual keys, secrets, or tokens to public repositories. Use environment variables or a gitignored configuration file for production applications.
 
 ## Available Services
 
@@ -184,7 +264,7 @@ Always wrap API calls in `try-catch` blocks to handle these potential exceptions
 
 ## Contributing
 
-Contributions are welcome! If you\'d like to contribute, please:
+Contributions are welcome! If you'd like to contribute, please:
 1.  Fork the repository.
 2.  Create a new branch for your feature or bug fix.
 3.  Write tests for your changes.
