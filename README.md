@@ -2,6 +2,10 @@
 
 A comprehensive Flutter/Dart library for seamless integration with the EZVIZ Camera API. This SDK empowers developers to build applications that can interact with EZVIZ cameras, providing functionalities like authentication, device management, live streaming, PTZ control, alarm management, cloud storage interaction, and sub-account (RAM) management.
 
+Looking for a example on how to use this,check out this repo which implements api auth,devvice list getting and display of camera stream 
+https://github.com/akshaynexus/ezviz_flutter_example_app
+
+
 ## Features
 
 *   **Modern Dart Implementation**: Null-safe, asynchronous, and follows Dart best practices.
