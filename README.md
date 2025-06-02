@@ -766,3 +766,251 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes.
+
+# EZVIZ Flutter Example App
+
+This is a comprehensive example application demonstrating the EZVIZ Flutter package capabilities, including both Native SDK and HTTP API integration.
+
+## 🚨 IMPORTANT: Credentials Required
+
+**The error you're encountering (\"AppKey doesn't exist\", \"AccessToken expired\") is due to invalid or missing EZVIZ developer credentials.**
+
+### Getting Valid EZVIZ Credentials
+
+1. **Register as EZVIZ Developer**:
+   - Go to [https://open.ezvizlife.com/](https://open.ezvizlife.com/)
+   - Create a developer account
+   - Complete the registration process
+
+2. **Create Application**:
+   - Log into the developer console
+   - Create a new application
+   - Get your **App Key** and **App Secret**
+
+3. **Update Credentials**:
+   - Replace `YOUR_APP_KEY_HERE` with your actual App Key
+   - Replace `YOUR_APP_SECRET_HERE` with your actual App Secret
+   - The app will automatically get access tokens and area domains
+
+## ✅ **MAJOR FIX: Area Domain Support**
+
+This version includes a **critical fix** for the Native SDK authentication issue:
+
+### **The Problem**
+- **HTTP API**: ✅ Correctly used area domains from token response
+- **Native SDK**: ❌ **Missing area domain support entirely**
+
+### **The Solution**  
+The Native SDK initialization now properly:
+
+1. **Gets Access Token**: Makes API call to `https://open.ezvizlife.com/api/lapp/token/get`
+2. **Extracts Area Domain**: Retrieves the regional API endpoint (e.g., `https://iusopen.ezvizlife.com`)
+3. **Uses Proper Credentials**: Initializes Native SDK with the real access token (not app secret!)
+4. **Shows Status**: Displays the area domain being used in the UI
+
+### **Why This Matters**
+- **Regional API Endpoints**: Different regions use different EZVIZ servers
+- **Authentication Tokens**: Access tokens are only valid in their specific region
+- **Error Prevention**: Eliminates \"AppKey doesn't exist\" and \"AccessToken expired\" errors
+
+### **Before vs After**
+**Before (Broken)**:
+```dart
+// Used app secret instead of access token
+accessToken: appSecret
+// No area domain support
+```
+
+**After (Fixed)**:
+```dart
+// Gets real access token from API
+accessToken: "at.7jrcjmna8qnqg8d3dgnzs87m4v2dme3l-32enpqgusd-1jvdfe4-uxo15ik0s"
+// Uses correct regional endpoint
+areaDomain: "https://iusopen.ezvizlife.com"
+```
+
+## 📱 Features
+
+### Dual API Integration
+- **HTTP API**: Camera listing, multiple streaming protocols, PTZ control
+- **Native SDK**: Hardware acceleration, audio control, recording, screenshots
+
+### 7-Tab Interface
+1. **SDK Init**: Initialize both APIs with proper area domain support
+2. **Devices**: Load device lists from both APIs with device selection
+3. **Native Player**: Hardware-accelerated native video player with live streaming
+4. **HTTP Streams**: Generate streaming URLs for multiple protocols (EZOPEN, HLS, RTMP, FLV)
+5. **PTZ Control**: Interactive pan-tilt-zoom controls for both APIs
+6. **Audio/Record**: Audio controls, recording, and screenshot capabilities
+7. **WiFi Config**: Placeholder for future network configuration features
+
+### Streaming Protocols Supported
+- **EZOPEN**: Native app integration protocol
+- **HLS**: Web and mobile streaming
+- **RTMP**: Live streaming protocol
+- **FLV**: Flash video format
+
+## 🛠 Installation & Setup
+
+### Prerequisites
+- Flutter 3.32.0 or later
+- Valid EZVIZ developer account
+- Android 5.0+ / iOS 11.0+
+
+### Setup Instructions
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd ezviz_example_app
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   flutter pub get
+   ```
+
+3. **Update credentials** in `lib/ui/pages/native_sdk_demo_page.dart`:
+   ```dart
+   _appKeyController.text = 'your_actual_app_key_here';
+   _appSecretController.text = 'your_actual_app_secret_here';
+   ```
+
+4. **Run the app**:
+   ```bash
+   flutter run
+   ```
+
+### Android Configuration
+
+Ensure your `android/app/src/main/AndroidManifest.xml` includes:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+
+<application
+    android:usesCleartextTraffic="true"
+    android:requestLegacyExternalStorage="true">
+```
+
+## 📖 Usage Guide
+
+### Step 1: Initialize APIs
+1. Open the **Init** tab
+2. Enter your valid EZVIZ App Key and App Secret
+3. Click **Init HTTP API** first to get access token and area domain
+4. Click **Init Native SDK** to initialize with proper credentials
+5. ✅ Look for success message showing area domain (e.g., `https://iusopen.ezvizlife.com`)
+
+### Step 2: Load Devices
+1. Switch to **Devices** tab
+2. Select HTTP API or Native SDK
+3. Click **Load HTTP Cameras** or **Load Native Devices**
+4. Select a device from the list
+
+### Step 3: Stream Video
+- **Native Player**: Go to **Native** tab, initialize player, start live stream
+- **HTTP URLs**: Go to **HTTP** tab, generate URLs for different protocols
+
+### Step 4: Control Camera
+- **PTZ Control**: Use **PTZ** tab for pan/tilt/zoom operations
+- **Audio**: Use **Audio** tab for sound and recording controls
+
+## 🔧 Error Handling
+
+### Common Error Codes
+- **10017**: Invalid App Key - check your credentials
+- **10030**: App Key/Secret mismatch - verify both values
+- **10002**: Access token expired - reinitialize the APIs
+- **10005**: App Key suspended - contact EZVIZ support
+
+### Authentication Flow
+1. **Credential Validation**: Checks for placeholder values
+2. **Token Request**: Gets access token from EZVIZ API
+3. **Area Domain**: Extracts regional endpoint
+4. **SDK Initialization**: Uses proper credentials for both APIs
+5. **Error Feedback**: Shows specific error messages in UI
+
+## 🌍 Regional Support
+
+The app now properly handles EZVIZ's regional architecture:
+
+- **Global Endpoint**: `https://open.ezvizlife.com` (for getting tokens)
+- **Regional Endpoints**: Automatically detected (e.g., `https://iusopen.ezvizlife.com`)
+- **Token Validity**: Tokens are only valid in their assigned region
+- **Automatic Routing**: API calls use the correct regional endpoint
+
+## 🚨 Troubleshooting
+
+### \"AppKey doesn't exist\" Error
+- ✅ **FIXED**: Now gets proper access token and uses area domain
+- Check that you're using real credentials (not placeholders)
+- Verify App Key exists in EZVIZ developer console
+
+### \"AccessToken expired\" Error  
+- ✅ **FIXED**: Now uses proper access token instead of app secret
+- The app automatically refreshes tokens when needed
+- Check your internet connection
+
+### No devices found
+- Make sure devices are added to your EZVIZ account
+- Check device online status in EZVIZ app
+- Verify account permissions for device access
+
+### Native SDK timeout
+- ✅ **FIXED**: Now uses proper authentication flow
+- Check internet connection stability
+- Try HTTP API first to test credentials
+
+## 💡 Code Examples
+
+### Getting Access Token with Area Domain
+```dart
+final response = await http.post(
+  Uri.parse('https://open.ezvizlife.com/api/lapp/token/get'),
+  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+  body: {'appKey': appKey, 'appSecret': appSecret},
+);
+
+final data = jsonDecode(response.body);
+String accessToken = data['data']['accessToken'];
+String areaDomain = data['data']['areaDomain']; // Critical!
+```
+
+### Native SDK Initialization
+```dart
+final options = EzvizInitOptions(
+  appKey: appKey,
+  accessToken: accessToken, // Use real token, not app secret!
+  enableLog: true,
+  enableP2P: false,
+);
+
+await EzvizManager.shared().initSDK(options);
+await EzvizManager.shared().setAccessToken(accessToken);
+```
+
+### HTTP API with Area Domain
+```dart
+final client = EzvizClient(appKey: appKey, appSecret: appSecret);
+// Client automatically uses area domain for all requests
+final cameras = await DeviceService(client).getCameraList();
+```
+
+## 📝 License
+
+This project is for demonstration purposes. Make sure to comply with EZVIZ's Terms of Service when using their APIs.
+
+---
+
+**✅ This version resolves the critical authentication issues by implementing proper area domain support for both Native SDK and HTTP API integration.**

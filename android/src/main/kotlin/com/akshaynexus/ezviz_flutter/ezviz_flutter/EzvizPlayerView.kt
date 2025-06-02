@@ -17,8 +17,7 @@ import android.os.Looper
 import android.os.Message
 import com.videogo.openapi.EZConstants
 import com.videogo.errorlayer.ErrorInfo
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
+import com.google.gson.Gson
 
 enum class EzvizPlayerStatus(val value: Int) {
     Idle(0), Init(1), Start(2), Pause(3), Stop(4), Error(5)
@@ -164,7 +163,7 @@ class EzvizPlayerView(context: Context) : FrameLayout(context), SurfaceHolder.Ca
         val eventResult = EzvizEventResult(
             EzvizPlayerChannelEvents.playerStatusChange,
             "Player Status Changed",
-            Json.encodeToString(playerResult)
+            Gson().toJson(playerResult)
         )
         eventHandler?.onDispatchStatus(eventResult)
     }
