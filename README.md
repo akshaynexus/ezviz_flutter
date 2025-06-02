@@ -5,6 +5,10 @@ A comprehensive Flutter plugin for EZVIZ camera integration with support for dev
 [![pub package](https://img.shields.io/pub/v/ezviz_flutter.svg)](https://pub.dev/packages/ezviz_flutter)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+Looking for a example on how to use this,check out this repo which implements api auth,devvice list getting and display of camera stream 
+https://github.com/akshaynexus/ezviz_flutter_example_app
+
+
 ## Features
 
 ### Native SDK Features (Android/iOS)
