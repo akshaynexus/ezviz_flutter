@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.0.5] - 2025-06-02
+- Fix serialization errors
 
-## [1.0.4] - 2024-12-19
+## [1.0.4] - 2025-12-19
 
 ### Added - Publication Ready Release with Credits
 - **Publication Preparation**: Updated package configuration for pub.dev publishing
@@ -26,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced migration instructions
 - Added links to original repositories
 
-## [1.0.3] - 2024-12-19
+## [1.0.3] - 2025-12-19
 
 ### Added - Major Native SDK Integration + Enhanced Features from ezviz_flutter_cam
 - **Native Android/iOS SDK Support**: Complete integration with EZVIZ native SDKs for both platforms
@@ -102,7 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Existing models and services unchanged
 - Smooth migration path for existing users
 
-## [1.0.2] - 2024-11-15
+## [1.0.2] - 2025-11-15
 
 ### Added
 - Enhanced device management capabilities
@@ -114,7 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Device list pagination handling
 - PTZ control response parsing
 
-## [1.0.1] - 2024-10-20
+## [1.0.1] - 2025-10-20
 
 ### Added
 - RAM (Sub-Account) management service
@@ -126,7 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API response model serialization
 - Error handling for network timeouts
 
-## [1.0.0] - 2024-09-15
+## [1.0.0] - 2025-09-15
 
 ### Added - Initial Release
 - Complete HTTP API integration for EZVIZ Open Platform
