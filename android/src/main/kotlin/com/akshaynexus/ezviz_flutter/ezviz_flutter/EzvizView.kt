@@ -7,7 +7,8 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 import android.util.Log
@@ -110,6 +111,6 @@ class EzvizFlutterPlayerView(
     }
 
     override fun onDispatchStatus(event: EzvizEventResult) {
-        this.eventSink?.success(Gson().toJson(event))
+        this.eventSink?.success(Json.encodeToString(event))
     }
 }
