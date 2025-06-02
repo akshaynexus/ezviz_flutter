@@ -260,7 +260,7 @@ class _PTZPanelPainter extends CustomPainter {
 
   void _drawActiveSection(Canvas canvas, Offset center) {
     final paint = Paint()
-      ..color = activeColor.withOpacity(0.6)
+      ..color = activeColor.withValues(alpha: 0.6)
       ..style = PaintingStyle.fill;
 
     final angle = _getAngleForDirection(activeDirection!);
