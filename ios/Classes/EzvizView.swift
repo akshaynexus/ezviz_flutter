@@ -102,6 +102,30 @@ class EzvizView : NSObject,FlutterPlatformView{
             DispatchQueue.main.async {
                 result(self.player.stopReplay())
             }
+        case "openSound":
+            DispatchQueue.main.async {
+                result(self.player.openSound())
+            }
+        case "closeSound":
+            DispatchQueue.main.async {
+                result(self.player.closeSound())
+            }
+        case "capturePicture":
+            DispatchQueue.main.async {
+                result(self.player.capturePicture())
+            }
+        case "startRecording":
+            DispatchQueue.main.async {
+                result(self.player.startRecording())
+            }
+        case "stopRecording":
+            DispatchQueue.main.async {
+                result(self.player.stopRecording())
+            }
+        case "isRecording":
+            DispatchQueue.main.async {
+                result(self.player.isRecording())
+            }
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -110,7 +134,8 @@ class EzvizView : NSObject,FlutterPlatformView{
     @objc func playerStatusChanged( notification: Notification) {
         if let data = notification.userInfo as? [String: Any] {
             do {
-                let playerResult = try EzvizPlayerResult(status: data["status"] as? UInt ?? 0, message: data["message"] as? String ?? "")
+                let status = data["status"] as? UInt ?? 0
+                let playerResult = try EzvizPlayerResult(status: Int(status), message: data["message"] as? String ?? "")
                 let event = EzvizPlayerEventResult(eventType: EzvizPlayerChannelEvents.playerStatusChange, msg: "Player Status Changed", data: objToJSONString(obj: playerResult))
                 self.eventSink?(objToJSONString(obj: event))
             }catch{}

@@ -23,6 +23,13 @@ class EzvizFlutterPlayerView(
     private val methodChannel: MethodChannel
     private val eventChannel: EventChannel
     private var eventSink: EventChannel.EventSink? = null
+    
+    companion object {
+        private val json = Json { 
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
+    }
 
     init {
         player.eventHandler = this
@@ -98,6 +105,30 @@ class EzvizFlutterPlayerView(
                 player.stopPlayBack()
             }
 
+            "openSound" -> {
+                result.success(player.openSound())
+            }
+
+            "closeSound" -> {
+                result.success(player.closeSound())
+            }
+
+            "capturePicture" -> {
+                result.success(player.capturePicture())
+            }
+
+            "startRecording" -> {
+                result.success(player.startRecording())
+            }
+
+            "stopRecording" -> {
+                result.success(player.stopRecording())
+            }
+
+            "isRecording" -> {
+                result.success(player.isRecording())
+            }
+
             else -> result.notImplemented()
         }
     }
@@ -111,6 +142,19 @@ class EzvizFlutterPlayerView(
     }
 
     override fun onDispatchStatus(event: EzvizEventResult) {
-        this.eventSink?.success(Json.encodeToString(event))
+        // Always use manual JSON creation to avoid serialization issues
+        val jsonString = buildString {
+            append("{")
+            append("\"eventType\":\"${event.eventType.replace("\"", "\\\"")}\"")
+            append(",\"msg\":\"${event.msg.replace("\"", "\\\"")}\"")
+            append(",\"data\":")
+            if (event.data != null) {
+                append("\"${event.data.replace("\"", "\\\"")}\"")
+            } else {
+                append("null")
+            }
+            append("}")
+        }
+        this.eventSink?.success(jsonString)
     }
 }

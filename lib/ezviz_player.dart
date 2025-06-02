@@ -40,8 +40,19 @@ class EzvizPlayerController {
         var ezvizEvent = EzvizEvent.init(jsonData);
         if (ezvizEvent != null) {
           if (ezvizEvent.eventType == EzvizChannelEvents.playerStatusChange) {
-            var mapData = json.decode(jsonData['data']);
-            ezvizEvent.data = EzvizPlayerStatus.fromJson(mapData);
+            try {
+              // Handle both cases: data as JSON string or as direct object
+              if (jsonData['data'] is String) {
+                var mapData = json.decode(jsonData['data']);
+                ezvizEvent.data = EzvizPlayerStatus.fromJson(mapData);
+              } else if (jsonData['data'] is Map) {
+                ezvizEvent.data = EzvizPlayerStatus.fromJson(jsonData['data']);
+              }
+            } catch (e) {
+              ezvizLog("Error parsing player status: $e");
+              // Create a default status if parsing fails
+              ezvizEvent.data = EzvizPlayerStatus(status: 5, message: "Parse error: $e");
+            }
           }
           event(ezvizEvent);
         }

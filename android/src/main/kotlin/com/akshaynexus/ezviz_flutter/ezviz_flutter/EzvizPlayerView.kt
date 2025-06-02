@@ -38,6 +38,13 @@ class EzvizPlayerView(context: Context) : FrameLayout(context), SurfaceHolder.Ca
     private val isInitSurface = AtomicBoolean(false)
     private val isResumePlay = AtomicBoolean(true)
     private var playStatus: EzvizPlayerStatus
+    
+    companion object {
+        private val json = Json { 
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
+    }
 
     var eventHandler: EzvizPlayerEventHandler? = null
 
@@ -75,15 +82,30 @@ class EzvizPlayerView(context: Context) : FrameLayout(context), SurfaceHolder.Ca
     }
 
     private fun handleErrorMessage(msg: Message) {
-        if (msg.what in listOf(
-                EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_CONNECTION_EXCEPTION,
-                EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_ENCRYPT_PASSWORD_ERROR,
-                EZConstants.EZRealPlayConstants.MSG_REALPLAY_PASSWORD_ERROR,
-                EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_FAIL
-            )
-        ) {
-            val errorInfo = msg.obj as? ErrorInfo
-            dispatchStatus(EzvizPlayerStatus.Error, errorInfo?.description)
+        when (msg.what) {
+            EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_ENCRYPT_PASSWORD_ERROR,
+            EZConstants.EZRealPlayConstants.MSG_REALPLAY_PASSWORD_ERROR -> {
+                val errorInfo = msg.obj as? ErrorInfo
+                val errorMessage = "Verification code error: ${errorInfo?.description ?: "Invalid password"}"
+                Log.e(TAG, "Encryption password error: $errorMessage")
+                dispatchStatus(EzvizPlayerStatus.Error, errorMessage)
+            }
+            EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_CONNECTION_EXCEPTION,
+            EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_FAIL -> {
+                val errorInfo = msg.obj as? ErrorInfo
+                val errorMessage = errorInfo?.description ?: "Playback failed"
+                Log.e(TAG, "Playback error: $errorMessage")
+                dispatchStatus(EzvizPlayerStatus.Error, errorMessage)
+            }
+            else -> {
+                // Handle other potential error messages
+                if (msg.what < 0) { // Negative values typically indicate errors
+                    val errorInfo = msg.obj as? ErrorInfo
+                    val errorMessage = errorInfo?.description ?: "Unknown error: ${msg.what}"
+                    Log.e(TAG, "Player error: $errorMessage")
+                    dispatchStatus(EzvizPlayerStatus.Error, errorMessage)
+                }
+            }
         }
     }
 
@@ -124,14 +146,21 @@ class EzvizPlayerView(context: Context) : FrameLayout(context), SurfaceHolder.Ca
 
     fun startPlayback(startDate: Calendar, endDate: Calendar) {
         CoroutineScope(Dispatchers.IO).launch {
-            val list = EZGlobalSDK.getInstance().searchRecordFileFromDevice(deviceSerial, cameraNo, startDate, endDate)
-            val playbackResult = list.firstOrNull()?.let { file ->
-                player?.startPlayback(file) ?: false
-            } ?: false
+            try {
+                val list = EZGlobalSDK.getInstance().searchRecordFileFromDevice(deviceSerial, cameraNo, startDate, endDate)
+                val playbackResult = list.firstOrNull()?.let { file ->
+                    player?.startPlayback(file) ?: false
+                } ?: false
 
-            withContext(Dispatchers.Main) {
-                if (!playbackResult) {
-                    dispatchStatus(EzvizPlayerStatus.Error, "Playback list is empty")
+                withContext(Dispatchers.Main) {
+                    if (!playbackResult) {
+                        dispatchStatus(EzvizPlayerStatus.Error, "No recordings found in the specified time range")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e(TAG, "Error searching for recordings: ${e.message}")
+                    dispatchStatus(EzvizPlayerStatus.Error, "Failed to get recordings: ${e.message}")
                 }
             }
         }
@@ -152,7 +181,65 @@ class EzvizPlayerView(context: Context) : FrameLayout(context), SurfaceHolder.Ca
     }
 
     fun setPlayVerifyCode(verifyCode: String) {
-        player?.setPlayVerifyCode(verifyCode)
+        try {
+            Log.d(TAG, "Setting play verify code for encrypted camera")
+            player?.setPlayVerifyCode(verifyCode)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error setting verify code: ${e.message}")
+            dispatchStatus(EzvizPlayerStatus.Error, "Failed to set verification code: ${e.message}")
+        }
+    }
+
+    fun openSound(): Boolean {
+        return player?.openSound() ?: false
+    }
+
+    fun closeSound(): Boolean {
+        return player?.closeSound() ?: false
+    }
+
+    fun capturePicture(): String? {
+        return try {
+            // Capture picture functionality - implementation depends on SDK version
+            // For now, return null indicating not implemented
+            Log.w(TAG, "Capture picture not implemented in current SDK version")
+            null
+        } catch (e: Exception) {
+            Log.e(TAG, "Error capturing picture: ${e.message}")
+            null
+        }
+    }
+
+    fun startRecording(): Boolean {
+        return try {
+            // Recording functionality - implementation depends on SDK version
+            Log.w(TAG, "Start recording not implemented in current SDK version")
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting recording: ${e.message}")
+            false
+        }
+    }
+
+    fun stopRecording(): Boolean {
+        return try {
+            // Stop recording functionality - implementation depends on SDK version
+            Log.w(TAG, "Stop recording not implemented in current SDK version")
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping recording: ${e.message}")
+            false
+        }
+    }
+
+    fun isRecording(): Boolean {
+        return try {
+            // Recording status check - implementation depends on SDK version
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking recording status: ${e.message}")
+            false
+        }
     }
 
     fun setVideoSizeChange(width: Int, height: Int) {
@@ -160,11 +247,23 @@ class EzvizPlayerView(context: Context) : FrameLayout(context), SurfaceHolder.Ca
     }
 
     private fun dispatchStatus(status: EzvizPlayerStatus, message: String?) {
-        val playerResult = EzvizPlayerResult(status.ordinal, message)
+        // Always use manual JSON creation to avoid serialization issues
+        val jsonString = buildString {
+            append("{")
+            append("\"status\":${status.value}")
+            append(",\"message\":")
+            if (message != null) {
+                append("\"${message.replace("\"", "\\\"")}\"")
+            } else {
+                append("null")
+            }
+            append("}")
+        }
+        
         val eventResult = EzvizEventResult(
             EzvizPlayerChannelEvents.playerStatusChange,
             "Player Status Changed",
-            Json.encodeToString(playerResult)
+            jsonString
         )
         eventHandler?.onDispatchStatus(eventResult)
     }

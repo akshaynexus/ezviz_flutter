@@ -11,6 +11,7 @@ const val Command_Up = "EZPTZCommand_Up"
 const val Command_Down = "EZPTZCommand_Down"
 const val Command_ZoomIn = "EZPTZCommand_ZoomIn"
 const val Command_ZoomOut = "EZPTZCommand_ZoomOut"
+
 /// 数据返回
 @Serializable
 data class EzvizEventResult(

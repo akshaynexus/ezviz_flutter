@@ -139,7 +139,46 @@ class EzvizPlayer : UIView {
     ///
     /// - Parameter verifyCode: 密码
     func setPlayVerifyCode(_ verifyCode: String) {
-        self.play?.setPlayVerifyCode(verifyCode)
+        ezvizLog(msg: "Setting play verify code for encrypted camera")
+        guard let player = self.play else {
+            ezvizLog(msg: "Player not initialized when setting verify code")
+            setPlayerStatus(.Error, msg: "Player not ready for verification code")
+            return
+        }
+        player.setPlayVerifyCode(verifyCode)
+    }
+    
+    /// 开启声音
+    func openSound() -> Bool {
+        return self.play?.openSound() ?? false
+    }
+    
+    /// 关闭声音
+    func closeSound() -> Bool {
+        return self.play?.closeSound() ?? false
+    }
+    
+    /// 截屏
+    func capturePicture() -> String? {
+        ezvizLog(msg: "Capture picture not implemented in current SDK version")
+        return nil
+    }
+    
+    /// 开始录像
+    func startRecording() -> Bool {
+        ezvizLog(msg: "Start recording not implemented in current SDK version")
+        return false
+    }
+    
+    /// 停止录像
+    func stopRecording() -> Bool {
+        ezvizLog(msg: "Stop recording not implemented in current SDK version")
+        return false
+    }
+    
+    /// 获取录像状态
+    func isRecording() -> Bool {
+        return false
     }
     
     private func setPlayerStatus(_ status: EzvizPlayerStatus, msg: String?) {
@@ -155,20 +194,39 @@ class EzvizPlayer : UIView {
 // MARK: - EZPlayerDelegate
 extension EzvizPlayer : EZPlayerDelegate {
     func player(_ player: EZPlayer!, didPlayFailed error: Error!) {
-        print("播放失败，%@",error.debugDescription)
-        setPlayerStatus(.Error, msg: error.localizedDescription)
+        let errorMsg = error.localizedDescription
+        ezvizLog(msg: "Player failed with error: \(errorMsg)")
+        
+        // Check if error is related to encryption
+        let errorStr = errorMsg.lowercased()
+        if errorStr.contains("password") || errorStr.contains("verification") || 
+           errorStr.contains("encrypt") || errorStr.contains("verify") {
+            ezvizLog(msg: "Detected encryption-related error")
+            setPlayerStatus(.Error, msg: "Verification code error: \(errorMsg)")
+        } else {
+            setPlayerStatus(.Error, msg: errorMsg)
+        }
     }
     
     func player(_ player: EZPlayer!, didReceivedMessage messageCode: Int) {
-        print("播放中，messageCode %d",messageCode)
+        ezvizLog(msg: "Player message code: \(messageCode)")
+        
+        // Handle specific message codes that might indicate encryption issues
+        // Note: These codes may vary based on SDK version
+        if messageCode < 0 {
+            ezvizLog(msg: "Received error message code: \(messageCode)")
+        }
     }
     
     func player(_ player: EZPlayer!, didReceivedDataLength dataLength: Int) {
-        print("播放中，dataLength %d",dataLength)
+        // Only log this in debug mode as it's very frequent
+        if dataLength > 0 {
+            // Successfully receiving data
+        }
     }
     
     func player(_ player: EZPlayer!, didReceivedDisplayHeight height: Int, displayWidth width: Int) {
-        print("播放中，height %d width %d",height,width)
+        ezvizLog(msg: "Video display size: \(width)x\(height)")
     }
 }
 

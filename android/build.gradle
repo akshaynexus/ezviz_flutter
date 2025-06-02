@@ -8,11 +8,8 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:$kotlin_version")
     }
-}
-
-plugins {
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.22'
 }
 
 group = "com.akshaynexus.ezviz_flutter.ezviz_flutter"
@@ -27,7 +24,7 @@ allprojects {
 
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
-apply plugin: "kotlinx-serialization"
+apply plugin: "org.jetbrains.kotlin.plugin.serialization"
 
 android {
     if (project.android.hasProperty("namespace")) {
@@ -52,6 +49,7 @@ android {
 
     defaultConfig {
         minSdk = 21
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     dependencies {

@@ -86,10 +86,10 @@ struct EzvizPlayerEventResult : Codable {
 
 /// 播放状态
 struct EzvizPlayerResult: Codable {
-    let status: UInt
+    let status: Int
     let message: String?
     
-    init(status: UInt,message: String?) throws {
+    init(status: Int,message: String?) throws {
         self.status = status
         self.message = message
     }
