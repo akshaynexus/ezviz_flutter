@@ -4,6 +4,59 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.1.0] - 2025-06-02
+
+### Added - EzvizSimplePlayer: Ultimate Easy Integration Component
+- **🎯 EzvizSimplePlayer Widget**: Revolutionary new component that makes EZVIZ camera integration incredibly simple
+  - **Auto SDK Initialization**: Handles all SDK setup automatically with app key, secret, and access token
+  - **Auto Authentication**: Manages login and token handling internally without user intervention
+  - **Auto-Play Capability**: Starts streaming immediately when SDK and device are ready
+  - **Comprehensive Error Handling**: Built-in error management with customizable error callbacks
+  - **Encryption Auto-Detection**: Automatically detects encrypted cameras and prompts for verification codes
+  - **Audio Management**: Easy enable/disable audio functionality with one-line configuration
+  - **Built-in Controls**: Optional play/pause and audio toggle controls with customizable styling
+  - **Real-time State Management**: Live state updates with detailed status callbacks
+  - **Customizable UI**: Custom loading widgets, error widgets, and control styling options
+
+### Enhanced Features
+- **🔒 Smart Encryption Handling**: Automatic password dialog with remember functionality
+- **🎵 Seamless Audio Integration**: Auto-enable audio when stream starts playing
+- **🎨 Flexible UI Customization**: Custom loading/error widgets and control styling
+- **📱 State Management**: Comprehensive state machine with 8 different player states
+- **🔄 Retry Logic**: Automatic retry mechanisms for failed connections and encryption errors
+- **💾 Password Storage**: Optional secure storage of encryption passwords per device
+
+### New Configuration Class
+- **EzvizPlayerConfig**: Comprehensive configuration object supporting:
+  - SDK credentials (appKey, appSecret, accessToken)
+  - Authentication options (account/password alternative)
+  - Player behavior (autoPlay, enableAudio, showControls)
+  - Encryption settings (enableEncryptionDialog)
+  - UI customization (loadingWidget, errorWidget, styling options)
+
+### Developer Experience Improvements
+- **📝 Comprehensive Documentation**: Updated README with multiple integration examples
+  - Minimal setup (3 lines of code)
+  - Standard setup with callbacks
+  - Advanced setup with custom UI
+- **🔧 Example Implementations**: Three complete example implementations:
+  - `SimplePlayerExample`: Standard integration with status tracking
+  - `MinimalPlayerExample`: Absolute minimal setup demonstration
+  - `AdvancedPlayerExample`: Custom UI and advanced state management
+- **🎯 Integration Patterns**: Clear progression from simple to complex use cases
+
+### Code Quality & Reliability
+- **Fixed Kotlin Serialization Issues**: Resolved persistent kotlinx.serialization runtime errors
+- **Manual JSON Building**: Replaced problematic serialization with reliable manual JSON construction
+- **Double Encoding Fix**: Fixed JSON parsing issues in Flutter event handling
+- **State Synchronization**: Improved player state management and UI updates
+- **Memory Management**: Proper disposal and cleanup of controllers and resources
+
+### Migration & Compatibility
+- **100% Backward Compatible**: All existing APIs remain unchanged
+- **Progressive Enhancement**: Existing apps can adopt EzvizSimplePlayer incrementally
+- **Legacy Support**: Traditional EzvizPlayer still available for advanced use cases
+
 ## [1.0.8] - 2025-06-02
 - Fix crashes from deserialization and add proper encrypted stream support
 ## [1.0.6] - 2025-06-02

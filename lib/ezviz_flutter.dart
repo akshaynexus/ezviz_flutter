@@ -20,6 +20,7 @@ export 'package:ezviz_flutter/ezviz_wifi_config.dart';
 // Enhanced UI widgets
 export 'package:ezviz_flutter/widgets/ptz_control_panel.dart';
 export 'package:ezviz_flutter/widgets/enhanced_player_controls.dart';
+export 'package:ezviz_flutter/widgets/ezviz_simple_player.dart';
 
 // Legacy API compatibility - keep existing HTTP-based API
 export 'src/ezviz_flutter_base.dart';

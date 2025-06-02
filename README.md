@@ -122,7 +122,130 @@ IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 
 ## Quick Start
 
-### 1. Initialize the SDK
+### EzvizSimplePlayer - Easy Integration
+
+For the simplest integration, use the new `EzvizSimplePlayer` widget that handles all complexity for you:
+
+```dart
+import 'package:ezviz_flutter/ezviz_flutter.dart';
+
+class SimpleVideoPlayer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('EZVIZ Camera')),
+      body: EzvizSimplePlayer(
+        deviceSerial: 'YOUR_DEVICE_SERIAL',
+        channelNo: 1,
+        config: EzvizPlayerConfig(
+          appKey: 'YOUR_APP_KEY',
+          appSecret: 'YOUR_APP_SECRET', 
+          accessToken: 'YOUR_ACCESS_TOKEN',
+          autoPlay: true,
+          enableAudio: true,
+          showControls: true,
+          enableEncryptionDialog: true, // Auto-handles encrypted cameras
+        ),
+        onStateChanged: (state) {
+          print('Player state: ${state.name}');
+        },
+        onError: (error) {
+          print('Player error: $error');
+        },
+      ),
+    );
+  }
+}
+```
+
+**Features of EzvizSimplePlayer:**
+- ✅ **Auto SDK initialization** - Handles all SDK setup automatically
+- ✅ **Auto authentication** - Manages login and tokens internally  
+- ✅ **Auto-play** - Starts streaming immediately when ready
+- ✅ **Error handling** - Comprehensive error management with callbacks
+- ✅ **Encryption support** - Auto-detects and prompts for encrypted cameras
+- ✅ **Audio control** - Easy enable/disable audio functionality
+- ✅ **Built-in controls** - Play/pause and audio toggle controls
+- ✅ **State management** - Real-time state updates and notifications
+- ✅ **Customizable UI** - Custom loading/error widgets and styling
+
+### Advanced Integration Examples
+
+#### Minimal Setup (3 lines of code)
+```dart
+EzvizSimplePlayer(
+  deviceSerial: 'YOUR_DEVICE_SERIAL',
+  channelNo: 1,
+  config: EzvizPlayerConfig(
+    appKey: 'YOUR_APP_KEY',
+    appSecret: 'YOUR_APP_SECRET',
+    accessToken: 'YOUR_ACCESS_TOKEN',
+  ),
+)
+```
+
+#### Standard Setup with Callbacks
+```dart
+EzvizSimplePlayer(
+  deviceSerial: 'YOUR_DEVICE_SERIAL',
+  channelNo: 1,
+  config: EzvizPlayerConfig(
+    appKey: 'YOUR_APP_KEY',
+    appSecret: 'YOUR_APP_SECRET',
+    accessToken: 'YOUR_ACCESS_TOKEN',
+    autoPlay: true,
+    enableAudio: true,
+    showControls: true,
+  ),
+  onStateChanged: (state) {
+    switch (state) {
+      case EzvizSimplePlayerState.playing:
+        print('Stream is playing');
+        break;
+      case EzvizSimplePlayerState.error:
+        print('Error occurred');
+        break;
+      // Handle other states...
+    }
+  },
+  onPasswordRequired: () async {
+    // Custom password dialog
+    return await showDialog<String>(/* your dialog */);
+  },
+  onError: (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $error')),
+    );
+  },
+)
+```
+
+#### Advanced Setup with Custom UI
+```dart
+EzvizSimplePlayer(
+  deviceSerial: 'YOUR_DEVICE_SERIAL',
+  channelNo: 1,
+  config: EzvizPlayerConfig(
+    appKey: 'YOUR_APP_KEY',
+    appSecret: 'YOUR_APP_SECRET',
+    accessToken: 'YOUR_ACCESS_TOKEN',
+    autoPlay: true,
+    enableAudio: true,
+    showControls: false, // Use custom controls
+    loadingWidget: CustomLoadingWidget(),
+    errorWidget: CustomErrorWidget(),
+    loadingTextStyle: TextStyle(color: Colors.white, fontSize: 18),
+    controlsBackgroundColor: Colors.black.withOpacity(0.8),
+    controlsIconColor: Colors.white,
+  ),
+  onStateChanged: (state) => _handleStateChange(state),
+  onError: (error) => _handleError(error),
+)
+```
+
+### Traditional Manual Setup
+
+If you need more control, you can still use the traditional approach:
 
 ```dart
 import 'package:ezviz_flutter/ezviz_flutter.dart';
@@ -143,7 +266,7 @@ Future<void> initializeEzvizSDK() async {
 }
 ```
 
-### 2. Enhanced Live Video Streaming
+### Manual Enhanced Live Video Streaming
 
 ```dart
 class EnhancedLiveStreamPage extends StatefulWidget {
@@ -244,7 +367,7 @@ class _EnhancedLiveStreamPageState extends State<EnhancedLiveStreamPage> {
 }
 ```
 
-### 3. Circular PTZ Control Panel
+### Circular PTZ Control Panel
 
 ```dart
 class PTZControlPage extends StatelessWidget {
@@ -345,7 +468,7 @@ class PTZControlPage extends StatelessWidget {
 }
 ```
 
-### 4. Audio & Intercom Features
+### Audio & Intercom Features
 
 ```dart
 // Two-way audio communication
@@ -420,7 +543,7 @@ class _IntercomPageState extends State<IntercomPage> {
 }
 ```
 
-### 5. Wi-Fi Configuration
+### Wi-Fi Configuration
 
 ```dart
 // Configure device Wi-Fi settings
@@ -530,7 +653,7 @@ class _WiFiConfigPageState extends State<WiFiConfigPage> {
 }
 ```
 
-### 6. Recording & Screenshots
+### Recording & Screenshots
 
 ```dart
 // Recording and screenshot management
@@ -563,7 +686,7 @@ class RecordingManager {
 }
 ```
 
-### 7. Enhanced Video Playback
+### Enhanced Video Playback
 
 ```dart
 // Enhanced playback with pause/resume
@@ -620,7 +743,7 @@ class _PlaybackControlsExampleState extends State<PlaybackControlsExample> {
 }
 ```
 
-## New API Components
+## API Components
 
 ### EzvizAudio
 Audio and intercom functionality:
@@ -643,6 +766,25 @@ Wi-Fi configuration management:
 - `EzvizWifiConfig.stopConfig()` - Stop configuration
 
 ### UI Components
+
+#### EzvizSimplePlayer
+The easiest way to integrate EZVIZ cameras with automatic handling of all functionality:
+```dart
+EzvizSimplePlayer(
+  deviceSerial: 'DEVICE_SERIAL',
+  channelNo: 1,
+  config: EzvizPlayerConfig(
+    appKey: 'APP_KEY',
+    appSecret: 'APP_SECRET',
+    accessToken: 'ACCESS_TOKEN',
+    autoPlay: true,
+    enableAudio: true,
+    enableEncryptionDialog: true,
+  ),
+  onStateChanged: (state) => print('State: $state'),
+  onError: (error) => print('Error: $error'),
+)
+```
 
 #### PTZControlPanel
 Circular touch control panel for intuitive PTZ control:
@@ -735,13 +877,15 @@ We extend our gratitude to the original authors and contributors of these reposi
 
 ### Core Classes
 - `EzvizManager` - Main SDK manager (singleton)
-- `EzvizPlayer` - Video player widget  
+- `EzvizPlayer` - Low-level video player widget  
+- `EzvizSimplePlayer` - High-level easy-to-use player widget ⭐
 - `EzvizPlayerController` - Player control interface
 - `EzvizAudio` - Audio and intercom management
 - `EzvizRecording` - Recording and screenshot features
 - `EzvizWifiConfig` - Wi-Fi configuration management
 
 ### UI Widgets
+- `EzvizSimplePlayer` - Complete player solution with auto-handling ⭐
 - `PTZControlPanel` - Circular PTZ control interface
 - `EnhancedPlayerControls` - Advanced video player controls
 
