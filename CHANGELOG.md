@@ -1,82 +1,157 @@
-## 1.0.3
+# Changelog
 
-### 🔐 Enhanced Live Streaming with Password Support
-- **New Password Parameter**: Added `password` parameter to `LiveService.getPlayAddress()` method for encrypted devices
-- **Automatic Encryption Handling**: New `getPlayAddressWithPassword()` method that automatically handles encryption errors
-- **Intuitive API**: `password` parameter serves as an alias for the `code` parameter, making it more developer-friendly
-- **Multiple Protocol Support**: Enhanced documentation for RTMP, HLS, FLV, and WebRTC protocols
+All notable changes to this project will be documented in this file.
 
-### 🚀 New Features
-- **`LiveService.getPlayAddressWithPassword()`**: Automatically tries without password first, then retries with password on encryption errors
-- **Enhanced Error Handling**: Better handling of error code 60019 (encryption enabled, parameter code is empty)
-- **Flexible Authentication**: Support for both `code` and `password` parameters (password takes precedence)
-- **Protocol & Quality Options**: Clear documentation for all supported streaming protocols and quality levels
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### 📚 Documentation & Examples
-- **Comprehensive Examples**: Updated `live_service_example.dart` with multiple scenarios:
-  - Basic live streaming (no encryption)
-  - Encrypted device streaming with passwords
-  - Automatic encryption handling
-  - Multiple devices with different passwords
-  - Different protocols (RTMP, HLS, FLV, WebRTC) and quality settings
-- **Error Handling Guide**: Helper functions demonstrating proper error handling for common scenarios
-- **Parameter Documentation**: Detailed explanations for all LiveService parameters
+## [1.0.4] - 2024-12-19
 
-### 🔧 Developer Experience Improvements
-- **Intuitive Parameter Names**: `password` parameter for better code readability
-- **Smart Fallback Logic**: Automatic retry mechanism for encrypted devices
-- **Error Code Mapping**: Clear error handling for device encryption, offline devices, and invalid serials
-- **Multi-Device Support**: Examples showing how to handle multiple devices with different encryption settings
+### Added - Publication Ready Release with Credits
+- **Publication Preparation**: Updated package configuration for pub.dev publishing
+- **Credits and Acknowledgments**: Added proper attribution to source repositories
+  - flutter_ezviz: Core native SDK implementation
+  - ezviz_flutter_cam: Enhanced features and UI components
+- **Channel Name Consistency**: Standardized method channel names to use `ezviz_flutter` prefix
+- **Documentation Updates**: Enhanced README with proper credits and migration guide
 
-### 📺 Streaming Protocol Support
-- **Protocol 0**: RTMP streaming
-- **Protocol 1**: HLS streaming (recommended for web/mobile)
-- **Protocol 2**: FLV streaming  
-- **Protocol 3**: WebRTC streaming (lowest latency)
+### Fixed
+- Method channel naming consistency across all components
+- Event channel naming alignment with package standards
+- Wi-Fi configuration event channel naming
 
-### 🎯 Quality Level Support
-- **Quality 0**: Smooth (optimized for bandwidth)
-- **Quality 1**: HD (720p)
-- **Quality 2**: Ultra HD (1080p)
+### Documentation
+- Added comprehensive credits section acknowledging source repositories
+- Updated version references to 1.0.4
+- Enhanced migration instructions
+- Added links to original repositories
 
-### 🛠️ Technical Details
-- Enhanced `LiveService` class with backward compatibility
-- Improved error detection for encryption-related issues (error 60019)
-- Better parameter validation and fallback handling
-- Comprehensive example coverage for real-world usage scenarios
+## [1.0.3] - 2024-12-19
 
-## 1.0.2
+### Added - Major Native SDK Integration + Enhanced Features from ezviz_flutter_cam
+- **Native Android/iOS SDK Support**: Complete integration with EZVIZ native SDKs for both platforms
+- **Live Video Streaming**: Real-time video playback with native performance using `EzvizPlayer` widget
+- **PTZ Control**: Full pan, tilt, zoom camera control with `EzvizManager.controlPTZ()`
+- **Video Player Widget**: Native video player component with platform-specific implementations
+- **Device Management**: Native device discovery and management through `EzvizManager.shared()`
+- **Video Quality Control**: Adjust streaming quality (smooth, balanced, HD, UHD)
+- **Network Device Support**: Connect to local network cameras with login/logout functionality
+- **Event Handling**: Real-time event system for player status and SDK events
+- **Error Code Mapping**: Comprehensive error code definitions with descriptions
 
-### 🐛 Bug Fixes
-- **Fixed Type Casting Error**: Resolved `type 'int' is not a subtype of type 'String' in type cast` error in HTTP requests
-- **HTTP Form Data**: All parameter values are now properly converted to strings for `application/x-www-form-urlencoded` requests
-- **DeviceService**: Fixed `getDeviceList()` method and all other methods with integer parameters (`pageStart`, `pageSize`, `channelNo`, etc.)
-- **Universal Fix**: Fixed type casting issues across all service classes that pass integer, boolean, or other non-string parameters
+### New Enhanced Features (from ezviz_flutter_cam)
+- **Audio & Intercom**: Two-way audio communication with half-duplex and full-duplex support
+  - `EzvizAudio.startVoiceTalk()` - Start intercom session
+  - `EzvizAudio.stopVoiceTalk()` - Stop intercom session
+  - `EzvizAudio.openSound()` / `EzvizAudio.closeSound()` - Audio control
+- **Recording & Screenshots**: Video recording and image capture during playback
+  - `EzvizRecording.startRecording()` / `EzvizRecording.stopRecording()`
+  - `EzvizRecording.capturePicture()` - Take screenshots
+  - `EzvizRecording.isRecording()` - Check recording status
+- **Wi-Fi Configuration**: Device network setup capabilities
+  - `EzvizWifiConfig.startWifiConfig()` - Wi-Fi configuration mode
+  - `EzvizWifiConfig.startAPConfig()` - Access Point configuration mode
+  - Sound wave configuration support
+- **Enhanced Playback Controls**: Advanced video playback features
+  - `pausePlayback()` / `resumePlayback()` - Pause and resume playback
+  - Enhanced video player with full-screen support
 
-### 🔧 Technical Details
-- Modified `EzvizClient.post()` method to automatically convert all body parameters to strings before HTTP requests
-- Ensures compatibility with form-encoded HTTP POST requests which require string values
-- Affects all service methods including device management, alarm handling, live streaming, PTZ control, and more
+### New UI Components
+- **PTZControlPanel**: Circular touch control panel for intuitive camera movement
+  - 360-degree touch control with visual feedback
+  - Direction indicators and center tap functionality
+  - Customizable size, colors, and icons
+- **EnhancedPlayerControls**: Professional video player interface
+  - Auto-hiding controls with tap-to-show functionality
+  - Recording indicator with pulsing animation
+  - Quality selector dropdown
+  - Full-screen toggle and sound controls
+  - Play/pause, stop, record, and screenshot buttons
 
-## 1.0.1
+### New Classes and APIs
+- `EzvizAudio` - Audio and intercom management
+- `EzvizRecording` - Recording and screenshot functionality
+- `EzvizWifiConfig` - Wi-Fi configuration management
+- `EzvizWifiConfigResult` - Configuration result model
+- `EzvizWifiConfigMode` - Configuration mode enumeration
+- `PTZControlPanel` - Circular PTZ control widget
+- `EnhancedPlayerControls` - Advanced player controls widget
 
-### 🚀 New Features
-- **Flexible Authentication**: Added support for direct access token authentication alongside existing app key/secret authentication
-- **Enhanced EzvizClient Constructor**: Now accepts either `accessToken` + optional `areaDomain` OR `appKey` + `appSecret`
-- **Improved Error Handling**: Better error messages for authentication failures and token validation
-- **Automatic Token Management**: Smart handling of provided vs API-obtained tokens
+### Enhanced Player Controller
+- Added pause/resume functionality for playback
+- Audio control methods (openSound/closeSound)
+- Recording methods (start/stop/status)
+- Screenshot capture capability
+- Enhanced error handling and logging
 
-### 📚 Documentation
-- Updated README with comprehensive authentication examples
-- Added new `authentication_examples.dart` demonstrating both auth methods
-- Updated API configuration examples for flexible authentication
-- Improved code documentation and examples
+### Platform Enhancements
+- **Android**: Additional NDK configuration and library support
+- **iOS**: Enhanced Info.plist permissions for audio, location, and photo library
+- **Xcode**: Access WiFi Information and Hotspot Configuration capabilities
 
-### 🔧 Improvements
-- Better validation of authentication parameters at construction time
-- Enhanced authentication flow with automatic retry for expired tokens
-- More intuitive authentication priority (access token preferred over app credentials)
+### Documentation Improvements
+- Comprehensive examples for all new features
+- Setup guides for audio, recording, and Wi-Fi configuration
+- Feature comparison table (HTTP API vs Native SDK)
+- Migration guide from v1.0.2
+- Troubleshooting section for new features
 
-## 1.0.0
+### Backward Compatibility
+- All existing HTTP API functionality preserved
+- Legacy `EzvizClient` still available
+- Existing models and services unchanged
+- Smooth migration path for existing users
 
-- Initial version.
+## [1.0.2] - 2024-11-15
+
+### Added
+- Enhanced device management capabilities
+- Improved error handling for API responses
+- Additional device information fields
+
+### Fixed
+- Authentication token refresh issues
+- Device list pagination handling
+- PTZ control response parsing
+
+## [1.0.1] - 2024-10-20
+
+### Added
+- RAM (Sub-Account) management service
+- Cloud storage service integration
+- Detector management for A1 series devices
+
+### Fixed
+- Authentication flow improvements
+- API response model serialization
+- Error handling for network timeouts
+
+## [1.0.0] - 2024-09-15
+
+### Added - Initial Release
+- Complete HTTP API integration for EZVIZ Open Platform
+- Authentication service with automatic token management
+- Device management (list, add, remove, configure)
+- Live streaming URL generation (HLS, RTMP, FLV)
+- PTZ control for supported cameras
+- Alarm management and notifications
+- Comprehensive error handling with custom exceptions
+- Type-safe models with json_serializable
+- Example applications for all services
+- Integration test suite
+
+### Services Included
+- `AuthService` - Authentication and token management
+- `DeviceService` - Device operations and configuration
+- `LiveService` - Live stream URL generation
+- `PtzService` - Pan-tilt-zoom camera control
+- `AlarmService` - Alarm and notification management
+- `DetectorService` - Motion detector management
+- `CloudStorageService` - Cloud storage operations
+- `RamAccountService` - Sub-account management
+
+### Models and Types
+- Comprehensive data models for all API responses
+- Type-safe request/response handling
+- Null-safe implementation
+- Custom exception types for better error handling

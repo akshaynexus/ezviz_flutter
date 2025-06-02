@@ -28,6 +28,7 @@ class LiveService {
     int? quality,
     String? startTime,
     String? stopTime,
+    bool debug = false, // Add debug flag
   }) async {
     final body = <String, dynamic>{'deviceSerial': deviceSerial};
     if (channelNo != null) body['channelNo'] = channelNo;
@@ -35,13 +36,29 @@ class LiveService {
 
     // Use password parameter if provided, otherwise use code
     final deviceCode = password ?? code;
-    if (deviceCode != null) body['code'] = deviceCode;
+    if (deviceCode != null) {
+      body['code'] = deviceCode;
+      if (debug) {
+        print('🔐 LiveService Debug: Adding code parameter');
+        print('   - Original password: $password');
+        print('   - Original code: $code');
+        print('   - Final deviceCode: $deviceCode');
+        print('   - Code length: ${deviceCode.length}');
+      }
+    } else if (debug) {
+      print('⚠️ LiveService Debug: NO CODE/PASSWORD provided');
+    }
 
     if (expireTime != null) body['expireTime'] = expireTime;
     if (type != null) body['type'] = type;
     if (quality != null) body['quality'] = quality;
     if (startTime != null) body['startTime'] = startTime;
     if (stopTime != null) body['stopTime'] = stopTime;
+
+    if (debug) {
+      print('📡 LiveService Debug: API Request Body:');
+      body.forEach((key, value) => print('   - $key: $value'));
+    }
 
     return _client.post('/api/lapp/live/address/get', body);
   }
@@ -73,32 +90,50 @@ class LiveService {
   /// [channelNo]: Channel number (default: 1)
   /// [protocol]: Protocol type (0: RTMP, 1: HLS, 2: FLV, 3: WebRTC)
   /// [quality]: Video quality (0: Smooth, 1: HD, 2: Ultra HD)
+  /// [debug]: Enable debug logging
   Future<Map<String, dynamic>> getPlayAddressWithPassword(
     String deviceSerial,
     String password, {
     int channelNo = 1,
     int protocol = 1, // Default to HLS
     int quality = 1, // Default to HD
+    bool debug = false,
   }) async {
+    if (debug) {
+      print('🔄 LiveService: getPlayAddressWithPassword called');
+      print('   - deviceSerial: $deviceSerial');
+      print('   - password: $password');
+      print('   - password length: ${password.length}');
+      print('   - channelNo: $channelNo');
+      print('   - protocol: $protocol');
+      print('   - quality: $quality');
+    }
+
     try {
       // First try without password
+      if (debug) print('🔍 Trying without password first...');
       return await getPlayAddress(
         deviceSerial,
         channelNo: channelNo,
         protocol: protocol,
         quality: quality,
+        debug: debug,
       );
     } catch (e) {
+      if (debug) print('❌ First attempt failed: $e');
+
       // If encryption error, retry with password
       if (e.toString().contains('60019') ||
           e.toString().contains('encryption') ||
           e.toString().contains('parameter code is empty')) {
+        if (debug) print('🔐 Retrying with password...');
         return await getPlayAddress(
           deviceSerial,
           channelNo: channelNo,
           protocol: protocol,
           quality: quality,
           password: password,
+          debug: debug,
         );
       } else {
         rethrow;

@@ -1,6 +1,6 @@
 name: ezviz_flutter
 description: A comprehensive Flutter/Dart library for EZVIZ camera API integration with support for device management, live streaming, PTZ control, and more.
-version: 1.0.3
+version: 1.0.4
 homepage: https://github.com/akshaynexus/ezviz_flutter
 repository: https://github.com/akshaynexus/ezviz_flutter
 
@@ -16,6 +16,7 @@ dependencies:
   json_annotation: ^4.8.1
   equatable: ^2.0.5
   meta: ^1.9.1
+  plugin_platform_interface: ^2.0.2
   # path: ^1.8.0
 
 dev_dependencies:
@@ -26,3 +27,13 @@ dev_dependencies:
   lints: ^5.0.0
   test: ^1.24.0
   mockito: ^5.4.2
+
+# Flutter plugin configuration for native SDK integration
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.akshaynexus.ezviz_flutter.ezviz_flutter
+        pluginClass: FlutterEzvizPlugin
+      ios:
+        pluginClass: FlutterEzvizPlugin

@@ -1,4 +1,3 @@
-i will give you the api docs for ezviz make a fully functional fully tested api helper for ezviz api in dart
 
 1 API Definitions
 
