@@ -1,6 +1,6 @@
 name: ezviz_flutter
 description: A comprehensive Flutter/Dart library for EZVIZ camera API integration featuring EzvizSimplePlayer for easy camera integration, device management, live streaming, PTZ control, and more.
-version: 1.1.0
+version: 1.1.1
 homepage: https://github.com/akshaynexus/ezviz_flutter
 repository: https://github.com/akshaynexus/ezviz_flutter
 
