@@ -10,12 +10,14 @@ class EzvizInitOptions {
   final String accessToken;
   final bool enableLog;
   final bool enableP2P;
+  final String? baseUrl;
 
   EzvizInitOptions({
     this.appKey = "",
     this.accessToken = "",
     this.enableLog = false,
     this.enableP2P = false,
+    this.baseUrl,
   });
 
   Map<String, dynamic> toJson() {
@@ -24,6 +26,9 @@ class EzvizInitOptions {
     data['accessToken'] = this.accessToken;
     data['enableLog'] = this.enableLog;
     data['enableP2P'] = this.enableP2P;
+    if (this.baseUrl != null) {
+      data['baseUrl'] = this.baseUrl;
+    }
     return data;
   }
 }

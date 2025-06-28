@@ -34,12 +34,23 @@ object EzvizManager {
             val accessToken = it["accessToken"] as? String ?: ""
             val enableLog = it["enableLog"] as? Boolean ?: false
             val enableP2P = it["enableP2P"] as? Boolean ?: false
+            val baseUrl = it["baseUrl"] as? String
             val application = ApplicationUtils.application
             application?.let { app ->
+                // Initialize SDK with India access token
                 val ret = EZGlobalSDK.initLib(app, appKey)
+                
+                
                 EZGlobalSDK.enableP2P(enableP2P)
                 EZGlobalSDK.showSDKLog(enableLog)
                 EZGlobalSDK.getInstance().setAccessToken(accessToken)
+                if(baseUrl != null) {
+                    if(baseUrl.contains("iindiaopen"))
+                        android.util.Log.d("EzvizManager", "Expected to connect to India endpoints automatically")
+                    EZGlobalSDK.getInstance().setServerUrl(baseUrl,baseUrl)
+                }
+                if (enableLog) android.util.Log.d("EzvizManager", "Android SDK initialized with baseUrl: $baseUrl")
+                
                 EZHCNetDeviceSDK.getInstance()
                 result.success(ret)
             }

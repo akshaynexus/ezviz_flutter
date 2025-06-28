@@ -50,6 +50,19 @@ android {
     defaultConfig {
         minSdk = 21
         consumerProguardFiles 'proguard-rules.pro'
+        
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+    
+    packagingOptions {
+        pickFirst "**/libc++_shared.so"
+        pickFirst "**/libjnidispatch.so"
+        pickFirst "**/libPlayCtrl.so"
+        pickFirst "**/libSystemTransform.so"
+        pickFirst "**/libStreamTransClient.so"
+        pickFirst "**/libEzvizStreamEncrypt.so"
     }
 
     dependencies {

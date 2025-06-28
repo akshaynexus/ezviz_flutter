@@ -164,6 +164,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
         accessToken: widget.config.accessToken ?? "",
         enableLog: true,
         enableP2P: false,
+        baseUrl: widget.config.baseUrl,
       );
 
       final result = await EzvizManager.shared().initSDK(initOptions);
