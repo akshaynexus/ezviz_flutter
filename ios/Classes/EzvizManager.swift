@@ -23,14 +23,11 @@ class EzvizManager {
             let enableLog = map["enableLog"] as? Bool ?? false
             let enableP2P = map["enableP2P"] as? Bool ?? false
             let baseUrl = map["baseUrl"] as? String
-            let ret = EZGlobalSDK.initLib(withAppKey: appKey)
+            let defaultBaseUrl = "https://open.ezvizlife.com"
+            let ret = EZGlobalSDK.initLib(withAppKey: appKey, url: baseUrl ?? defaultBaseUrl, authUrl: baseUrl ?? defaultBaseUrl)
             EZGlobalSDK.setAccessToken(accessToken)
             EZGlobalSDK.setDebugLogEnable(enableLog)
             EZGlobalSDK.enableP2P(enableP2P)
-            //Conditionally set the baseurl if passed in init args
-            if baseUrl != nil {
-                EZGlobalSDK.setServerUrl(baseUrl,baseUrl)
-            }
             EZHCNetDeviceSDK.initSDK()
             result(ret)
         }else {
