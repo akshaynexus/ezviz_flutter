@@ -58,6 +58,8 @@ class _SimplePlayerExampleState extends State<SimplePlayerExample> {
                   enableAudio: true,
                   showControls: true,
                   enableEncryptionDialog: true,
+                  allowFullscreen: true, // Enable YouTube-style fullscreen
+                  autoRotate: true, // Auto-rotate to landscape in fullscreen
                   loadingTextStyle: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -115,7 +117,10 @@ class _SimplePlayerExampleState extends State<SimplePlayerExample> {
                 ),
                 Text('3. Use the controls to play/pause and toggle audio'),
                 Text(
-                  '4. For encrypted cameras, a password dialog will appear automatically',
+                  '4. Tap the fullscreen button for YouTube-style fullscreen with quality controls',
+                ),
+                Text(
+                  '5. For encrypted cameras, a password dialog will appear automatically',
                 ),
               ],
             ),
@@ -189,6 +194,7 @@ class MinimalPlayerExample extends StatelessWidget {
           appKey: 'YOUR_APP_KEY',
           appSecret: 'YOUR_APP_SECRET',
           accessToken: 'YOUR_ACCESS_TOKEN',
+          allowFullscreen: true, // Enable fullscreen support
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../ezviz_flutter.dart';
 import 'dart:async';
+import 'dart:io';
 
 /// Configuration for EzvizSimplePlayer
 class EzvizPlayerConfig {
@@ -24,6 +25,9 @@ class EzvizPlayerConfig {
   final bool hideControlsOnTap;
   final bool compactControls;
   final bool autoRotate;
+  final bool enableDoubleTapSeek;
+  final bool enableSwipeSeek;
+  final bool showDeviceInfo;
 
   /// UI customization
   final Widget? loadingWidget;
@@ -44,10 +48,13 @@ class EzvizPlayerConfig {
     this.enableAudio = true,
     this.showControls = true,
     this.enableEncryptionDialog = true,
-    this.allowFullscreen = false,
+    this.allowFullscreen = true,
     this.hideControlsOnTap = true,
     this.compactControls = false,
     this.autoRotate = true,
+    this.enableDoubleTapSeek = true,
+    this.enableSwipeSeek = true,
+    this.showDeviceInfo = false,
     this.loadingWidget,
     this.errorWidget,
     this.loadingTextStyle,
@@ -122,12 +129,18 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
   static const Duration _connectionTimeout = Duration(seconds: 15);
   Timer? _connectionTimer;
   bool _isConnecting = false;
-  bool _isPlayerInitialized = false; // Track if player is properly initialized
+  bool _isPlayerInitialized = false;
 
-  // New: Controls and fullscreen management
-  bool _showControls = true;
-  bool _isFullscreen = false;
+  // Controls and fullscreen management
+  bool _showControls = false; // Start hidden
   Timer? _controlsTimer;
+
+  // Track if player widget has been created
+  bool _playerCreated = false;
+
+  /// Check if we're in fullscreen (landscape mode)
+  bool get isFullScreen =>
+      MediaQuery.of(context).orientation == Orientation.landscape;
 
   @override
   void initState() {
@@ -140,10 +153,17 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
 
   @override
   void dispose() {
+    // Cancel all timers first
     _connectionTimer?.cancel();
     _controlsTimer?.cancel();
-    _controller?.stopRealPlay();
-    _controller?.release();
+
+    // Clean up controller
+    if (_controller != null) {
+      _controller!.stopRealPlay();
+      _controller!.release();
+      _controller = null;
+    }
+
     super.dispose();
   }
 
@@ -188,6 +208,9 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
 
     _controller!.setPlayerEventHandler(
       (EzvizEvent event) {
+        // Check if widget is still mounted before processing events
+        if (!mounted) return;
+
         if (event.eventType == EzvizChannelEvents.playerStatusChange) {
           if (event.data is EzvizPlayerStatus) {
             final status = event.data as EzvizPlayerStatus;
@@ -196,13 +219,14 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
         }
       },
       (error) {
+        if (!mounted) return;
         debugPrint('💥 Player event handler error: $error');
         _handleError('Player event error: $error');
       },
     );
   }
 
-  /// Handle player status changes (based on working example)
+  /// Handle player status changes
   void _handlePlayerStatus(EzvizPlayerStatus status) {
     // Cancel connection timer if we get any status update
     _connectionTimer?.cancel();
@@ -214,27 +238,22 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
     if (!mounted) return;
 
     setState(() {
-      // Update playing state like the working example
-      _isPlaying = status.status == 2; // 2 = Start/Playing state
+      _isPlaying = status.status == 2;
 
-      // Clear loading state when player is initialized or playing
       if (status.status == 1 || status.status == 2) {
-        // 1 = Init, 2 = Start
         _isConnecting = false;
       }
     });
 
     switch (status.status) {
-      case 1: // Init - Player is ready but not playing
+      case 1: // Init
         _isPlayerInitialized = true;
-        _connectionAttempts = 0; // Reset attempts when properly initialized
+        _connectionAttempts = 0;
         _updateState(EzvizSimplePlayerState.initialized);
         debugPrint('✅ Player initialized and ready');
 
-        // Only auto-start if configured and not already connecting
         if (widget.config.autoPlay && !_isConnecting && !_isPlaying) {
           debugPrint('🚀 Auto-starting stream...');
-          // Use the same approach as the working example
           Future.delayed(const Duration(milliseconds: 500), () {
             if (mounted && !_isConnecting && !_isPlaying) {
               _startLiveStream();
@@ -243,13 +262,12 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
         }
         break;
 
-      case 2: // Start/Playing
-        _connectionAttempts = 0; // Reset attempts on successful connection
+      case 2: // Playing
+        _connectionAttempts = 0;
         _isConnecting = false;
         _updateState(EzvizSimplePlayerState.playing);
         debugPrint('🎬 Stream is now playing');
 
-        // Auto-enable audio if configured
         if (widget.config.enableAudio && !_soundEnabled) {
           _enableAudio();
         }
@@ -277,7 +295,6 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
               errorMsg.contains('encrypt')) {
             _handlePasswordRequired();
           } else {
-            // Handle other errors without automatic retry like working example
             _handleError('Player error: ${status.message}');
           }
         } else {
@@ -297,7 +314,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
     }
   }
 
-  /// Initialize player (like the working example)
+  /// Initialize player
   Future<void> _initializePlayer() async {
     if (_controller == null) return;
 
@@ -310,7 +327,6 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
         '🎯 Initializing player for device: ${widget.deviceSerial}, channel: ${widget.channelNo}',
       );
 
-      // Re-initialize SDK like the working example does
       if (!_isSDKInitialized) {
         debugPrint('🔧 Re-initializing SDK before player creation...');
         await _initializeSDK();
@@ -324,7 +340,6 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
         widget.channelNo,
       );
 
-      // Set encryption password if available
       if (_currentPassword != null) {
         debugPrint('🔐 Setting verification code');
         await _controller!.setPlayVerifyCode(_currentPassword!);
@@ -338,14 +353,14 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
     }
   }
 
-  /// Start live stream (separated like in working example)
+  /// Start live stream
   Future<void> _startLiveStream() async {
-    if (_controller == null || _isConnecting) return;
+    if (_controller == null || _isConnecting || !mounted) return;
 
     // Check if we've exceeded max attempts
     if (_connectionAttempts >= _maxConnectionAttempts) {
       _handleError(
-        'Maximum connection attempts exceeded. Please check camera status in EZviz mobile app.',
+        'Maximum connection attempts exceeded. Please check camera status.',
       );
       return;
     }
@@ -368,10 +383,12 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
         }
       }
 
+      // Check mounted state before continuing
+      if (!mounted) return;
+
       final success = await _controller!.startRealPlay();
       if (success) {
         debugPrint('✅ Live stream started successfully');
-        // Don't set _isPlaying here, let the status handler do it
       } else {
         // Check if this is an encrypted camera and we need password
         if (_currentPassword == null) {
@@ -453,6 +470,8 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
 
   /// Show default password dialog
   Future<String?> _showDefaultPasswordDialog() async {
+    final TextEditingController passwordController = TextEditingController();
+
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -465,6 +484,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: passwordController,
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Verification Code',
@@ -481,12 +501,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
           ),
           TextButton(
             onPressed: () {
-              final textField = context
-                  .findAncestorWidgetOfExactType<TextField>();
-              // This is a simplified implementation - in practice you'd use a TextEditingController
-              Navigator.of(context).pop(
-                '',
-              ); // Return empty for now, user should implement onPasswordRequired
+              Navigator.of(context).pop(passwordController.text);
             },
             child: const Text('OK'),
           ),
@@ -515,7 +530,6 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
   Future<void> _toggleAudio() async {
     if (_controller == null) return;
 
-    // Restart controls timer on user interaction
     if (widget.config.hideControlsOnTap && _showControls) {
       _startControlsTimer();
     }
@@ -538,11 +552,18 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
     }
   }
 
+  /// Public method to toggle audio - can be called from external widgets
+  Future<void> toggleAudio() async {
+    return _toggleAudio();
+  }
+
+  /// Public getter for audio state - can be accessed from external widgets
+  bool get isAudioEnabled => _soundEnabled;
+
   /// Toggle play/pause
   Future<void> _togglePlayPause() async {
     if (_controller == null) return;
 
-    // Restart controls timer on user interaction
     if (widget.config.hideControlsOnTap && _showControls) {
       _startControlsTimer();
     }
@@ -550,7 +571,6 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
     if (_isPlaying) {
       await _stopLiveStream();
     } else {
-      // Reset connection attempts when manually starting
       _connectionAttempts = 0;
       await _startLiveStream();
     }
@@ -570,7 +590,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
 
   /// Update state and notify callback
   void _updateState(EzvizSimplePlayerState newState) {
-    if (!mounted) return; // Prevent errors when widget is disposed
+    if (!mounted) return;
 
     setState(() {
       _state = newState;
@@ -580,7 +600,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
 
   /// Handle errors
   void _handleError(String error) {
-    if (!mounted) return; // Prevent errors when widget is disposed
+    if (!mounted) return;
 
     _connectionTimer?.cancel();
     _isConnecting = false;
@@ -656,119 +676,279 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
     );
   }
 
-  /// Build controls overlay
-  Widget _buildControlsOverlay() {
-    // This method is deprecated - we now use external controls
-    return const SizedBox.shrink();
-  }
-
   /// Start controls auto-hide timer
   void _startControlsTimer() {
     // No longer needed - controls are always visible externally
     return;
   }
 
-  /// Handle tap on video area
-  void _onVideoTap() {
-    // No longer needed - controls are external
-    return;
-  }
-
   /// Toggle fullscreen mode
-  void _toggleFullscreen() {
+  void _toggleFullscreen() async {
     if (!widget.config.allowFullscreen) return;
 
-    setState(() {
-      _isFullscreen = !_isFullscreen;
-    });
-
-    if (_isFullscreen) {
-      _enterFullscreen();
+    if (isFullScreen) {
+      // Exit fullscreen
+      await _exitFullscreen();
+    } else {
+      // Enter fullscreen
+      await _enterFullscreen();
     }
   }
 
-  /// Enter fullscreen mode using overlay
-  void _enterFullscreen() async {
-    debugPrint('🎬 Entering fullscreen mode...');
+  /// Enter fullscreen mode
+  Future<void> _enterFullscreen() async {
+    // Set landscape orientation
+    DeviceOrientation deviceOrientation = DeviceOrientation.landscapeLeft;
+    if (Platform.isIOS) {
+      deviceOrientation = DeviceOrientation.landscapeRight;
+    }
 
-    // Hide system UI for immersive fullscreen
-    debugPrint('🖥️ Hiding system UI...');
+    await SystemChrome.setPreferredOrientations([deviceOrientation]);
+
+    // Hide system UI
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-    if (!mounted) return; // Check if widget is still mounted after awaits
+    // Show controls initially and start auto-hide timer
+    setState(() {
+      _showControls = true;
+    });
+    _startFullscreenControlsTimer();
+  }
 
-    debugPrint('🚀 Navigating to fullscreen overlay');
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (context, animation, _) => _FullscreenOverlay(
-          child: _buildVideoArea(), // Reuse the same video area
-          deviceSerial: widget.deviceSerial,
-          channelNo: widget.channelNo,
-          isPlaying: _isPlaying,
-          soundEnabled: _soundEnabled,
-          onTogglePlayPause: _togglePlayPause,
-          onToggleSound: _toggleAudio,
-          autoRotate: widget.config.autoRotate, // Pass the setting
-          onExit: () {
-            _exitFullscreen();
-          },
+  /// Exit fullscreen mode
+  Future<void> _exitFullscreen() async {
+    // Restore portrait orientation
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
+    // Show system UI
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+
+    // Reset controls
+    _controlsTimer?.cancel();
+    setState(() {
+      _showControls = true;
+    });
+  }
+
+  /// Start fullscreen controls auto-hide timer
+  void _startFullscreenControlsTimer() {
+    _controlsTimer?.cancel();
+    if (isFullScreen) {
+      _controlsTimer = Timer(widget.config.controlsHideTimeout, () {
+        if (mounted && isFullScreen) {
+          setState(() {
+            _showControls = false;
+          });
+        }
+      });
+    }
+  }
+
+  /// Build fullscreen controls
+  Widget _buildFullscreenControls() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.black.withOpacity(0.7),
+            Colors.transparent,
+            Colors.transparent,
+            Colors.black.withOpacity(0.7),
+          ],
+          stops: const [0.0, 0.2, 0.8, 1.0],
         ),
-        transitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder: (context, animation, _, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
+      ),
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Top bar (without back button)
+            if (widget.config.showDeviceInfo)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  '${widget.deviceSerial} - Channel ${widget.channelNo}',
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+            const Spacer(),
+
+            // Center play/pause button
+            if (!_isPlaying)
+              Center(
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                    onPressed: _togglePlayPause,
+                  ),
+                ),
+              ),
+
+            const Spacer(),
+
+            // Bottom controls
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  // Play/Pause button
+                  IconButton(
+                    icon: Icon(
+                      _isPlaying ? Icons.pause : Icons.play_arrow,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                    onPressed: _togglePlayPause,
+                  ),
+
+                  // Volume button
+                  IconButton(
+                    icon: Icon(
+                      _soundEnabled ? Icons.volume_up : Icons.volume_off,
+                      color: Colors.white,
+                    ),
+                    onPressed: _toggleAudio,
+                  ),
+
+                  const Spacer(),
+
+                  // Live indicator
+                  if (_isPlaying)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.circle, color: Colors.white, size: 8),
+                          SizedBox(width: 4),
+                          Text(
+                            'LIVE',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  const SizedBox(width: 16),
+
+                  // Exit fullscreen button
+                  IconButton(
+                    icon: const Icon(
+                      Icons.fullscreen_exit,
+                      color: Colors.white,
+                    ),
+                    onPressed: _toggleFullscreen,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  /// Exit fullscreen mode and restore orientation
-  void _exitFullscreen() {
-    debugPrint('🎬 Exiting fullscreen mode...');
+  /// Build portrait player with controls
+  Widget _buildPortraitPlayer() {
+    return Stack(
+      children: [
+        // Video area
+        _buildVideoArea(),
 
-    // Restore portrait orientation (if auto-rotate was enabled)
-    if (widget.config.autoRotate) {
-      debugPrint('🔄 Restoring portrait orientation...');
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-      debugPrint('✅ Portrait orientation restored');
-    } else {
-      debugPrint('📱 Auto-rotate was disabled, keeping current orientation');
-    }
-
-    // Restore system UI
-    debugPrint('🖥️ Restoring system UI...');
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+        // Controls area at bottom
+        if (widget.config.showControls)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: _buildExternalControls(),
+          ),
+      ],
     );
-
-    debugPrint('🚀 Closing fullscreen overlay');
-    Navigator.of(context).pop();
-    setState(() {
-      _isFullscreen = false;
-    });
-    debugPrint('✅ Fullscreen mode exited');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: Column(
-        children: [
-          // Video area (no overlays, no gesture conflicts)
-          Expanded(
-            child: Container(width: double.infinity, child: _buildVideoArea()),
-          ),
+    if (isFullScreen) {
+      // Fullscreen mode - return a widget that takes over the parent's constraints
+      return WillPopScope(
+        onWillPop: () async {
+          _toggleFullscreen();
+          return false;
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.black,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Video player centered
+              Center(
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: _buildVideoArea(),
+                ),
+              ),
 
-          // Controls area (always visible, outside video)
-          if (widget.config.showControls) _buildExternalControls(),
-        ],
-      ),
-    );
+              // Touch detector
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _showControls = !_showControls;
+                  });
+                  if (_showControls) {
+                    _startFullscreenControlsTimer();
+                  }
+                },
+                child: Container(color: Colors.transparent),
+              ),
+
+              // Controls overlay
+              AnimatedOpacity(
+                opacity: _showControls ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 300),
+                child: _buildFullscreenControls(),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      // Portrait mode
+      return Container(
+        height: 250.0,
+        color: Colors.black,
+        child: _buildPortraitPlayer(),
+      );
+    }
   }
 
   /// Build video area without any overlays
@@ -782,15 +962,19 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
     } else {
       return EzvizPlayer(
         onCreated: (controller) {
-          _controller = controller;
-          _setupPlayerEventHandlers();
-          _initializePlayer();
+          // Only initialize once
+          if (!_playerCreated) {
+            _playerCreated = true;
+            _controller = controller;
+            _setupPlayerEventHandlers();
+            _initializePlayer();
+          }
         },
       );
     }
   }
 
-  /// Build external controls (always visible, below video)
+  /// Build external controls
   Widget _buildExternalControls() {
     final bool isCompact = widget.config.compactControls;
     final double controlsHeight = isCompact ? 36 : 48;
@@ -849,8 +1033,8 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
 
           SizedBox(width: isCompact ? 4 : 8),
 
-          // Connection status indicator (compact)
-          if (!isCompact) // Hide status in ultra-compact mode
+          // Connection status indicator
+          if (!isCompact)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
@@ -889,12 +1073,12 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
               child: IconButton(
                 padding: EdgeInsets.zero,
                 icon: Icon(
-                  Icons.fullscreen,
+                  isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
                   color: widget.config.controlsIconColor ?? Colors.white,
                   size: iconSize - 2,
                 ),
                 onPressed: _toggleFullscreen,
-                tooltip: 'Fullscreen',
+                tooltip: isFullScreen ? 'Exit Fullscreen' : 'Fullscreen',
               ),
             ),
         ],
@@ -942,7 +1126,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
     }
   }
 
-  /// Get shorter text for state indicator
+  /// Get text for state indicator
   String _getStateText(EzvizSimplePlayerState state) {
     switch (state) {
       case EzvizSimplePlayerState.playing:
@@ -965,35 +1149,38 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
   }
 }
 
-/// Fullscreen overlay that reuses the existing video player
-class _FullscreenOverlay extends StatefulWidget {
-  final Widget child; // The existing video player widget
+/// Fullscreen player overlay that takes over the entire screen
+class _FullscreenPlayerOverlay extends StatefulWidget {
+  final EzvizPlayerController? controller;
   final String deviceSerial;
   final int channelNo;
   final bool isPlaying;
   final bool soundEnabled;
-  final VoidCallback onTogglePlayPause;
-  final VoidCallback onToggleSound;
-  final bool autoRotate;
-  final VoidCallback onExit;
+  final bool showDeviceInfo;
+  final VoidCallback onPlayPause;
+  final VoidCallback onToggleAudio;
+  final Widget Function() buildVideoArea;
+  final Duration controlsHideTimeout;
 
-  const _FullscreenOverlay({
-    required this.child,
+  const _FullscreenPlayerOverlay({
+    required this.controller,
     required this.deviceSerial,
     required this.channelNo,
     required this.isPlaying,
     required this.soundEnabled,
-    required this.onTogglePlayPause,
-    required this.onToggleSound,
-    required this.autoRotate,
-    required this.onExit,
+    required this.showDeviceInfo,
+    required this.onPlayPause,
+    required this.onToggleAudio,
+    required this.buildVideoArea,
+    required this.controlsHideTimeout,
   });
 
   @override
-  State<_FullscreenOverlay> createState() => _FullscreenOverlayState();
+  State<_FullscreenPlayerOverlay> createState() =>
+      _FullscreenPlayerOverlayState();
 }
 
-class _FullscreenOverlayState extends State<_FullscreenOverlay> {
+class _FullscreenPlayerOverlayState extends State<_FullscreenPlayerOverlay> {
   bool _showControls = true;
   Timer? _controlsTimer;
 
@@ -1001,56 +1188,18 @@ class _FullscreenOverlayState extends State<_FullscreenOverlay> {
   void initState() {
     super.initState();
     _startControlsTimer();
-
-    // Set landscape orientation after the page is displayed (more aggressive approach)
-    if (widget.autoRotate) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        debugPrint('🔄 Setting landscape orientation in fullscreen...');
-
-        // Try landscape left first
-        await SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeLeft,
-        ]);
-
-        // Wait longer for the change to take effect
-        await Future.delayed(const Duration(milliseconds: 300));
-
-        // Then allow both landscape orientations
-        await SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ]);
-
-        debugPrint('✅ Landscape orientation set in fullscreen');
-      });
-    }
   }
 
   @override
   void dispose() {
     _controlsTimer?.cancel();
-
-    // Ensure orientation is restored if user exits via system navigation (only if auto-rotate was enabled)
-    if (widget.autoRotate) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-    }
-
-    // Restore system UI
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
-    );
-
     super.dispose();
   }
 
   void _startControlsTimer() {
     _controlsTimer?.cancel();
-    _controlsTimer = Timer(const Duration(seconds: 3), () {
-      if (mounted && _showControls) {
+    _controlsTimer = Timer(widget.controlsHideTimeout, () {
+      if (mounted) {
         setState(() {
           _showControls = false;
         });
@@ -1058,120 +1207,177 @@ class _FullscreenOverlayState extends State<_FullscreenOverlay> {
     });
   }
 
-  void _onTap() {
+  void _onScreenTap() {
     setState(() {
       _showControls = !_showControls;
     });
-
     if (_showControls) {
       _startControlsTimer();
-    } else {
-      _controlsTimer?.cancel();
     }
+  }
+
+  void _exitFullscreen() {
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: GestureDetector(
-        onTap: _onTap,
-        child: Stack(
+    return WillPopScope(
+      onWillPop: () async {
+        _exitFullscreen();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          fit: StackFit.expand,
           children: [
-            // Reuse the existing video player (no new stream!)
-            SizedBox.expand(child: widget.child),
+            // Video player filling entire screen
+            Center(
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: widget.buildVideoArea(),
+              ),
+            ),
 
-            // Fullscreen controls overlay
-            Positioned.fill(
-              child: AnimatedOpacity(
-                opacity: _showControls ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: IgnorePointer(
-                  ignoring: !_showControls,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.3),
-                          Colors.transparent,
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.8),
-                        ],
-                        stops: const [0.0, 0.3, 0.7, 1.0],
-                      ),
-                    ),
-                    child: SafeArea(
-                      child: Column(
-                        children: [
-                          // Top controls
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              children: [
-                                // Back button
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.white,
-                                    size: 28,
-                                  ),
-                                  onPressed: widget.onExit,
-                                ),
-                                const Spacer(),
-                                // Device info
-                                Text(
-                                  '${widget.deviceSerial} - Channel ${widget.channelNo}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+            // Touch detector
+            GestureDetector(
+              onTap: _onScreenTap,
+              child: Container(color: Colors.transparent),
+            ),
+
+            // Controls overlay
+            AnimatedOpacity(
+              opacity: _showControls ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 300),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.7),
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
+                    ],
+                    stops: const [0.0, 0.2, 0.8, 1.0],
+                  ),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      // Top bar (without back button)
+                      if (widget.showDeviceInfo)
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            '${widget.deviceSerial} - Channel ${widget.channelNo}',
+                            style: const TextStyle(color: Colors.white, fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+
+                      const Spacer(),
+
+                      // Center play/pause button
+                      if (!widget.isPlaying)
+                        Center(
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                                size: 48,
+                              ),
+                              onPressed: widget.onPlayPause,
                             ),
                           ),
+                        ),
 
-                          const Spacer(),
+                      const Spacer(),
 
-                          // Bottom controls
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Play/Pause button for fullscreen
-                                IconButton(
-                                  icon: Icon(
-                                    widget.isPlaying
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: 48,
-                                  ),
-                                  onPressed: widget.onTogglePlayPause,
-                                ),
-
-                                const SizedBox(width: 32),
-
-                                // Audio button for fullscreen
-                                IconButton(
-                                  icon: Icon(
-                                    widget.soundEnabled
-                                        ? Icons.volume_up
-                                        : Icons.volume_off,
-                                    color: Colors.white,
-                                    size: 36,
-                                  ),
-                                  onPressed: widget.onToggleSound,
-                                ),
-                              ],
+                      // Bottom controls
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            // Play/Pause button
+                            IconButton(
+                              icon: Icon(
+                                widget.isPlaying
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                              onPressed: widget.onPlayPause,
                             ),
-                          ),
-                        ],
+
+                            // Volume button
+                            IconButton(
+                              icon: Icon(
+                                widget.soundEnabled
+                                    ? Icons.volume_up
+                                    : Icons.volume_off,
+                                color: Colors.white,
+                              ),
+                              onPressed: widget.onToggleAudio,
+                            ),
+
+                            const Spacer(),
+
+                            // Live indicator
+                            if (widget.isPlaying)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Row(
+                                  children: const [
+                                    Icon(
+                                      Icons.circle,
+                                      color: Colors.white,
+                                      size: 8,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'LIVE',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                            const SizedBox(width: 16),
+
+                            // Exit fullscreen button
+                            IconButton(
+                              icon: const Icon(
+                                Icons.fullscreen_exit,
+                                color: Colors.white,
+                              ),
+                              onPressed: _exitFullscreen,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),

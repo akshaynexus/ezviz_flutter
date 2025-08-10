@@ -21,12 +21,16 @@ A new Flutter plugin project.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386', 'ENABLE_BITCODE' => 'NO' }
   s.swift_version = '5.0'
 
-  s.dependency 'EZOpenSDK'
+  # Conditionally include EZVIZ SDK only for device builds, not simulator
+  s.dependency 'EZOpenSDK' unless ENV['FLUTTER_BUILD_FOR_SIMULATOR'] == '1'
 
-  s.vendored_frameworks = [
-    'Frameworks/EZOpenSDKFramework.framework',
-    'Frameworks/EZOpenSDK.xcframework'
-  ]
+  # Only include vendored frameworks for device builds
+  unless ENV['FLUTTER_BUILD_FOR_SIMULATOR'] == '1'
+    s.vendored_frameworks = [
+      'Frameworks/EZOpenSDKFramework.framework',
+      'Frameworks/EZOpenSDK.xcframework'
+    ]
+  end
 
   # If your plugin requires a privacy manifest, for example if it uses any
   # required reason APIs, update the PrivacyInfo.xcprivacy file to describe your

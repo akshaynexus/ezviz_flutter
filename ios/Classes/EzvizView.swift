@@ -17,7 +17,12 @@ class EzvizView : NSObject,FlutterPlatformView{
     private var eventSink: FlutterEventSink?
     
     init(messenger: FlutterBinaryMessenger, viewId: Int64, frame: CGRect) {
+        #if !targetEnvironment(simulator)
         player = EzvizPlayer()
+        #else
+        player = EzvizPlayer()  // This will be our stub player
+        #endif
+        
         let methodChannelName = EzvizPlayerChannelMethods.methodChannelName + "_\(viewId)"
         let eventChannelName = EzvizPlayerChannelEvents.eventChannelName + "_\(viewId)"
         methodChannel = FlutterMethodChannel.init(name: methodChannelName, binaryMessenger: messenger)
@@ -27,7 +32,10 @@ class EzvizView : NSObject,FlutterPlatformView{
             self?.onHandle(call, result: result)
         }
         eventChannel.setStreamHandler(self)
+        
+        #if !targetEnvironment(simulator)
         NotificationCenter.default.addObserver(self, selector: #selector(playerStatusChanged(notification:)), name: .EzvizPlayStatusChanged, object: nil)
+        #endif
     }
     
     deinit {

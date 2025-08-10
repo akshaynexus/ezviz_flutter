@@ -1,6 +1,10 @@
 import Flutter
 import UIKit
+
+// Conditionally import EZVIZ SDK only for device builds
+#if !targetEnvironment(simulator)
 import EZOpenSDKFramework
+#endif
 
 func ezvizLog(msg: String) {
     print("EZviz Log: \(msg)")
@@ -12,9 +16,11 @@ public class SwiftFlutterEzvizPlugin: NSObject, FlutterPlugin, FlutterStreamHand
     private var eventSink: FlutterEventSink?
 
     deinit {
+        #if !targetEnvironment(simulator)
         if isInit {
             EZGlobalSDK.destoryLib()
         }
+        #endif
     }
 
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -29,6 +35,41 @@ public class SwiftFlutterEzvizPlugin: NSObject, FlutterPlugin, FlutterStreamHand
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        #if targetEnvironment(simulator)
+        // Simulator build - provide stub responses
+        switch call.method {
+        case EzvizChannelMethods.platformVersion:
+            result("iOS " + UIDevice.current.systemVersion + " (Simulator)")
+        case EzvizChannelMethods.sdkVersion:
+            result("STUB-1.0.0")
+        case EzvizChannelMethods.initSDK:
+            isInit = true
+            result(["success": true, "message": "SDK initialized (simulator stub)"])
+        case EzvizChannelMethods.enableLog:
+            result(nil)
+        case EzvizChannelMethods.enableP2P:
+            result(nil)
+        case EzvizChannelMethods.setAccessToken:
+            result(nil)
+        case EzvizChannelMethods.deviceInfo:
+            result(["error": "Simulator mode - device info unavailable"])
+        case EzvizChannelMethods.deviceInfoList:
+            result([])
+        case EzvizChannelMethods.setVideoLevel:
+            result(["success": false, "message": "Simulator mode"])
+        case EzvizChannelMethods.controlPTZ:
+            result(["success": false, "message": "Simulator mode"])
+        case EzvizChannelMethods.loginNetDevice:
+            result(["success": false, "message": "Simulator mode"])
+        case EzvizChannelMethods.logoutNetDevice:
+            result(["success": false, "message": "Simulator mode"])
+        case EzvizChannelMethods.netControlPTZ:
+            result(["success": false, "message": "Simulator mode"])
+        default:
+            result(FlutterMethodNotImplemented)
+        }
+        #else
+        // Device build - use actual EZVIZ SDK
         switch call.method {
         case EzvizChannelMethods.platformVersion:
             result("iOS " + UIDevice.current.systemVersion)
@@ -60,6 +101,7 @@ public class SwiftFlutterEzvizPlugin: NSObject, FlutterPlugin, FlutterStreamHand
         default:
             result(FlutterMethodNotImplemented)
         }
+        #endif
     }
 
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {

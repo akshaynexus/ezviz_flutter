@@ -6,7 +6,11 @@
 //
 
 import Foundation
+
+// Conditionally import EZVIZ SDK only for device builds
+#if !targetEnvironment(simulator)
 import EZOpenSDKFramework
+#endif
 
 /// 播放状态
 ///
@@ -28,26 +32,73 @@ enum EzvizPlayerStatus: UInt {
 /// 播放View
 class EzvizPlayer : UIView {
 
+    #if !targetEnvironment(simulator)
     private var play: EZPlayer?
+    #endif
     private var deviceSerial: String?
     private var cameraNo: Int = 0
     private var url: String?
     /// 播放状态
     private var status: EzvizPlayerStatus = .Idle
     
+    #if targetEnvironment(simulator)
+    // Simulator-specific properties
+    private var stubLabel: UILabel?
+    #endif
+    
     deinit {
+        #if !targetEnvironment(simulator)
         self.play?.destoryPlayer()
+        #endif
         self.setPlayerStatus(.Idle, msg: nil)
     }
+    
+    #if targetEnvironment(simulator)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupSimulatorView()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupSimulatorView()
+    }
+    
+    private func setupSimulatorView() {
+        backgroundColor = .black
+        
+        stubLabel = UILabel()
+        stubLabel?.text = "Camera Preview\n(Simulator Mode)"
+        stubLabel?.textColor = .white
+        stubLabel?.textAlignment = .center
+        stubLabel?.numberOfLines = 0
+        stubLabel?.font = UIFont.systemFont(ofSize: 16)
+        stubLabel?.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(stubLabel!)
+        
+        NSLayoutConstraint.activate([
+            stubLabel!.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stubLabel!.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+    }
+    #endif
     
     func initPlayer(deviceSerial: String, cameraNo: Int) {
         playerRelease()
         self.url = nil
         self.deviceSerial = deviceSerial
         self.cameraNo = cameraNo
+        
+        #if !targetEnvironment(simulator)
         self.play = EZGlobalSDK.createPlayer(withDeviceSerial: deviceSerial, cameraNo: cameraNo)
         self.play?.setPlayerView(self)
         self.play?.delegate = self
+        #else
+        // Simulator stub - just update the label
+        stubLabel?.text = "Camera Preview\nDevice: \(deviceSerial)\nChannel: \(cameraNo)\n(Simulator Mode)"
+        #endif
+        
         self.setPlayerStatus(.Init, msg: nil)
     }
     
@@ -56,9 +107,16 @@ class EzvizPlayer : UIView {
         self.url = url
         self.deviceSerial = nil
         self.cameraNo = 0
+        
+        #if !targetEnvironment(simulator)
         self.play = EZGlobalSDK.createPlayer(withUrl: url)
         self.play?.setPlayerView(self)
         self.play?.delegate = self
+        #else
+        // Simulator stub
+        stubLabel?.text = "Camera Preview\nURL: \(url)\n(Simulator Mode)"
+        #endif
+        
         self.setPlayerStatus(.Init, msg: nil)
     }
     
@@ -74,30 +132,49 @@ class EzvizPlayer : UIView {
         self.url = nil
         self.deviceSerial = nil
         self.cameraNo = 0
+        
+        #if !targetEnvironment(simulator)
         self.play = EZPlayer.createPlayer(withUserId: userId, cameraNo: cameraNo, streamType: streamType)
         self.play?.setPlayerView(self)
         self.play?.delegate = self
+        #else
+        // Simulator stub
+        stubLabel?.text = "Camera Preview\nUser: \(userId)\nChannel: \(cameraNo)\n(Simulator Mode)"
+        #endif
+        
         self.setPlayerStatus(.Init, msg: nil)
     }
     
     func startRealPlay() -> Bool{
+        #if !targetEnvironment(simulator)
         guard self.play != nil else {
             return false
         }
         self.setPlayerStatus(.Start, msg: nil)
         return self.play!.startRealPlay()
+        #else
+        // Simulator stub - fake success
+        self.setPlayerStatus(.Start, msg: nil)
+        return true
+        #endif
     }
     
     func stopRealPlay() -> Bool {
+        #if !targetEnvironment(simulator)
         guard self.play != nil else {
             return false
         }
         setPlayerStatus(.Stop, msg: nil)
         return self.play!.stopRealPlay()
+        #else
+        // Simulator stub - fake success
+        setPlayerStatus(.Stop, msg: nil)
+        return true
+        #endif
     }
     
     func startReplay(startTime:Date, endTime:Date) -> Bool {
-        
+        #if !targetEnvironment(simulator)
         guard deviceSerial != nil && self.play != nil else {
             return false
         }
@@ -119,19 +196,32 @@ class EzvizPlayer : UIView {
         }
         
         return playResult
+        #else
+        // Simulator stub - fake success
+        self.setPlayerStatus(.Start, msg: nil)
+        return true
+        #endif
     }
     
     func stopReplay() -> Bool{
+        #if !targetEnvironment(simulator)
         guard self.play != nil else {
             return false
         }
         setPlayerStatus(.Stop, msg: nil)
         return self.play!.stopPlayback()
+        #else
+        // Simulator stub - fake success
+        setPlayerStatus(.Stop, msg: nil)
+        return true
+        #endif
     }
     
     func playerRelease() {
+        #if !targetEnvironment(simulator)
         self.play?.destoryPlayer()
         self.play = nil
+        #endif
         setPlayerStatus(.Idle, msg: nil)
     }
     
@@ -140,22 +230,36 @@ class EzvizPlayer : UIView {
     /// - Parameter verifyCode: 密码
     func setPlayVerifyCode(_ verifyCode: String) {
         ezvizLog(msg: "Setting play verify code for encrypted camera")
+        
+        #if !targetEnvironment(simulator)
         guard let player = self.play else {
             ezvizLog(msg: "Player not initialized when setting verify code")
             setPlayerStatus(.Error, msg: "Player not ready for verification code")
             return
         }
         player.setPlayVerifyCode(verifyCode)
+        #else
+        // Simulator stub - just log
+        ezvizLog(msg: "Simulator mode - verification code set: \(verifyCode)")
+        #endif
     }
     
     /// 开启声音
     func openSound() -> Bool {
+        #if !targetEnvironment(simulator)
         return self.play?.openSound() ?? false
+        #else
+        return true // Simulator stub - fake success
+        #endif
     }
     
     /// 关闭声音
     func closeSound() -> Bool {
+        #if !targetEnvironment(simulator)
         return self.play?.closeSound() ?? false
+        #else
+        return true // Simulator stub - fake success
+        #endif
     }
     
     /// 截屏
@@ -192,6 +296,7 @@ class EzvizPlayer : UIView {
 }
 
 // MARK: - EZPlayerDelegate
+#if !targetEnvironment(simulator)
 extension EzvizPlayer : EZPlayerDelegate {
     func player(_ player: EZPlayer!, didPlayFailed error: Error!) {
         let errorMsg = error.localizedDescription
@@ -229,5 +334,6 @@ extension EzvizPlayer : EZPlayerDelegate {
         ezvizLog(msg: "Video display size: \(width)x\(height)")
     }
 }
+#endif
 
 

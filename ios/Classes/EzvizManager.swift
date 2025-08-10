@@ -5,18 +5,27 @@
 //  Created by 江鴻 on 2019/8/24.
 //
 import Foundation
-import EZOpenSDKFramework
 import Flutter
+
+// Conditionally import EZVIZ SDK only for device builds
+#if !targetEnvironment(simulator)
+import EZOpenSDKFramework
+#endif
 
 
 class EzvizManager {
     /// 获取SDK版本号
     static func sdkVersion(result: @escaping FlutterResult) {
+        #if !targetEnvironment(simulator)
         result(EZGlobalSDK.getVersion())
+        #else
+        result("STUB-1.0.0-Simulator")
+        #endif
     }
     
     /// 初始化SDK
     static func initSDK(_ arguments: Any?,result: @escaping FlutterResult) {
+        #if !targetEnvironment(simulator)
         if let map = arguments as? Dictionary<String, Any> {
             let appKey = map["appKey"] as? String ?? AppKey
             let accessToken = map["accessToken"] as? String ?? AccessToken
@@ -33,36 +42,53 @@ class EzvizManager {
         }else {
             result(false)
         }
+        #else
+        // Simulator stub - always return success
+        result(true)
+        #endif
     }
     
     /// 是否开启日志
     static func enableLog(_ arguments: Any?) {
+        #if !targetEnvironment(simulator)
         if let map = arguments as? Dictionary<String, Any> {
             if let debug = map["enableLog"] as? Bool {
                 EZGlobalSDK.setDebugLogEnable(debug)
             }
         }
+        #else
+        // Simulator stub - do nothing
+        #endif
     }
     
     /// 是否开启P2P
     static func enableP2P(_ arguments: Any?) {
+        #if !targetEnvironment(simulator)
         if let map = arguments as? Dictionary<String, Any> {
             if let enableP2P = map["enableP2P"] as? Bool {
                 EZGlobalSDK.enableP2P(enableP2P)
             }
         }
+        #else
+        // Simulator stub - do nothing
+        #endif
     }
     
     /// 设置Token
     static func setAccessToken(_ arguments: Any?) {
+        #if !targetEnvironment(simulator)
         if let map = arguments as? Dictionary<String, Any> {
             if let accessToken = map["accessToken"] as? String {
                 EZGlobalSDK.setAccessToken(accessToken)
             }
         }
+        #else
+        // Simulator stub - do nothing
+        #endif
     }
 
     static func getDeviceInfo(_ arguments: Any?, result: @escaping FlutterResult) {
+        #if !targetEnvironment(simulator)
         if let map = arguments as? [String: Any],
            let deviceSerial = map["deviceSerial"] as? String {
             EZGlobalSDK.getDeviceInfo(deviceSerial) { device, error in
@@ -76,9 +102,14 @@ class EzvizManager {
         } else {
             result(nil)
         }
+        #else
+        // Simulator stub
+        result(["error": "Simulator mode - device info unavailable"])
+        #endif
     }
     
     static func getDeviceInfoList(result: @escaping FlutterResult) {
+        #if !targetEnvironment(simulator)
         EZGlobalSDK.getDeviceList(0, pageSize: 100) { (devices, count, error) in
             if let error = error {
                 ezvizLog(msg: error.localizedDescription)
@@ -95,10 +126,15 @@ class EzvizManager {
             let devArr = devList.map { $0.toJSON() }
             result(devArr)
         }
+        #else
+        // Simulator stub - return empty device list
+        result([])
+        #endif
     }
     
     /// 设置视频通道分辨率
     static func setVideoLevel(_ arguments: Any?, result: @escaping FlutterResult) {
+        #if !targetEnvironment(simulator)
         if let map = arguments as? Dictionary<String, Any> {
             let deviceSerial = map["deviceSerial"] as? String ?? ""
             let cameraId = map["cameraId"] as? Int ?? 0
@@ -115,10 +151,15 @@ class EzvizManager {
                 }
             }
         }
+        #else
+        // Simulator stub
+        result(false)
+        #endif
     }
     
     /// 云台控制
     static func controlPTZ(_ arguments: Any?, result: @escaping FlutterResult) {
+        #if !targetEnvironment(simulator)
         if let map = arguments as? Dictionary<String, Any> {
             let deviceSerial = map["deviceSerial"] as? String ?? ""
             let cameraId = map["cameraId"] as? Int ?? 0
@@ -146,11 +187,16 @@ class EzvizManager {
                 result(false)
             }
         }
+        #else
+        // Simulator stub
+        result(false)
+        #endif
     }
 }
 
 
 // MARK: - 网络设备相关操作
+#if !targetEnvironment(simulator)
 extension EzvizManager {
     
     /// 登录网络设备
@@ -213,3 +259,19 @@ extension EzvizManager {
     }
     
 }
+#else
+// Simulator stubs for network device operations
+extension EzvizManager {
+    static func loginNetDevice(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(nil)
+    }
+    
+    static func logoutNetDevice(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(false)
+    }
+    
+    static func netControlPTZ(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(false)
+    }
+}
+#endif

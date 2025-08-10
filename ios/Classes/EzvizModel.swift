@@ -6,7 +6,11 @@
 //
 
 import Foundation
+
+// Conditionally import EZVIZ SDK only for device builds
+#if !targetEnvironment(simulator)
 import EZOpenSDKFramework
+#endif
 
 
 let AppKey: String = "888b1f2a00d14aee910d1a7437669a2a"
@@ -21,6 +25,7 @@ let Command_Down = "EZPTZCommand_Down"
 let Command_ZoomIn = "EZPTZCommand_ZoomIn"
 let Command_ZoomOut = "EZPTZCommand_ZoomOut"
 
+#if !targetEnvironment(simulator)
 extension EZDeviceInfo {
     func toJSON()-> [String:Any] {
         return [
@@ -44,11 +49,13 @@ extension EZHCNetDeviceInfo {
         ]
     }
 }
+#endif
 
 extension Notification.Name {
     static let EzvizPlayStatusChanged = Notification.Name("EzvizPlayStatusChanged")
 }
 
+#if !targetEnvironment(simulator)
 var PTZKeys: [AnyHashable : Any] = [
     Action_START: EZPTZAction.start,
     Action_STOP: EZPTZAction.stop,
@@ -70,6 +77,11 @@ var netPTZKeys: [AnyHashable : Any] = [
     Command_ZoomIn: EZPTZCommandType.ZOOM_IN,
     Command_ZoomOut: EZPTZCommandType.ZOOM_OUT,
 ]
+#else
+// Simulator stubs - empty dictionaries
+var PTZKeys: [AnyHashable : Any] = [:]
+var netPTZKeys: [AnyHashable : Any] = [:]
+#endif
 
 /// 数据返回
 struct EzvizPlayerEventResult : Codable {

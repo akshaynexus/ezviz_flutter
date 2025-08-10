@@ -4,6 +4,61 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.2.0] - 2025-08-10
+
+### Added - Fullscreen Player & Enhanced Mobile Experience
+- **🖥️ Fullscreen Player Support**: Complete fullscreen video player functionality with seamless transitions
+  - **Orientation-Based Fullscreen**: Automatic fullscreen mode in landscape orientation
+  - **System UI Management**: Immersive fullscreen with hidden system bars and navigation
+  - **Camera Switching Overlay**: Elegant camera selector overlay in landscape mode
+  - **Exit Controls**: Dedicated fullscreen exit button with orientation lock
+  - **Back Button Handling**: Disabled back button during fullscreen for uninterrupted viewing
+
+- **🔊 Enhanced Audio Management**: Improved audio controls and state management
+  - **Public Audio API**: External audio toggle access with `toggleAudio()` and `isAudioEnabled` getter
+  - **Reactive Audio State**: ValueNotifier-based audio state for real-time UI updates without player reinit
+  - **Audio Toggle Integration**: Seamless audio control in both mini and fullscreen players
+  - **Permission-Aware Audio**: Audio controls only visible when user has audio permissions
+
+- **📱 Mobile-First Design**: Optimized mobile experience with responsive controls
+  - **Touch-Friendly Controls**: Large, accessible control buttons optimized for touch interaction
+  - **Auto-Hide Controls**: Controls automatically hide in fullscreen with tap-to-show functionality
+  - **Vertical Camera Selector**: Space-efficient vertical camera list in landscape mode
+  - **Responsive Button Sizing**: Adaptive button sizes (15% smaller on mobile for better UX)
+
+- **🔧 Configuration Enhancements**: New configuration options for better customization
+  - **Device Info Toggle**: `showDeviceInfo` option in EzvizPlayerConfig (default: false)
+  - **Control Visibility**: Fine-grained control over which UI elements are displayed
+  - **Orientation Preferences**: Support for all device orientations (portrait/landscape)
+
+### Fixed - Connection & Performance Issues
+- **⏰ Connection Timeout Fix**: Eliminated false timeout warnings for slow-connecting but working cameras
+  - **Cancellable Timers**: Proper timer cancellation when cameras successfully connect
+  - **State-Based Timeout Management**: Smart timeout handling based on actual connection states
+  - **Improved Error Messaging**: More accurate connection status reporting
+
+- **🔄 Player State Management**: Enhanced player lifecycle and state synchronization
+  - **Single Instance Management**: Prevents multiple player instances for same stream (EZVIZ SDK limitation)
+  - **State Persistence**: Maintains player state across orientation changes
+  - **Memory Management**: Proper disposal of resources and event listeners
+
+- **🎯 UI/UX Improvements**: Polished user interface and interaction patterns
+  - **Control Button Layout**: Optimized control positioning in fullscreen mode
+  - **Visual Feedback**: Clear visual indicators for selected cameras and active states
+  - **Touch Target Optimization**: Improved tap areas for better mobile interaction
+
+### Developer Experience
+- **📝 Public API Expansion**: New public methods for external control integration
+  - `toggleAudio()` - External audio control access
+  - `isAudioEnabled` - Audio state getter for external components
+- **🔧 Better Error Handling**: Improved error messages and recovery mechanisms
+- **🎨 UI Component Modularity**: Cleaner separation of concerns for easier customization
+
+### Backward Compatibility
+- **100% Compatible**: All existing EzvizSimplePlayer implementations continue to work unchanged
+- **Opt-in Features**: New fullscreen and audio features are completely optional
+- **Legacy Support**: Traditional usage patterns remain fully supported
+
 ## [1.1.4] - 2025-06-02
 - Fix iOS syntax error and implement seting base url properly on iOS
 
