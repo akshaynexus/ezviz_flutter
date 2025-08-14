@@ -559,6 +559,9 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> {
 
   /// Public getter for audio state - can be accessed from external widgets
   bool get isAudioEnabled => _soundEnabled;
+  
+  /// Public getter for the controller - can be accessed from external widgets
+  EzvizPlayerController? get controller => _controller;
 
   /// Toggle play/pause
   Future<void> _togglePlayPause() async {
@@ -1273,7 +1276,10 @@ class _FullscreenPlayerOverlayState extends State<_FullscreenPlayerOverlay> {
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
                             '${widget.deviceSerial} - Channel ${widget.channelNo}',
-                            style: const TextStyle(color: Colors.white, fontSize: 16),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ),
