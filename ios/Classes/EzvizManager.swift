@@ -377,29 +377,36 @@ extension EzvizManager {
     
     /// Probe device info
     static func probeDeviceInfo(_ arguments: Any?, result: @escaping FlutterResult) {
+        #if !targetEnvironment(simulator)
         guard let map = arguments as? Dictionary<String, Any>,
               let deviceSerial = map["deviceSerial"] as? String else {
             result(nil)
             return
         }
         
-        _ = EZGlobalSDK.probeDeviceInfo(deviceSerial) { (deviceInfo, error) in
+        // Follow the same pattern as getDeviceInfo - single parameter method
+        _ = EZGlobalSDK.getDeviceInfo(deviceSerial) { (deviceInfo, error) in
             if let error = error {
                 result(nil)
                 return
             }
             
+            // Create probe info map from device info
             let probeInfoMap = [
-                "deviceSerial": deviceInfo.subSerial ?? "",
-                "deviceName": deviceInfo.displayName ?? "",
-                "deviceType": deviceInfo.releaseVersion ?? "",
+                "deviceSerial": deviceInfo.deviceSerial ?? "",
+                "deviceName": deviceInfo.deviceName ?? "",
+                "deviceType": deviceInfo.deviceType ?? "",
                 "status": deviceInfo.status,
                 "supportWifi": deviceInfo.supportWifi,
-                "netType": "WiFi"
+                "netType": deviceInfo.netType ?? "Unknown"
             ] as [String : Any]
             
             result(probeInfoMap)
         }
+        #else
+        // Simulator stub
+        result(nil)
+        #endif
     }
     
     /// Open login page
