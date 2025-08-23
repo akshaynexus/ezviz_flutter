@@ -384,21 +384,28 @@ extension EzvizManager {
             return
         }
         
-        // Follow the same pattern as getDeviceInfo - single parameter method
-        _ = EZGlobalSDK.getDeviceInfo(deviceSerial) { (deviceInfo, error) in
+        // Use the actual probeDeviceInfo method that returns EZProbeDeviceInfo
+        // The method signature requires deviceType parameter
+        _ = EZGlobalSDK.probeDeviceInfo(deviceSerial, deviceType: "") { (probeInfo, error) in
             if let error = error {
                 result(nil)
                 return
             }
             
-            // Create probe info map from device info
+            // Create probe info map using actual EZProbeDeviceInfo properties
             let probeInfoMap = [
-                "deviceSerial": deviceInfo.deviceSerial ?? "",
-                "deviceName": deviceInfo.deviceName ?? "",
-                "deviceType": deviceInfo.deviceType ?? "",
-                "status": deviceInfo.status,
-                "supportWifi": deviceInfo.supportWifi,
-                "netType": deviceInfo.netType ?? "Unknown"
+                "deviceSerial": probeInfo.subSerial ?? "",
+                "deviceName": probeInfo.displayName ?? "",
+                "deviceType": probeInfo.releaseVersion ?? "",
+                "status": probeInfo.status,
+                "supportWifi": probeInfo.supportWifi > 0, // Convert NSInteger to Bool (0=No, 1+=Yes)
+                "netType": probeInfo.supportWifi > 0 ? "WiFi" : "Ethernet",
+                // Additional useful properties from EZProbeDeviceInfo
+                "fullSerial": probeInfo.fullSerial ?? "",
+                "defaultPicPath": probeInfo.defaultPicPath ?? "",
+                "availiableChannelCount": probeInfo.availiableChannelCount,
+                "relatedDeviceCount": probeInfo.relatedDeviceCount,
+                "supportExt": probeInfo.supportExt ?? ""
             ] as [String : Any]
             
             result(probeInfoMap)
