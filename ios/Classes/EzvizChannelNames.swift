@@ -37,6 +37,28 @@ class EzvizChannelMethods {
     static let logoutNetDevice = "logoutNetDevice";
     /// NetDevice 云台控制
     static let netControlPTZ = "netControlPTZ";
+    /// 获取设备列表 (with pagination)
+    static let getDeviceList = "getDeviceList";
+    /// 添加设备
+    static let addDevice = "addDevice";
+    /// 删除设备
+    static let deleteDevice = "deleteDevice";
+    /// 探测设备信息
+    static let probeDeviceInfo = "probeDeviceInfo";
+    /// 打开登录页面
+    static let openLoginPage = "openLoginPage";
+    /// 登出
+    static let logout = "logout";
+    /// 获取访问令牌
+    static let getAccessToken = "getAccessToken";
+    /// 获取区域列表
+    static let getAreaList = "getAreaList";
+    /// 设置服务器URL
+    static let setServerUrl = "setServerUrl";
+    /// 搜索录像文件
+    static let searchRecordFile = "searchRecordFile";
+    /// 搜索设备录像文件
+    static let searchDeviceRecordFile = "searchDeviceRecordFile";
 }
 
 // 插件事件名称定义

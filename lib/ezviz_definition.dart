@@ -95,7 +95,7 @@ class EzvizDeviceInfo {
     this.cameraNum = 0,
   });
 
-  factory EzvizDeviceInfo.fronJson(Map<String, dynamic> json) {
+  factory EzvizDeviceInfo.fromJson(Map<String, dynamic> json) {
     return EzvizDeviceInfo(
       deviceSerial: json['deviceSerial'],
       deviceName: json['deviceName'],

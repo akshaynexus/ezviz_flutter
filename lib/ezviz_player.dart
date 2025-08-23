@@ -5,6 +5,8 @@ import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
 import 'package:ezviz_flutter/ezviz_definition.dart';
 import 'package:ezviz_flutter/ezviz_methods.dart';
 import 'package:ezviz_flutter/ezviz_utils.dart';
@@ -14,19 +16,55 @@ typedef void EzvizPlayerCreatedCallback(EzvizPlayerController controller);
 ///用与和原生代码关联 播放器管理类
 class EzvizPlayerController {
   late final MethodChannel _channel;
-
   late final EventChannel _eventChannel;
+  bool _isDisposed = false;
 
   /// 事件监听
   StreamSubscription? _dataSubscription;
 
   EzvizPlayerController(int id) {
-    _channel = new MethodChannel(
-      EzvizPlayerChannelMethods.methodChannelName + "_$id",
-    );
-    _eventChannel = new EventChannel(
-      EzvizPlayerChannelEvents.eventChannelName + "_$id",
-    );
+    try {
+      _channel = new MethodChannel(
+        EzvizPlayerChannelMethods.methodChannelName + "_$id",
+      );
+      _eventChannel = new EventChannel(
+        EzvizPlayerChannelEvents.eventChannelName + "_$id",
+      );
+    } catch (e) {
+      print('Error initializing EzvizPlayerController: $e');
+      // Create dummy channels to prevent null reference errors
+      _channel = MethodChannel('dummy_channel');
+      _eventChannel = EventChannel('dummy_event_channel');
+    }
+  }
+
+  /// Safe method channel invocation with error handling
+  Future<T?> _safeInvokeMethod<T>(String method, [dynamic arguments]) async {
+    if (_isDisposed) {
+      print('Controller is disposed, ignoring method call: $method');
+      return null;
+    }
+    
+    try {
+      return await _channel.invokeMethod<T>(method, arguments);
+    } on PlatformException catch (e) {
+      print('Platform exception in $method: ${e.message}');
+      return null;
+    } on MissingPluginException catch (e) {
+      print('Missing plugin in $method: ${e.message}');
+      return null;
+    } catch (e) {
+      print('Unexpected error in $method: $e');
+      return null;
+    }
+  }
+
+  /// Dispose the controller safely
+  void dispose() {
+    if (!_isDisposed) {
+      _isDisposed = true;
+      removePlayerEventHandler();
+    }
   }
 
   /// 设置EventHandler
@@ -233,10 +271,75 @@ class EzvizPlayer extends StatefulWidget {
   _EzvizPlayerState createState() => _EzvizPlayerState();
 }
 
-class _EzvizPlayerState extends State<EzvizPlayer> {
+class _EzvizPlayerState extends State<EzvizPlayer> 
+    with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
+  bool _isDisposed = false;
+  EzvizPlayerController? _controller;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    WidgetsBinding.instance.removeObserver(this);
+    _controller?.removePlayerEventHandler();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Handle app lifecycle to prevent surface issues
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      _controller?.removePlayerEventHandler();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(color: Colors.black45, child: nativeView());
+    super.build(context);
+    if (_isDisposed) {
+      return Container(color: Colors.black);
+    }
+    
+    return Container(
+      color: Colors.black45, 
+      child: SafeArea(
+        child: _buildSafePlatformView()
+      )
+    );
+  }
+
+  Widget _buildSafePlatformView() {
+    try {
+      return Container(
+        constraints: BoxConstraints(
+          minWidth: 1.0,
+          minHeight: 1.0,
+          maxWidth: double.infinity,
+          maxHeight: double.infinity,
+        ),
+        child: nativeView(),
+      );
+    } catch (e) {
+      print('Error building platform view: $e');
+      return Container(
+        color: Colors.black,
+        child: Center(
+          child: Text(
+            'Video player unavailable',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    }
   }
 
   Widget nativeView() {
@@ -245,12 +348,16 @@ class _EzvizPlayerState extends State<EzvizPlayer> {
         viewType: EzvizPlayerChannelMethods.methodChannelName,
         onPlatformViewCreated: onPlatformViewCreated,
         creationParamsCodec: const StandardMessageCodec(),
+        hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{},
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return UiKitView(
         viewType: EzvizPlayerChannelMethods.methodChannelName,
         onPlatformViewCreated: onPlatformViewCreated,
         creationParamsCodec: const StandardMessageCodec(),
+        hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{},
       );
     } else {
       return new Text(
@@ -260,6 +367,16 @@ class _EzvizPlayerState extends State<EzvizPlayer> {
   }
 
   Future<void> onPlatformViewCreated(id) async {
-    widget.onCreated(new EzvizPlayerController(id));
+    if (_isDisposed) return;
+    
+    try {
+      _controller = new EzvizPlayerController(id);
+      widget.onCreated(_controller!);
+    } catch (e) {
+      print('Error creating platform view controller: $e');
+      // Create a dummy controller to prevent null reference errors
+      _controller = new EzvizPlayerController(id);
+      widget.onCreated(_controller!);
+    }
   }
 }

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ezviz_flutter/ezviz_flutter.dart';
+import 'audio_test_example.dart';
+import 'comprehensive_sdk_example.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -391,6 +393,30 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => HttpApiDemoPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.mic),
+              title: Text('Audio Test Demo'),
+              subtitle: Text('Test audio and voice talk features'),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AudioTestExample()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.dashboard),
+              title: Text('Comprehensive SDK Demo'),
+              subtitle: Text('Full native SDK functionality showcase'),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ComprehensiveSDKExample()),
                 );
               },
             ),

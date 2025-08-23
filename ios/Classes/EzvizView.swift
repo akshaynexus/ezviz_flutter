@@ -134,6 +134,58 @@ class EzvizView : NSObject,FlutterPlatformView{
             DispatchQueue.main.async {
                 result(self.player.isRecording())
             }
+        case "pausePlayback":
+            DispatchQueue.main.async {
+                result(self.player.pausePlayback())
+            }
+        case "resumePlayback":
+            DispatchQueue.main.async {
+                result(self.player.resumePlayback())
+            }
+        case "seekPlayback":
+            if let map = call.arguments as? Dictionary<String, Any>,
+               let timeMs = map["timeMs"] as? Double {
+                let time = Date(timeIntervalSince1970: timeMs / 1000)
+                DispatchQueue.main.async {
+                    result(self.player.seekPlayback(time: time))
+                }
+            } else {
+                result(false)
+            }
+        case "getOSDTime":
+            DispatchQueue.main.async {
+                if let osdTime = self.player.getOSDTime() {
+                    result(osdTime.timeIntervalSince1970 * 1000) // Convert to milliseconds
+                } else {
+                    result(0)
+                }
+            }
+        case "setPlaySpeed":
+            if let map = call.arguments as? Dictionary<String, Any>,
+               let speed = map["speed"] as? Float {
+                DispatchQueue.main.async {
+                    result(self.player.setPlaySpeed(speed: speed))
+                }
+            } else {
+                result(false)
+            }
+        case "startLocalRecord":
+            if let map = call.arguments as? Dictionary<String, Any>,
+               let filePath = map["filePath"] as? String {
+                DispatchQueue.main.async {
+                    result(self.player.startLocalRecord(filePath: filePath))
+                }
+            } else {
+                result(false)
+            }
+        case "stopLocalRecord":
+            DispatchQueue.main.async {
+                result(self.player.stopLocalRecord())
+            }
+        case "isLocalRecording":
+            DispatchQueue.main.async {
+                result(self.player.isLocalRecording())
+            }
         default:
             result(FlutterMethodNotImplemented)
         }

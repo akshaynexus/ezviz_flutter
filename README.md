@@ -120,58 +120,38 @@ IPHONEOS_DEPLOYMENT_TARGET = 12.0;
    - Access WiFi Information
    - Hotspot Configuration
 
+## 📚 Examples & Documentation
+
+All example code has been organized into comprehensive documentation. See the **[docs](docs/)** folder for detailed examples:
+
+### 🎯 Quick Links to Examples
+
+| Feature | Example | Description |
+|---------|---------|-------------|
+| **Simple Integration** | [Simple Player Examples](docs/examples/simple_player_example.md) | EzvizSimplePlayer - 3 lines to get started |
+| **Complete SDK** | [Comprehensive SDK Integration](docs/examples/comprehensive_sdk_example.md) | Full device management with authentication |
+| **Multi-Region** | [Global SDK Support](docs/examples/global_sdk_example.md) | Multi-region deployment and area selection |
+| **Advanced Playback** | [Advanced Playback Controls](docs/examples/advanced_playback_example.md) | Enhanced video playback with all features |
+| **Camera Control** | [PTZ Control Examples](docs/examples/ptz_control_example.md) | Pan-Tilt-Zoom camera control |
+| **Audio/Intercom** | [Audio & Intercom Examples](docs/examples/audio_intercom_example.md) | Two-way audio communication |
+| **WiFi Setup** | [WiFi Configuration](docs/examples/wifi_config_example.md) | Device network configuration |
+| **Recording** | [Recording & Screenshots](docs/examples/recording_screenshots_example.md) | Video recording and image capture |
+| **Professional UI** | [Enhanced Video Playback](docs/examples/enhanced_video_playback_example.md) | Professional video player interface |
+| **Live Streaming** | [Live Streaming Examples](docs/examples/live_streaming_example.md) | Real-time streaming with controls |
+
+### 📖 Complete Documentation
+- **[Documentation Index](docs/README.md)** - Complete overview of all examples and guides
+- **Implementation Levels** - From 3-line simple integration to professional implementations
+- **Best Practices** - Error handling, performance optimization, and resource management
+- **Troubleshooting** - Common issues and solutions for each feature
+
 ## Quick Start
 
-### EzvizSimplePlayer - Easy Integration
+### 🚀 Three Integration Levels
 
-For the simplest integration, use the new `EzvizSimplePlayer` widget that handles all complexity for you:
+#### Level 1: Simple Integration (3 lines of code)
+Perfect for getting started quickly:
 
-```dart
-import 'package:ezviz_flutter/ezviz_flutter.dart';
-
-class SimpleVideoPlayer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('EZVIZ Camera')),
-      body: EzvizSimplePlayer(
-        deviceSerial: 'YOUR_DEVICE_SERIAL',
-        channelNo: 1,
-        config: EzvizPlayerConfig(
-          appKey: 'YOUR_APP_KEY',
-          appSecret: 'YOUR_APP_SECRET', 
-          accessToken: 'YOUR_ACCESS_TOKEN',
-          autoPlay: true,
-          enableAudio: true,
-          showControls: true,
-          enableEncryptionDialog: true, // Auto-handles encrypted cameras
-        ),
-        onStateChanged: (state) {
-          print('Player state: ${state.name}');
-        },
-        onError: (error) {
-          print('Player error: $error');
-        },
-      ),
-    );
-  }
-}
-```
-
-**Features of EzvizSimplePlayer:**
-- ✅ **Auto SDK initialization** - Handles all SDK setup automatically
-- ✅ **Auto authentication** - Manages login and tokens internally  
-- ✅ **Auto-play** - Starts streaming immediately when ready
-- ✅ **Error handling** - Comprehensive error management with callbacks
-- ✅ **Encryption support** - Auto-detects and prompts for encrypted cameras
-- ✅ **Audio control** - Easy enable/disable audio functionality
-- ✅ **Built-in controls** - Play/pause and audio toggle controls
-- ✅ **State management** - Real-time state updates and notifications
-- ✅ **Customizable UI** - Custom loading/error widgets and styling
-
-### Advanced Integration Examples
-
-#### Minimal Setup (3 lines of code)
 ```dart
 EzvizSimplePlayer(
   deviceSerial: 'YOUR_DEVICE_SERIAL',
@@ -184,586 +164,127 @@ EzvizSimplePlayer(
 )
 ```
 
-#### Standard Setup with Callbacks
+**🎯 [View Complete Simple Player Examples →](docs/examples/simple_player_example.md)**
+
+#### Level 2: Standard Integration
+Full-featured implementation with state management:
+
 ```dart
 EzvizSimplePlayer(
   deviceSerial: 'YOUR_DEVICE_SERIAL',
   channelNo: 1,
-  config: EzvizPlayerConfig(
-    appKey: 'YOUR_APP_KEY',
-    appSecret: 'YOUR_APP_SECRET',
-    accessToken: 'YOUR_ACCESS_TOKEN',
-    autoPlay: true,
-    enableAudio: true,
-    showControls: true,
-  ),
-  onStateChanged: (state) {
-    switch (state) {
-      case EzvizSimplePlayerState.playing:
-        print('Stream is playing');
-        break;
-      case EzvizSimplePlayerState.error:
-        print('Error occurred');
-        break;
-      // Handle other states...
-    }
-  },
-  onPasswordRequired: () async {
-    // Custom password dialog
-    return await showDialog<String>(/* your dialog */);
-  },
-  onError: (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $error')),
-    );
-  },
+  config: EzvizPlayerConfig(/* full config */),
+  onStateChanged: (state) => handleStateChange(state),
+  onError: (error) => handleError(error),
+  onPasswordRequired: () => showPasswordDialog(),
 )
 ```
 
-#### Advanced Setup with Custom UI
-```dart
-EzvizSimplePlayer(
-  deviceSerial: 'YOUR_DEVICE_SERIAL',
-  channelNo: 1,
-  config: EzvizPlayerConfig(
-    appKey: 'YOUR_APP_KEY',
-    appSecret: 'YOUR_APP_SECRET',
-    accessToken: 'YOUR_ACCESS_TOKEN',
-    autoPlay: true,
-    enableAudio: true,
-    showControls: false, // Use custom controls
-    loadingWidget: CustomLoadingWidget(),
-    errorWidget: CustomErrorWidget(),
-    loadingTextStyle: TextStyle(color: Colors.white, fontSize: 18),
-    controlsBackgroundColor: Colors.black.withOpacity(0.8),
-    controlsIconColor: Colors.white,
-  ),
-  onStateChanged: (state) => _handleStateChange(state),
-  onError: (error) => _handleError(error),
-)
-```
+**🎯 [View Comprehensive SDK Integration →](docs/examples/comprehensive_sdk_example.md)**
 
-### Traditional Manual Setup
+#### Level 3: Advanced Integration
+Professional implementations with custom UI and advanced features:
 
-If you need more control, you can still use the traditional approach:
+**🎯 [View All Advanced Examples →](docs/examples/)**
 
-```dart
-import 'package:ezviz_flutter/ezviz_flutter.dart';
+### 🎯 Choose Your Starting Point
 
-// Initialize the native SDK
-Future<void> initializeEzvizSDK() async {
-  final options = EzvizInitOptions(
-    appKey: 'your_app_key',
-    accessToken: 'your_access_token',
-    enableLog: true,
-    enableP2P: false,
-  );
-  
-  final success = await EzvizManager.shared().initSDK(options);
-  if (success) {
-    print('EZVIZ SDK initialized successfully');
-  }
-}
-```
+- **New to EZVIZ?** Start with [Simple Player Examples](docs/examples/simple_player_example.md)
+- **Need full device management?** See [Comprehensive SDK Integration](docs/examples/comprehensive_sdk_example.md)  
+- **Building professional app?** Browse [Advanced Examples](docs/examples/) for your specific needs
 
-### Manual Enhanced Live Video Streaming
+### ✨ Key Features Available
 
-```dart
-class EnhancedLiveStreamPage extends StatefulWidget {
-  @override
-  _EnhancedLiveStreamPageState createState() => _EnhancedLiveStreamPageState();
-}
+- **EzvizSimplePlayer**: Auto-handles SDK initialization, authentication, and streaming
+- **Native SDK Integration**: Complete device lifecycle management
+- **Multi-Region Support**: Global deployment with area selection
+- **Advanced Controls**: PTZ, audio, recording, WiFi configuration
+- **Professional UI**: Enhanced player controls and fullscreen support
 
-class _EnhancedLiveStreamPageState extends State<EnhancedLiveStreamPage> {
-  EzvizPlayerController? playerController;
-  bool isPlaying = false;
-  bool isRecording = false;
-  bool soundEnabled = false;
-  bool isFullScreen = false;
-  int currentQuality = 2;
+## Complete API Components
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Video Player
-          Container(
-            width: double.infinity,
-            height: isFullScreen ? MediaQuery.of(context).size.height : 300,
-            child: EzvizPlayer(
-              onCreated: (controller) {
-                playerController = controller;
-                _initializePlayer();
-              },
-            ),
-          ),
-          // Enhanced Controls Overlay
-          Container(
-            width: double.infinity,
-            height: isFullScreen ? MediaQuery.of(context).size.height : 300,
-            child: EnhancedPlayerControls(
-              isPlaying: isPlaying,
-              isRecording: isRecording,
-              soundEnabled: soundEnabled,
-              isFullScreen: isFullScreen,
-              currentQuality: currentQuality,
-              onPlayPause: _togglePlayback,
-              onStop: _stopPlayback,
-              onRecord: _toggleRecording,
-              onScreenshot: _takeScreenshot,
-              onSoundToggle: _toggleSound,
-              onFullScreenToggle: _toggleFullScreen,
-              onQualityChange: _changeQuality,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+### Core Native SDK Integration
 
-  Future<void> _initializePlayer() async {
-    await playerController?.initPlayerByDevice('DEVICE_SERIAL', 1);
-    await playerController?.setPlayVerifyCode('VERIFY_CODE');
-  }
+#### EzvizAuthManager
+Comprehensive authentication and global SDK management:
+- `EzvizAuthManager.getAccessToken()` - Get current access token
+- `EzvizAuthManager.openLoginPage()` - Open native login page
+- `EzvizAuthManager.logout()` - Logout and clear tokens
+- `EzvizAuthManager.getAreaList()` - Get available global regions/areas
+- `EzvizAuthManager.initGlobalSDK()` - Initialize global SDK with area
 
-  Future<void> _togglePlayback() async {
-    if (isPlaying) {
-      await playerController?.stopRealPlay();
-    } else {
-      await playerController?.startRealPlay();
-    }
-    setState(() => isPlaying = !isPlaying);
-  }
+#### EzvizDeviceManager
+Complete device lifecycle management:
+- `EzvizDeviceManager.getDeviceList()` - Get paginated device list
+- `EzvizDeviceManager.addDevice()` - Add device by serial number
+- `EzvizDeviceManager.deleteDevice()` - Remove device from account
+- `EzvizDeviceManager.probeDeviceInfo()` - Check if device exists and status
+- `EzvizDeviceManager.searchCloudRecordFiles()` - Search cloud recordings
+- `EzvizDeviceManager.searchDeviceRecordFiles()` - Search device recordings
+- `EzvizDeviceManager.getDeviceInfo()` - Get detailed device information
 
-  Future<void> _toggleRecording() async {
-    if (isRecording) {
-      await playerController?.stopRecording();
-    } else {
-      await playerController?.startRecording();
-    }
-    setState(() => isRecording = !isRecording);
-  }
+#### EzvizPlaybackController
+Enhanced playback control with extensions:
+- `controller.pausePlayback()` - Pause recorded video playback
+- `controller.resumePlayback()` - Resume paused playback
+- `controller.seekPlayback()` - Seek to specific time
+- `controller.getOSDTime()` - Get current playback time
+- `controller.setPlaySpeed()` - Set playback speed (0.25x to 4x)
+- `controller.startLocalRecord()` - Start local recording
+- `controller.stopLocalRecord()` - Stop local recording
+- `controller.captureImage()` - Capture current frame
+- `controller.scalePlayWindow()` - Scale playback window
 
-  Future<void> _takeScreenshot() async {
-    final imagePath = await playerController?.capturePicture();
-    if (imagePath != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Screenshot saved: $imagePath')),
-      );
-    }
-  }
+#### EzvizPlaybackUtils
+Playback utilities and helpers:
+- `EzvizPlaybackUtils.formatPlaybackTime()` - Format time display
+- `EzvizPlaybackUtils.calculateProgress()` - Calculate progress percentage
+- `EzvizPlaybackUtils.progressToTime()` - Convert progress to time
+- `EzvizPlaybackUtils.getPlaybackSpeeds()` - Get available speed options
 
-  Future<void> _toggleSound() async {
-    if (soundEnabled) {
-      await playerController?.closeSound();
-    } else {
-      await playerController?.openSound();
-    }
-    setState(() => soundEnabled = !soundEnabled);
-  }
+### Enhanced Audio & Intercom
 
-  // ... other methods
-}
-```
-
-### Circular PTZ Control Panel
-
-```dart
-class PTZControlPage extends StatelessWidget {
-  final String deviceSerial = "YOUR_DEVICE_SERIAL";
-  final int cameraId = 1;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('PTZ Control')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Circular PTZ Control Panel
-            PTZControlPanel(
-              size: 250,
-              backgroundColor: Colors.black.withOpacity(0.3),
-              activeColor: Colors.blue,
-              borderColor: Colors.white,
-              centerIcon: Icon(Icons.camera_alt, color: Colors.grey[700]),
-              onDirectionStart: (direction) => _startPTZ(direction),
-              onDirectionStop: (direction) => _stopPTZ(direction),
-              onCenterTap: () => _centerCamera(),
-            ),
-            SizedBox(height: 40),
-            // Zoom Controls
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildZoomButton('Zoom In', EzvizPtzCommands.ZoomIn),
-                _buildZoomButton('Zoom Out', EzvizPtzCommands.ZoomOut),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _startPTZ(String direction) async {
-    String command;
-    switch (direction) {
-      case 'UP':
-        command = EzvizPtzCommands.Up;
-        break;
-      case 'DOWN':
-        command = EzvizPtzCommands.Down;
-        break;
-      case 'LEFT':
-        command = EzvizPtzCommands.Left;
-        break;
-      case 'RIGHT':
-        command = EzvizPtzCommands.Right;
-        break;
-      default:
-        return;
-    }
-
-    await EzvizManager.shared().controlPTZ(
-      deviceSerial,
-      cameraId,
-      command,
-      EzvizPtzActions.Start,
-      EzvizPtzSpeeds.Normal,
-    );
-  }
-
-  Future<void> _stopPTZ(String direction) async {
-    String command;
-    switch (direction) {
-      case 'UP':
-        command = EzvizPtzCommands.Up;
-        break;
-      case 'DOWN':
-        command = EzvizPtzCommands.Down;
-        break;
-      case 'LEFT':
-        command = EzvizPtzCommands.Left;
-        break;
-      case 'RIGHT':
-        command = EzvizPtzCommands.Right;
-        break;
-      default:
-        return;
-    }
-
-    await EzvizManager.shared().controlPTZ(
-      deviceSerial,
-      cameraId,
-      command,
-      EzvizPtzActions.Stop,
-      EzvizPtzSpeeds.Normal,
-    );
-  }
-
-  // ... other methods
-}
-```
-
-### Audio & Intercom Features
-
-```dart
-// Two-way audio communication
-class IntercomPage extends StatefulWidget {
-  @override
-  _IntercomPageState createState() => _IntercomPageState();
-}
-
-class _IntercomPageState extends State<IntercomPage> {
-  bool isTalking = false;
-  final String deviceSerial = "YOUR_DEVICE_SERIAL";
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Intercom')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Full-duplex intercom button
-            GestureDetector(
-              onTapDown: (_) => _startIntercom(supportTalk: 1), // Full-duplex
-              onTapUp: (_) => _stopIntercom(),
-              onTapCancel: () => _stopIntercom(),
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: isTalking ? Colors.red : Colors.blue,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.mic,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Text(isTalking ? 'Talking...' : 'Hold to Talk'),
-            SizedBox(height: 40),
-            // Half-duplex intercom button
-            ElevatedButton(
-              onPressed: () => _startIntercom(supportTalk: 3), // Half-duplex
-              child: Text('Start Half-Duplex Talk'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _startIntercom({required int supportTalk}) async {
-    final success = await EzvizAudio.startVoiceTalk(
-      deviceSerial: deviceSerial,
-      verifyCode: 'VERIFY_CODE',
-      cameraNo: 1,
-      isPhone2Dev: 1, // Phone speaks, device listens
-      supportTalk: supportTalk,
-    );
-    
-    if (success) {
-      setState(() => isTalking = true);
-    }
-  }
-
-  Future<void> _stopIntercom() async {
-    await EzvizAudio.stopVoiceTalk();
-    setState(() => isTalking = false);
-  }
-}
-```
-
-### Wi-Fi Configuration
-
-```dart
-// Configure device Wi-Fi settings
-class WiFiConfigPage extends StatefulWidget {
-  @override
-  _WiFiConfigPageState createState() => _WiFiConfigPageState();
-}
-
-class _WiFiConfigPageState extends State<WiFiConfigPage> {
-  final _ssidController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final String deviceSerial = "NEW_DEVICE_SERIAL";
-
-  @override
-  void initState() {
-    super.initState();
-    _setupConfigEventHandler();
-  }
-
-  void _setupConfigEventHandler() {
-    EzvizWifiConfig.setConfigEventHandler((result) {
-      if (result.isSuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Wi-Fi configuration successful!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Configuration failed: ${result.errorMessage}')),
-        );
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Wi-Fi Configuration')),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _ssidController,
-              decoration: InputDecoration(labelText: 'Wi-Fi SSID'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Wi-Fi Password'),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: _startWiFiConfig,
-                  child: Text('Wi-Fi Config'),
-                ),
-                ElevatedButton(
-                  onPressed: _startSoundWaveConfig,
-                  child: Text('Sound Wave'),
-                ),
-                ElevatedButton(
-                  onPressed: _startAPConfig,
-                  child: Text('AP Config'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _startWiFiConfig() async {
-    await EzvizWifiConfig.startWifiConfig(
-      deviceSerial: deviceSerial,
-      ssid: _ssidController.text,
-      password: _passwordController.text,
-      mode: EzvizWifiConfigMode.wifi,
-    );
-  }
-
-  Future<void> _startSoundWaveConfig() async {
-    await EzvizWifiConfig.startWifiConfig(
-      deviceSerial: deviceSerial,
-      ssid: _ssidController.text,
-      password: _passwordController.text,
-      mode: EzvizWifiConfigMode.wave,
-    );
-  }
-
-  Future<void> _startAPConfig() async {
-    await EzvizWifiConfig.startAPConfig(
-      deviceSerial: deviceSerial,
-      ssid: _ssidController.text,
-      password: _passwordController.text,
-      verifyCode: 'VERIFY_CODE',
-    );
-  }
-
-  @override
-  void dispose() {
-    EzvizWifiConfig.removeConfigEventHandler();
-    super.dispose();
-  }
-}
-```
-
-### Recording & Screenshots
-
-```dart
-// Recording and screenshot management
-class RecordingManager {
-  static Future<void> startRecording(EzvizPlayerController controller) async {
-    final success = await controller.startRecording();
-    if (success) {
-      print('Recording started');
-    }
-  }
-
-  static Future<void> stopRecording(EzvizPlayerController controller) async {
-    final success = await controller.stopRecording();
-    if (success) {
-      print('Recording stopped');
-    }
-  }
-
-  static Future<void> takeScreenshot(EzvizPlayerController controller) async {
-    final imagePath = await controller.capturePicture();
-    if (imagePath != null) {
-      print('Screenshot saved: $imagePath');
-      // Show image or save to gallery
-    }
-  }
-
-  static Future<bool> getRecordingStatus(EzvizPlayerController controller) async {
-    return await controller.isRecording();
-  }
-}
-```
-
-### Enhanced Video Playback
-
-```dart
-// Enhanced playback with pause/resume
-class PlaybackControlsExample extends StatefulWidget {
-  @override
-  _PlaybackControlsExampleState createState() => _PlaybackControlsExampleState();
-}
-
-class _PlaybackControlsExampleState extends State<PlaybackControlsExample> {
-  EzvizPlayerController? controller;
-  bool isPaused = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: _startPlayback,
-          child: Text('Play'),
-        ),
-        ElevatedButton(
-          onPressed: _pauseResume,
-          child: Text(isPaused ? 'Resume' : 'Pause'),
-        ),
-        ElevatedButton(
-          onPressed: _stopPlayback,
-          child: Text('Stop'),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _startPlayback() async {
-    final startTime = DateTime.now().subtract(Duration(hours: 1));
-    final endTime = DateTime.now();
-    await controller?.startReplay(startTime, endTime);
-    setState(() => isPaused = false);
-  }
-
-  Future<void> _pauseResume() async {
-    if (isPaused) {
-      await controller?.resumePlayback();
-    } else {
-      await controller?.pausePlayback();
-    }
-    setState(() => isPaused = !isPaused);
-  }
-
-  Future<void> _stopPlayback() async {
-    await controller?.stopReplay();
-    setState(() => isPaused = false);
-  }
-}
-```
-
-## API Components
-
-### EzvizAudio
+#### EzvizAudio
 Audio and intercom functionality:
 - `EzvizAudio.openSound()` - Enable audio
 - `EzvizAudio.closeSound()` - Disable audio  
-- `EzvizAudio.startVoiceTalk()` - Start intercom
+- `EzvizAudio.startVoiceTalk()` - Start intercom (half/full-duplex)
 - `EzvizAudio.stopVoiceTalk()` - Stop intercom
 
-### EzvizRecording
+### Recording & Media Capture
+
+#### EzvizRecording
 Recording and screenshot features:
 - `EzvizRecording.startRecording()` - Start video recording
 - `EzvizRecording.stopRecording()` - Stop video recording
 - `EzvizRecording.capturePicture()` - Take screenshot
 - `EzvizRecording.isRecording()` - Check recording status
 
-### EzvizWifiConfig
+### Network Configuration
+
+#### EzvizWifiConfig
 Wi-Fi configuration management:
 - `EzvizWifiConfig.startWifiConfig()` - Wi-Fi configuration
 - `EzvizWifiConfig.startAPConfig()` - AP mode configuration
 - `EzvizWifiConfig.stopConfig()` - Stop configuration
+- `EzvizWifiConfig.setConfigEventHandler()` - Handle configuration events
+
+### Data Models
+
+#### Device Information
+- `EzvizDeviceInfo` - Complete device information
+- `EzvizProbeDeviceInfo` - Device probe result
+- `EzvizCameraInfo` - Camera channel information
+
+#### Authentication & Areas
+- `EzvizAccessToken` - Access token with expiration
+- `EzvizAreaInfo` - Global region/area information
+
+#### Recording & Playback
+- `EzvizCloudRecordFile` - Cloud recording file information
+- `EzvizDeviceRecordFile` - Device recording file information
+- `PlaybackSpeed` - Playback speed option
+- `RecordingType` - Recording type enumeration (All, Timing, Alarm, Manual)
 
 ### UI Components
 
@@ -834,20 +355,58 @@ The new features are fully backward compatible. To use enhanced features:
 
 ## Troubleshooting
 
+### Common SDK Issues
+
+#### Authentication Problems
+- **Token Expired**: Use `EzvizAuthManager.getAccessToken()` to check token validity
+- **Login Failed**: Ensure correct area/region selection with `EzvizAuthManager.getAreaList()`
+- **Global SDK Issues**: Initialize proper area with `EzvizAuthManager.initGlobalSDK()`
+
+#### Device Management Issues
+- **Device Not Found**: Use `EzvizDeviceManager.probeDeviceInfo()` first to verify device exists
+- **Add Device Failed**: Check device status codes (20020, 20022, 20023) and provide verification code if needed
+- **Empty Device List**: Ensure user is logged in and has devices associated with account
+
+#### Playback Issues
+- **Pause/Resume Not Working**: Only works for recorded video, not live streams
+- **Seek Failed**: Ensure you're using recorded video playback, not live streaming
+- **No Audio**: Check device audio capabilities and enable with `controller.openSound()`
+- **Playback Speed**: Use `controller.setPlaySpeed()` only during recorded video playback
+
+#### Recording Search Issues
+- **No Records Found**: Check time range and recording types (timing, alarm, manual)
+- **Cloud vs Device Records**: Use appropriate search method for storage type
+- **Time Range**: Ensure start/end times are in milliseconds since epoch
+
 ### Audio Issues
 - Ensure microphone permissions are granted
 - Check device supports audio features
 - Verify intercom parameters (half vs full-duplex)
+- For full-duplex: use `supportTalk: 1`
+- For half-duplex: use `supportTalk: 3`
 
 ### Recording Issues  
 - Check storage permissions
 - Ensure sufficient device storage
 - Verify recording format support
+- Use `controller.isLocalRecording()` to check recording status
 
 ### Wi-Fi Configuration Issues
 - Ensure location permissions for Wi-Fi scanning
 - Check device is in configuration mode
 - Verify network credentials
+- Use appropriate config mode (wifi, wave, AP)
+
+### Video Player Issues
+- **Black Screen**: Check device serial, verify code, and network connectivity
+- **Fullscreen Problems**: Ensure proper controller lifecycle management
+- **Auto-play Failed**: Verify access token and device status
+- **Encryption Dialog**: Enable with `enableEncryptionDialog: true` in config
+
+### Performance Issues
+- **Slow Loading**: Use `EzvizSimplePlayer` for optimized performance
+- **Memory Usage**: Dispose controllers properly in `dispose()` method
+- **Multiple Players**: Limit concurrent video streams for better performance
 
 ## Credits and Acknowledgments
 
@@ -877,9 +436,12 @@ We extend our gratitude to the original authors and contributors of these reposi
 
 ### Core Classes
 - `EzvizManager` - Main SDK manager (singleton)
+- `EzvizAuthManager` - Authentication and global SDK management ⭐
+- `EzvizDeviceManager` - Complete device lifecycle management ⭐
 - `EzvizPlayer` - Low-level video player widget  
 - `EzvizSimplePlayer` - High-level easy-to-use player widget ⭐
-- `EzvizPlayerController` - Player control interface
+- `EzvizPlayerController` - Enhanced player control interface with extensions ⭐
+- `EzvizPlaybackUtils` - Playback utilities and helpers ⭐
 - `EzvizAudio` - Audio and intercom management
 - `EzvizRecording` - Recording and screenshot features
 - `EzvizWifiConfig` - Wi-Fi configuration management
@@ -889,9 +451,24 @@ We extend our gratitude to the original authors and contributors of these reposi
 - `PTZControlPanel` - Circular PTZ control interface
 - `EnhancedPlayerControls` - Advanced video player controls
 
-### Models
-- `EzvizWifiConfigResult` - Wi-Fi configuration result
-- `EzvizWifiConfigMode` - Configuration mode enumeration
+### Models & Data Types
+
+#### Core Models
+- `EzvizDeviceInfo` - Complete device information with status, capabilities, and camera details
+- `EzvizAccessToken` - Authentication token with expiration tracking
+- `EzvizAreaInfo` - Global region/area information for multi-region support
+- `EzvizProbeDeviceInfo` - Device probe result with availability status
+- `EzvizCameraInfo` - Individual camera channel information
+
+#### Recording & Playback
+- `EzvizCloudRecordFile` - Cloud recording file with metadata
+- `EzvizDeviceRecordFile` - Device storage recording file
+- `PlaybackSpeed` - Playback speed option (0.25x to 4x)
+- `RecordingType` - Enumeration: All, Timing, Alarm, Manual
+
+#### Configuration
+- `EzvizWifiConfigResult` - Wi-Fi configuration result with status
+- `EzvizWifiConfigMode` - Configuration mode: wifi, wave, AP
 
 ## Contributing
 

@@ -64,6 +64,51 @@ class FlutterEzvizPlugin : FlutterPlugin, MethodCallHandler {
       EzvizChannelMethods.netControlPTZ -> {
         EzvizManager.netControlPTZ(call.arguments, result)
       }
+      "startVoiceTalk" -> {
+        EzvizManager.startVoiceTalk(call.arguments, result)
+      }
+      "stopVoiceTalk" -> {
+        EzvizManager.stopVoiceTalk(result)
+      }
+      EzvizChannelMethods.getDeviceList -> {
+        EzvizManager.getDeviceList(call.arguments, result)
+      }
+      EzvizChannelMethods.addDevice -> {
+        EzvizManager.addDevice(call.arguments, result)
+      }
+      EzvizChannelMethods.deleteDevice -> {
+        EzvizManager.deleteDevice(call.arguments, result)
+      }
+      EzvizChannelMethods.probeDeviceInfo -> {
+        EzvizManager.probeDeviceInfo(call.arguments, result)
+      }
+      EzvizChannelMethods.openLoginPage -> {
+        EzvizManager.openLoginPage(call.arguments, result)
+      }
+      EzvizChannelMethods.logout -> {
+        EzvizManager.logout(result)
+      }
+      EzvizChannelMethods.getAccessToken -> {
+        EzvizManager.getAccessToken(result)
+      }
+      EzvizChannelMethods.getAreaList -> {
+        EzvizManager.getAreaList(result)
+      }
+      EzvizChannelMethods.setServerUrl -> {
+        EzvizManager.setServerUrl(call.arguments, result)
+      }
+      EzvizChannelMethods.searchRecordFile -> {
+        EzvizManager.searchRecordFile(call.arguments, result)
+      }
+      EzvizChannelMethods.searchDeviceRecordFile -> {
+        EzvizManager.searchDeviceRecordFile(call.arguments, result)
+      }
+      "startConfigWifi" -> {
+        EzvizManager.startConfigWifi(call.arguments, result)
+      }
+      "stopConfigWifi" -> {
+        EzvizManager.stopConfigWifi(result)
+      }
       else -> {
         result.notImplemented()
       }

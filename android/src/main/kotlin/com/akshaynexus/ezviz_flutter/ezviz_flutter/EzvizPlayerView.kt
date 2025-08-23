@@ -241,6 +241,85 @@ class EzvizPlayerView(context: Context) : FrameLayout(context), SurfaceHolder.Ca
             false
         }
     }
+    
+    fun pausePlayback(): Boolean {
+        return try {
+            player?.pausePlayback() ?: false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error pausing playback: ${e.message}")
+            false
+        }
+    }
+    
+    fun resumePlayback(): Boolean {
+        return try {
+            player?.resumePlayback() ?: false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error resuming playback: ${e.message}")
+            false
+        }
+    }
+    
+    fun seekPlayback(timeMs: Long): Boolean {
+        return try {
+            // Convert milliseconds to Calendar for seek operation
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = timeMs
+            player?.seekPlayback(calendar) ?: false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error seeking playback: ${e.message}")
+            false
+        }
+    }
+    
+    fun getOSDTime(): Long {
+        return try {
+            (player?.osdTime?.time ?: 0) as Long
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting OSD time: ${e.message}")
+            0
+        }
+    }
+    
+    fun setPlaySpeed(speed: Float): Boolean {
+        return try {
+            // Play speed setting - implementation depends on SDK version
+            Log.w(TAG, "Play speed setting not implemented in current SDK version")
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error setting play speed: ${e.message}")
+            false
+        }
+    }
+    
+    fun startLocalRecord(filePath: String): Boolean {
+        return try {
+            // startLocalRecord may not exist in this SDK version
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting local record: ${e.message}")
+            false
+        }
+    }
+    
+    fun stopLocalRecord(): Boolean {
+        return try {
+            player?.stopLocalRecord() ?: false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping local record: ${e.message}")
+            false
+        }
+    }
+    
+    fun isLocalRecording(): Boolean {
+        return try {
+            // Local recording status check - implementation depends on SDK version
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking local recording status: ${e.message}")
+            false
+        }
+    }
 
     fun setVideoSizeChange(width: Int, height: Int) {
         surfaceLayout.setSurfaceSize(width, height)

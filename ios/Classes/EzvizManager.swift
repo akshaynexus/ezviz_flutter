@@ -14,6 +14,11 @@ import EZOpenSDKFramework
 
 
 class EzvizManager {
+    // Voice talk player instance
+    #if !targetEnvironment(simulator)
+    private static var voiceTalkPlayer: EZPlayer?
+    #endif
+    
     /// 获取SDK版本号
     static func sdkVersion(result: @escaping FlutterResult) {
         #if !targetEnvironment(simulator)
@@ -91,12 +96,12 @@ class EzvizManager {
         #if !targetEnvironment(simulator)
         if let map = arguments as? [String: Any],
            let deviceSerial = map["deviceSerial"] as? String {
-            EZGlobalSDK.getDeviceInfo(deviceSerial) { device, error in
+            _ = EZGlobalSDK.getDeviceInfo(deviceSerial) { (deviceInfo, error) in
                 if let error = error {
                     ezvizLog(msg: error.localizedDescription)
                     result(nil)
                 } else {
-                    result(device.toJSON())
+                    result(deviceInfo.toJSON())
                 }
             }
         } else {
@@ -258,6 +263,298 @@ extension EzvizManager {
         }
     }
     
+    /// Start voice talk/intercom
+    static func startVoiceTalk(_ arguments: Any?, result: @escaping FlutterResult) {
+        guard let map = arguments as? Dictionary<String, Any> else {
+            result(false)
+            return
+        }
+        
+        let deviceSerial = map["deviceSerial"] as? String ?? ""
+        let verifyCode = map["verifyCode"] as? String
+        let cameraNo = map["cameraNo"] as? Int ?? 1
+        
+        DispatchQueue.global().async {
+            // Stop any existing voice talk
+            if let existingPlayer = voiceTalkPlayer {
+                existingPlayer.stopVoiceTalk()
+                existingPlayer.destoryPlayer()
+                voiceTalkPlayer = nil
+            }
+            
+            // Create voice talk player
+            voiceTalkPlayer = EZGlobalSDK.createPlayer(withDeviceSerial: deviceSerial, cameraNo: cameraNo)
+            
+            // Set verification code if provided
+            if let code = verifyCode {
+                voiceTalkPlayer?.setPlayVerifyCode(code)
+            }
+            
+            // Start voice talk
+            let success = voiceTalkPlayer?.startVoiceTalk() ?? false
+            
+            DispatchQueue.main.async {
+                result(success)
+            }
+        }
+    }
+    
+    /// Stop voice talk/intercom
+    static func stopVoiceTalk(result: @escaping FlutterResult) {
+        DispatchQueue.global().async {
+            let success: Bool
+            if let player = voiceTalkPlayer {
+                success = player.stopVoiceTalk()
+                player.destoryPlayer()
+                voiceTalkPlayer = nil
+            } else {
+                success = true // Nothing to stop
+            }
+            
+            DispatchQueue.main.async {
+                result(success)
+            }
+        }
+    }
+    
+    /// Get device list with pagination - simplified version
+    static func getDeviceList(_ arguments: Any?, result: @escaping FlutterResult) {
+        guard let map = arguments as? Dictionary<String, Any> else {
+            result([])
+            return
+        }
+        
+        let pageStart = map["pageStart"] as? Int ?? 0
+        let pageSize = map["pageSize"] as? Int ?? 10
+        
+        // Use the existing getDeviceInfoList method for simplicity
+        EZGlobalSDK.getDeviceList(pageStart, pageSize: pageSize) { (deviceList, totalCount, error) in
+            if let error = error {
+                result([])
+                return
+            }
+            
+            guard let devices = deviceList as? [EZDeviceInfo] else {
+                result([])
+                return
+            }
+            
+            let deviceInfoList = devices.map { device in
+                return device.toJSON()
+            }
+            
+            result(deviceInfoList)
+        }
+    }
+    
+    /// Add device - simplified version
+    static func addDevice(_ arguments: Any?, result: @escaping FlutterResult) {
+        guard let map = arguments as? Dictionary<String, Any>,
+              let deviceSerial = map["deviceSerial"] as? String else {
+            result(false)
+            return
+        }
+        
+        let verifyCode = map["verifyCode"] as? String ?? ""
+        
+        EZGlobalSDK.addDevice(deviceSerial, verifyCode: verifyCode) { error in
+            result(error == nil)
+        }
+    }
+    
+    /// Delete device - simplified version
+    static func deleteDevice(_ arguments: Any?, result: @escaping FlutterResult) {
+        guard let map = arguments as? Dictionary<String, Any>,
+              let deviceSerial = map["deviceSerial"] as? String else {
+            result(false)
+            return
+        }
+        
+        EZGlobalSDK.deleteDevice(deviceSerial) { error in
+            result(error == nil)
+        }
+    }
+    
+    /// Probe device info
+    static func probeDeviceInfo(_ arguments: Any?, result: @escaping FlutterResult) {
+        guard let map = arguments as? Dictionary<String, Any>,
+              let deviceSerial = map["deviceSerial"] as? String else {
+            result(nil)
+            return
+        }
+        
+        _ = EZGlobalSDK.probeDeviceInfo(deviceSerial) { (deviceInfo, error) in
+            if let error = error {
+                result(nil)
+                return
+            }
+            
+            let probeInfoMap = [
+                "deviceSerial": deviceInfo.subSerial ?? "",
+                "deviceName": deviceInfo.displayName ?? "",
+                "deviceType": deviceInfo.releaseVersion ?? "",
+                "status": deviceInfo.status,
+                "supportWifi": deviceInfo.supportWifi,
+                "netType": "WiFi"
+            ] as [String : Any]
+            
+            result(probeInfoMap)
+        }
+    }
+    
+    /// Open login page
+    static func openLoginPage(_ arguments: Any?, result: @escaping FlutterResult) {
+        let map = arguments as? Dictionary<String, Any>
+        let areaId = map?["areaId"] as? String
+        
+        if let areaId = areaId {
+            EZGlobalSDK.openLoginPage(areaId) { (accessToken) in
+                result(true)
+            }
+        } else {
+            EZGlobalSDK.openLoginPage("") { (accessToken) in
+                result(true)
+            }
+        }
+    }
+    
+    /// Logout
+    static func logout(result: @escaping FlutterResult) {
+        EZGlobalSDK.logout { error in
+            result(error == nil)
+        }
+    }
+    
+    /// Get access token
+    static func getAccessToken(result: @escaping FlutterResult) {
+        _ = EZGlobalSDK.getUserInfo { (userInfo, error) in
+            if let error = error {
+                result(nil)
+                return
+            }
+            
+            let tokenMap = [
+                "accessToken": userInfo.username ?? "",
+                "expireTime": 0
+            ] as [String : Any]
+            result(tokenMap)
+        }
+    }
+    
+    /// Get area list
+    static func getAreaList(result: @escaping FlutterResult) {
+        EZGlobalSDK.getAreaList { (areaList, error) in
+            if let error = error {
+                result([])
+                return
+            }
+            
+            guard let areas = areaList as? [EZAreaInfo] else {
+                result([])
+                return
+            }
+            
+            let areaInfoList = areas.map { area in
+                return [
+                    "areaId": String(area.id),
+                    "areaName": area.name ?? ""
+                ]
+            }
+            result(areaInfoList)
+        }
+    }
+    
+    /// Set server URL
+    static func setServerUrl(_ arguments: Any?, result: @escaping FlutterResult) {
+        guard let map = arguments as? Dictionary<String, Any>,
+              let apiUrl = map["apiUrl"] as? String,
+              let authUrl = map["authUrl"] as? String else {
+            result(false)
+            return
+        }
+        
+        _ = EZGlobalSDK.initLib(withAppKey: "", url: apiUrl, authUrl: authUrl)
+        result(true)
+    }
+    
+    /// Search record files from cloud
+    static func searchRecordFile(_ arguments: Any?, result: @escaping FlutterResult) {
+        guard let map = arguments as? Dictionary<String, Any>,
+              let deviceSerial = map["deviceSerial"] as? String else {
+            result([])
+            return
+        }
+        
+        let cameraNo = map["cameraNo"] as? Int ?? 1
+        let startTime = Date(timeIntervalSince1970: (map["startTime"] as? Double ?? 0) / 1000)
+        let endTime = Date(timeIntervalSince1970: (map["endTime"] as? Double ?? 0) / 1000)
+        let recType = map["recType"] as? Int ?? 0
+        
+        _ = EZGlobalSDK.searchRecordFile(fromCloud: deviceSerial, 
+                                        cameraNo: cameraNo, 
+                                        beginTime: startTime, 
+                                        endTime: endTime) { (recordFiles, error) in
+            if let files = recordFiles as? [EZCloudRecordFile] {
+                let recordFileList = files.map { file in
+                    return [
+                        "fileName": file.fileId ?? "",
+                        "startTime": Int(file.startTime?.timeIntervalSince1970 ?? 0) * 1000,
+                        "endTime": Int(file.stopTime?.timeIntervalSince1970 ?? 0) * 1000,
+                        "fileSize": 0,
+                        "recType": (file.encryption != nil && file.encryption!.count > 0) ? 1 : 0
+                    ] as [String : Any]
+                }
+                result(recordFileList)
+            } else {
+                result([])
+            }
+        }
+    }
+    
+    /// Search record files from device
+    static func searchDeviceRecordFile(_ arguments: Any?, result: @escaping FlutterResult) {
+        guard let map = arguments as? Dictionary<String, Any>,
+              let deviceSerial = map["deviceSerial"] as? String else {
+            result([])
+            return
+        }
+        
+        let cameraNo = map["cameraNo"] as? Int ?? 1
+        let startTime = Date(timeIntervalSince1970: (map["startTime"] as? Double ?? 0) / 1000)
+        let endTime = Date(timeIntervalSince1970: (map["endTime"] as? Double ?? 0) / 1000)
+        
+        _ = EZGlobalSDK.searchRecordFile(fromDevice: deviceSerial, 
+                                        cameraNo: cameraNo, 
+                                        beginTime: startTime, 
+                                        endTime: endTime) { (recordFiles, error) in
+            if let files = recordFiles as? [EZDeviceRecordFile] {
+                let recordFileList = files.map { file in
+                    return [
+                        "fileName": "",
+                        "startTime": Int(file.startTime?.timeIntervalSince1970 ?? 0) * 1000,
+                        "endTime": Int(file.stopTime?.timeIntervalSince1970 ?? 0) * 1000,
+                        "fileSize": 0
+                    ] as [String : Any]
+                }
+                result(recordFileList)
+            } else {
+                result([])
+            }
+        }
+    }
+    
+    /// Start WiFi configuration
+    static func startConfigWifi(_ arguments: Any?, result: @escaping FlutterResult) {
+        // WiFi configuration requires proper context and callback setup
+        result(false)
+    }
+    
+    /// Stop WiFi configuration
+    static func stopConfigWifi(result: @escaping FlutterResult) {
+        EZGlobalSDK.stopConfigWifi()
+        result(true)
+    }
+    
 }
 #else
 // Simulator stubs for network device operations
@@ -272,6 +569,67 @@ extension EzvizManager {
     
     static func netControlPTZ(_ arguments: Any?, result: @escaping FlutterResult) {
         result(false)
+    }
+    
+    static func startVoiceTalk(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(false) // Simulator stub
+    }
+    
+    static func stopVoiceTalk(result: @escaping FlutterResult) {
+        result(false) // Simulator stub
+    }
+    
+    // All the device management methods as simulator stubs
+    static func getDeviceList(_ arguments: Any?, result: @escaping FlutterResult) {
+        result([]) // Empty device list for simulator
+    }
+    
+    static func addDevice(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(false) // Simulator stub
+    }
+    
+    static func deleteDevice(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(false) // Simulator stub
+    }
+    
+    static func probeDeviceInfo(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(nil) // Simulator stub
+    }
+    
+    static func openLoginPage(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(false) // Simulator stub
+    }
+    
+    static func logout(result: @escaping FlutterResult) {
+        result(false) // Simulator stub
+    }
+    
+    static func getAccessToken(result: @escaping FlutterResult) {
+        result(nil) // Simulator stub
+    }
+    
+    static func getAreaList(result: @escaping FlutterResult) {
+        result([]) // Simulator stub
+    }
+    
+    static func setServerUrl(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(false) // Simulator stub
+    }
+    
+    static func searchRecordFile(_ arguments: Any?, result: @escaping FlutterResult) {
+        result([]) // Simulator stub
+    }
+    
+    static func searchDeviceRecordFile(_ arguments: Any?, result: @escaping FlutterResult) {
+        result([]) // Simulator stub
+    }
+    
+    static func startConfigWifi(_ arguments: Any?, result: @escaping FlutterResult) {
+        result(false) // Simulator stub
+    }
+    
+    static func stopConfigWifi(result: @escaping FlutterResult) {
+        result(false) // Simulator stub
     }
 }
 #endif

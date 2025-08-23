@@ -17,6 +17,11 @@ export 'package:ezviz_flutter/ezviz_audio.dart';
 export 'package:ezviz_flutter/ezviz_recording.dart';
 export 'package:ezviz_flutter/ezviz_wifi_config.dart';
 
+// New comprehensive native SDK integration
+export 'package:ezviz_flutter/ezviz_device_manager.dart';
+export 'package:ezviz_flutter/ezviz_auth_manager.dart';
+export 'package:ezviz_flutter/ezviz_playback_controller.dart';
+
 // Enhanced UI widgets
 export 'package:ezviz_flutter/widgets/ptz_control_panel.dart';
 export 'package:ezviz_flutter/widgets/enhanced_player_controls.dart';

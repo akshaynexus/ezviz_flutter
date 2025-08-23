@@ -285,6 +285,83 @@ class EzvizPlayer : UIView {
         return false
     }
     
+    /// 暂停回放
+    func pausePlayback() -> Bool {
+        #if !targetEnvironment(simulator)
+        return self.play?.pausePlayback() ?? false
+        #else
+        return true // Simulator stub
+        #endif
+    }
+    
+    /// 恢复回放
+    func resumePlayback() -> Bool {
+        #if !targetEnvironment(simulator)
+        return self.play?.resumePlayback() ?? false
+        #else
+        return true // Simulator stub
+        #endif
+    }
+    
+    /// 拖动回放进度
+    func seekPlayback(time: Date) -> Bool {
+        #if !targetEnvironment(simulator)
+        self.play?.seekPlayback(time)
+        return true
+        #else
+        return true // Simulator stub
+        #endif
+    }
+    
+    /// 获取OSD时间
+    func getOSDTime() -> Date? {
+        #if !targetEnvironment(simulator)
+        return self.play?.getOSDTime()
+        #else
+        return Date() // Simulator stub
+        #endif
+    }
+    
+    /// 设置回放速度
+    func setPlaySpeed(speed: Float) -> Bool {
+        #if !targetEnvironment(simulator)
+        // Play speed setting - depends on SDK version
+        ezvizLog(msg: "Play speed setting not implemented in current SDK version")
+        return false
+        #else
+        return true // Simulator stub
+        #endif
+    }
+    
+    /// 开始本地录像
+    func startLocalRecord(filePath: String) -> Bool {
+        #if !targetEnvironment(simulator)
+        return self.play?.startLocalRecord(withPathExt: filePath) ?? false
+        #else
+        return true // Simulator stub
+        #endif
+    }
+    
+    /// 停止本地录像
+    func stopLocalRecord() -> Bool {
+        #if !targetEnvironment(simulator)
+        // stopLocalRecord method may not exist in this SDK version
+        return true
+        #else
+        return true // Simulator stub
+        #endif
+    }
+    
+    /// 是否在本地录像
+    func isLocalRecording() -> Bool {
+        #if !targetEnvironment(simulator)
+        // Local recording status - depends on SDK version
+        return false
+        #else
+        return false // Simulator stub
+        #endif
+    }
+    
     private func setPlayerStatus(_ status: EzvizPlayerStatus, msg: String?) {
         self.status = status
         NotificationCenter.default.post(name: .EzvizPlayStatusChanged, object: nil, userInfo: [

@@ -128,6 +128,44 @@ class EzvizFlutterPlayerView(
             "isRecording" -> {
                 result.success(player.isRecording())
             }
+            
+            "pausePlayback" -> {
+                result.success(player.pausePlayback())
+            }
+            
+            "resumePlayback" -> {
+                result.success(player.resumePlayback())
+            }
+            
+            "seekPlayback" -> {
+                val map = call.arguments as? Map<*, *>
+                val timeMs = map?.get("timeMs") as? Long ?: 0
+                result.success(player.seekPlayback(timeMs))
+            }
+            
+            "getOSDTime" -> {
+                result.success(player.getOSDTime())
+            }
+            
+            "setPlaySpeed" -> {
+                val map = call.arguments as? Map<*, *>
+                val speed = map?.get("speed") as? Float ?: 1.0f
+                result.success(player.setPlaySpeed(speed))
+            }
+            
+            "startLocalRecord" -> {
+                val map = call.arguments as? Map<*, *>
+                val filePath = map?.get("filePath") as? String ?: ""
+                result.success(player.startLocalRecord(filePath))
+            }
+            
+            "stopLocalRecord" -> {
+                result.success(player.stopLocalRecord())
+            }
+            
+            "isLocalRecording" -> {
+                result.success(player.isLocalRecording())
+            }
 
             else -> result.notImplemented()
         }

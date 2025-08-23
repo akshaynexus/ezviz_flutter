@@ -109,7 +109,7 @@ class EzvizManager {
       {'deviceSerial': deviceSerial},
     );
     if (result != null) {
-      return EzvizDeviceInfo.fronJson(result);
+      return EzvizDeviceInfo.fromJson(result);
     } else {
       return null;
     }
@@ -123,7 +123,7 @@ class EzvizManager {
     if (result != null) {
       List<EzvizDeviceInfo> deviceList = [];
       result.forEach((item) {
-        deviceList.add(EzvizDeviceInfo.fronJson(item));
+        deviceList.add(EzvizDeviceInfo.fromJson(item));
       });
       return deviceList;
     } else {

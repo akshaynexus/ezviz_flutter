@@ -30,6 +30,28 @@ internal object EzvizChannelMethods {
     val logoutNetDevice = "logoutNetDevice"
     /// NetDevice 云台控制
     val netControlPTZ = "netControlPTZ"
+    /// 获取设备列表 (with pagination)
+    val getDeviceList = "getDeviceList"
+    /// 添加设备
+    val addDevice = "addDevice"
+    /// 删除设备
+    val deleteDevice = "deleteDevice"
+    /// 探测设备信息
+    val probeDeviceInfo = "probeDeviceInfo"
+    /// 打开登录页面
+    val openLoginPage = "openLoginPage"
+    /// 登出
+    val logout = "logout"
+    /// 获取访问令牌
+    val getAccessToken = "getAccessToken"
+    /// 获取区域列表
+    val getAreaList = "getAreaList"
+    /// 设置服务器URL
+    val setServerUrl = "setServerUrl"
+    /// 搜索录像文件
+    val searchRecordFile = "searchRecordFile"
+    /// 搜索设备录像文件
+    val searchDeviceRecordFile = "searchDeviceRecordFile"
 }
 
 // 插件事件名称定义
