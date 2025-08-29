@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ezviz_flutter/src/ezviz_client.dart';
 
 /// Test utilities and helpers for EZVIZ Flutter SDK tests
 class TestUtils {
@@ -166,6 +167,49 @@ class MockHttpResponse {
       'expireTime': (expireTime ?? DateTime.now().add(Duration(hours: 24)))
           .millisecondsSinceEpoch,
     });
+  }
+}
+
+/// Mock EzvizClient for testing services
+class MockEzvizClient extends EzvizClient {
+  String? lastEndpoint;
+  Map<String, dynamic>? lastBody;
+  Map<String, String>? lastHeaders;
+  
+  Map<String, dynamic>? mockResponse;
+  bool throwError = false;
+  bool throwErrorOnce = false;
+  String errorMessage = 'Mock error';
+  int callCount = 0;
+  
+  MockEzvizClient() : super(accessToken: 'test_token');
+  
+  @override
+  Future<Map<String, dynamic>> post(
+    String endpoint,
+    Map<String, dynamic> body,
+  ) async {
+    callCount++;
+    lastEndpoint = endpoint;
+    lastBody = body;
+    
+    if (throwError || (throwErrorOnce && callCount == 1)) {
+      throw Exception(errorMessage);
+    }
+    
+    return mockResponse ?? {'code': '200', 'data': {'success': true}};
+  }
+  
+  /// Reset mock state between tests
+  void reset() {
+    lastEndpoint = null;
+    lastBody = null;
+    lastHeaders = null;
+    mockResponse = null;
+    throwError = false;
+    throwErrorOnce = false;
+    errorMessage = 'Mock error';
+    callCount = 0;
   }
 }
 
