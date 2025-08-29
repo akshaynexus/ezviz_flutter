@@ -201,6 +201,72 @@ Professional implementations with custom UI and advanced features:
 - **Advanced Controls**: PTZ, audio, recording, WiFi configuration
 - **Professional UI**: Enhanced player controls and fullscreen support
 
+## Configuration
+
+### Region/Base URL Configuration
+
+The EZVIZ API endpoints vary by region. Configure the region using the convenient enum-based approach:
+
+#### Method 1: Global Configuration (Affects all instances)
+```dart
+import 'package:ezviz_flutter/ezviz_flutter.dart';
+
+void main() {
+  // Set region globally at app startup
+  EzvizConstants.setRegion(EzvizRegion.europe);
+  
+  // Or use a custom URL for private deployments
+  EzvizConstants.setBaseUrl('https://custom.ezvizlife.com');
+  
+  runApp(MyApp());
+}
+```
+
+#### Method 2: Per-Instance Configuration
+
+##### For EzvizClient (HTTP API):
+```dart
+// Using region enum (recommended)
+final client = EzvizClient(
+  appKey: 'YOUR_APP_KEY',
+  appSecret: 'YOUR_APP_SECRET',
+  region: EzvizRegion.usa,
+);
+
+// Or using custom URL
+final client = EzvizClient(
+  appKey: 'YOUR_APP_KEY',
+  appSecret: 'YOUR_APP_SECRET',
+  baseUrl: 'https://custom.ezvizlife.com',
+);
+```
+
+##### For EzvizSimplePlayer:
+```dart
+EzvizSimplePlayer(
+  deviceSerial: 'YOUR_DEVICE_SERIAL',
+  channelNo: 1,
+  config: EzvizPlayerConfig(
+    appKey: 'YOUR_APP_KEY',
+    appSecret: 'YOUR_APP_SECRET',
+    region: EzvizRegion.europe,  // Simply specify the region
+    // or use baseUrl for custom endpoints
+  ),
+)
+```
+
+#### Available Regions
+| Region | Enum Value | Base URL |
+|--------|------------|----------|
+| India (Default) | `EzvizRegion.india` | `https://iindiaopen.ezvizlife.com` |
+| China | `EzvizRegion.china` | `https://iopen.ezvizlife.com` |
+| Europe | `EzvizRegion.europe` | `https://ieuopen.ezvizlife.com` |
+| Russia | `EzvizRegion.russia` | `https://iruopen.ezvizlife.com` |
+| USA | `EzvizRegion.usa` | `https://iusopen.ezvizlife.com` |
+| Custom | `EzvizRegion.custom` | Use with `baseUrl` parameter |
+
+> **Note**: If no region is configured, the library defaults to the India region endpoint.
+
 ## Complete API Components
 
 ### Core Native SDK Integration

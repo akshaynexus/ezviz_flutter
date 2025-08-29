@@ -6,6 +6,7 @@ import 'exceptions/ezviz_exceptions.dart';
 class EzvizClient {
   final String? appKey;
   final String? appSecret;
+  final String baseUrl;
   String? _accessToken;
   String? _areaDomain;
   DateTime? _tokenExpireTime;
@@ -19,12 +20,20 @@ class EzvizClient {
   ///
   /// If [accessToken] is provided, it will be used directly.
   /// If [appKey] and [appSecret] are provided, they will be used to obtain an access token.
+  /// 
+  /// [region] sets the EZVIZ API region (e.g., EzvizRegion.europe)
+  /// [baseUrl] allows customizing the EZVIZ API endpoint. Defaults to India region.
+  /// If both region and baseUrl are provided, baseUrl takes precedence.
   EzvizClient({
     this.appKey,
     this.appSecret,
     String? accessToken,
     String? areaDomain,
-  }) : _hasProvidedAccessToken = accessToken != null {
+    EzvizRegion? region,
+    String? baseUrl,
+  })  : baseUrl = baseUrl ?? 
+            (region != null ? EzvizConstants.getRegionUrl(region) ?? EzvizConstants.baseUrl : EzvizConstants.baseUrl),
+        _hasProvidedAccessToken = accessToken != null {
     // Validate that we have either accessToken or both appKey+appSecret
     if (accessToken == null && (appKey == null || appSecret == null)) {
       throw ArgumentError(
@@ -63,7 +72,7 @@ class EzvizClient {
     }
 
     final response = await http.post(
-      Uri.parse('${EzvizConstants.baseUrl}/api/lapp/token/get'),
+      Uri.parse('$baseUrl/api/lapp/token/get'),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: {'appKey': appKey!, 'appSecret': appSecret!},
     );
@@ -96,7 +105,7 @@ class EzvizClient {
   ) async {
     await _ensureAuthenticated();
 
-    final url = (_areaDomain ?? EzvizConstants.baseUrl) + path;
+    final url = (_areaDomain ?? baseUrl) + path;
 
     // Convert all values to strings for form-encoded data
     final stringBody = <String, String>{'accessToken': _accessToken!};

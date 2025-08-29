@@ -10,6 +10,7 @@ class EzvizPlayerConfig {
   final String appKey;
   final String appSecret;
   final String? baseUrl;
+  final EzvizRegion? region;
 
   /// Authentication credentials
   final String? accessToken;
@@ -41,6 +42,7 @@ class EzvizPlayerConfig {
     required this.appKey,
     required this.appSecret,
     this.baseUrl,
+    this.region,
     this.accessToken,
     this.account,
     this.password,
@@ -236,12 +238,18 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
       );
 
       // Initialize SDK
+      // Determine the base URL from region or custom URL
+      String? effectiveBaseUrl = widget.config.baseUrl;
+      if (effectiveBaseUrl == null && widget.config.region != null) {
+        effectiveBaseUrl = EzvizConstants.getRegionUrl(widget.config.region!);
+      }
+      
       final initOptions = EzvizInitOptions(
         appKey: widget.config.appKey,
         accessToken: widget.config.accessToken ?? "",
         enableLog: true,
         enableP2P: false,
-        baseUrl: widget.config.baseUrl,
+        baseUrl: effectiveBaseUrl,
       );
 
       final result = await EzvizManager.shared().initSDK(initOptions);
