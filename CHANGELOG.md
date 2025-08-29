@@ -5,7 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.2.5] 2025-08-30
-- 
+### Added
+- **Region Configuration System**: Simple enum-based region selection
+  - Added `EzvizConstants.setRegion(EzvizRegion.europe)` for easy global configuration
+  - Added `region` parameter to `EzvizClient` and `EzvizSimplePlayer` constructors
+- **New Regions**: Added `EzvizRegion.singapore` and `EzvizRegion.americas` support
+
+### Fixed
+- **API Endpoints**: Updated all region URLs to official EZVIZ domains
+  - USA: `https://apius.ezvizlife.com`
+  - Europe: `https://open.ezvizlife.com`
+  - China: `https://open.ys7.com`
+  - Singapore: `https://apiisgp.ezvizlife.com`
+  - Americas: `https://isgpopen.ezviz.com`
+
+### Changed
+- **⚠️ Breaking**: Region URLs updated to official endpoints (existing configurations may need updates)
 ## [1.2.4] - 2025-08-23
 -  fix probeDeviceInfo error on iOS
 ## [1.2.3] - 2025-08-23
