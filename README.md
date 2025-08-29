@@ -248,15 +248,17 @@ EzvizSimplePlayer(
 )
 ```
 
-#### Available Regions
-| Region | Enum Value | Base URL |
-|--------|------------|----------|
-| India (Default) | `EzvizRegion.india` | `https://iindiaopen.ezvizlife.com` |
-| China | `EzvizRegion.china` | `https://iopen.ezvizlife.com` |
-| Europe | `EzvizRegion.europe` | `https://ieuopen.ezvizlife.com` |
-| Russia | `EzvizRegion.russia` | `https://iruopen.ezvizlife.com` |
-| USA | `EzvizRegion.usa` | `https://iusopen.ezvizlife.com` |
-| Custom | `EzvizRegion.custom` | Use with `baseUrl` parameter |
+#### Available Regions (Official EZVIZ Domains)
+| Region | Enum Value | Base URL | Coverage |
+|--------|------------|----------|----------|
+| India | `EzvizRegion.india` | `https://iindiaopen.ezvizlife.com` | India, South Asia |
+| China | `EzvizRegion.china` | `https://open.ys7.com` | Mainland China |
+| Europe | `EzvizRegion.europe` | `https://open.ezvizlife.com` | European regions |
+| USA/North America | `EzvizRegion.usa` | `https://apius.ezvizlife.com` | United States, Canada |
+| Singapore | `EzvizRegion.singapore` | `https://apiisgp.ezvizlife.com` | Singapore, Southeast Asia |
+| Americas General | `EzvizRegion.americas` | `https://isgpopen.ezviz.com` | General Americas coverage |
+| Russia | `EzvizRegion.russia` | `https://iruopen.ezvizlife.com` | Russia, CIS (legacy) |
+| Custom | `EzvizRegion.custom` | Use with `baseUrl` parameter | Private deployments |
 
 > **Note**: If no region is configured, the library defaults to the Global region endpoint.
 
@@ -412,60 +414,25 @@ The new features are fully backward compatible. To use enhanced features:
 2. Import new components: `import 'package:ezviz_flutter/ezviz_flutter.dart';`
 3. Use new widgets and APIs as needed
 
-## Troubleshooting
+## Troubleshooting & FAQ
 
-### Common SDK Issues
+For common issues, troubleshooting steps, and frequently asked questions, see our comprehensive **[FAQ & Troubleshooting Guide](FAQ.md)**.
 
-#### Authentication Problems
-- **Token Expired**: Use `EzvizAuthManager.getAccessToken()` to check token validity
-- **Login Failed**: Ensure correct area/region selection with `EzvizAuthManager.getAreaList()`
-- **Global SDK Issues**: Initialize proper area with `EzvizAuthManager.initGlobalSDK()`
+### Quick Help
+- **Authentication Issues** → [FAQ: Authentication Problems](FAQ.md#authentication-problems)
+- **Device Management** → [FAQ: Device Management Issues](FAQ.md#device-management-issues)
+- **Video Playback** → [FAQ: Playback Issues](FAQ.md#playback-issues)
+- **Audio Problems** → [FAQ: Audio Issues](FAQ.md#audio-issues)
+- **Region Configuration** → [FAQ: Region Configuration](FAQ.md#region-configuration)
+- **Performance Issues** → [FAQ: Performance Issues](FAQ.md#performance-issues)
 
-#### Device Management Issues
-- **Device Not Found**: Use `EzvizDeviceManager.probeDeviceInfo()` first to verify device exists
-- **Add Device Failed**: Check device status codes (20020, 20022, 20023) and provide verification code if needed
-- **Empty Device List**: Ensure user is logged in and has devices associated with account
+### Common Error Codes
+- `10001`, `10002` → Authentication/Token issues
+- `20008` → Device offline
+- `20020-20023` → Device add/verification issues
+- `30001`, `30003` → Network/Server issues
 
-#### Playback Issues
-- **Pause/Resume Not Working**: Only works for recorded video, not live streams
-- **Seek Failed**: Ensure you're using recorded video playback, not live streaming
-- **No Audio**: Check device audio capabilities and enable with `controller.openSound()`
-- **Playback Speed**: Use `controller.setPlaySpeed()` only during recorded video playback
-
-#### Recording Search Issues
-- **No Records Found**: Check time range and recording types (timing, alarm, manual)
-- **Cloud vs Device Records**: Use appropriate search method for storage type
-- **Time Range**: Ensure start/end times are in milliseconds since epoch
-
-### Audio Issues
-- Ensure microphone permissions are granted
-- Check device supports audio features
-- Verify intercom parameters (half vs full-duplex)
-- For full-duplex: use `supportTalk: 1`
-- For half-duplex: use `supportTalk: 3`
-
-### Recording Issues  
-- Check storage permissions
-- Ensure sufficient device storage
-- Verify recording format support
-- Use `controller.isLocalRecording()` to check recording status
-
-### Wi-Fi Configuration Issues
-- Ensure location permissions for Wi-Fi scanning
-- Check device is in configuration mode
-- Verify network credentials
-- Use appropriate config mode (wifi, wave, AP)
-
-### Video Player Issues
-- **Black Screen**: Check device serial, verify code, and network connectivity
-- **Fullscreen Problems**: Ensure proper controller lifecycle management
-- **Auto-play Failed**: Verify access token and device status
-- **Encryption Dialog**: Enable with `enableEncryptionDialog: true` in config
-
-### Performance Issues
-- **Slow Loading**: Use `EzvizSimplePlayer` for optimized performance
-- **Memory Usage**: Dispose controllers properly in `dispose()` method
-- **Multiple Players**: Limit concurrent video streams for better performance
+**👉 [View Complete FAQ & Troubleshooting Guide](FAQ.md)**
 
 ## Credits and Acknowledgments
 
