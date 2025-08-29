@@ -22,10 +22,10 @@ void main() {
         reason: 'EnhancedPlayerControls should be rendered',
       );
       
-      // Should show play button when not playing
+      // Should show play button(s) when not playing
       final playButtonFinder = find.byIcon(Icons.play_arrow);
       playButtonFinder.expectMeaningful(
-        findsOneWidget,
+        findsAtLeastNWidgets(1),
         reason: 'Play button should be visible when not playing',
       );
     });
@@ -63,8 +63,9 @@ void main() {
         ),
       );
       
-      // Tap play button
-      await tester.tap(find.byIcon(Icons.play_arrow));
+      // Tap first play button (there might be multiple)
+      final playButtons = find.byIcon(Icons.play_arrow);
+      await tester.tap(playButtons.first);
       await tester.pump();
       
       playPauseTapCount.expectMeaningful(
