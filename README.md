@@ -35,17 +35,10 @@ https://github.com/akshaynexus/ezviz_flutter_example_app
 
 ## Installation
 
-Add this to your package's `pubspec.yaml` file:
-
-```yaml
-dependencies:
-  ezviz_flutter: ^1.0.4
-```
-
-Then run:
+Run this command in the root of your flutter project
 
 ```bash
-flutter pub get
+flutter pub add ezviz_flutter
 ```
 
 ## Platform Setup
