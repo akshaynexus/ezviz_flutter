@@ -153,6 +153,30 @@ IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 - [Example App Repository](https://github.com/akshaynexus/ezviz_flutter_example_app)
 - [Issues & Support](https://github.com/akshaynexus/ezviz_flutter/issues)
 
+## 🙏 Credits and Acknowledgments
+
+This library integrates and builds upon code from several sources:
+
+### Native SDK Integration
+[**flutter_ezviz**](https://github.com/pam3ec555/flutter_ezviz) by pam3ec555: Native Android and iOS SDK implementation for EZVIZ cameras
+- Original native SDK wrapper and player components
+- Device management and PTZ control functionality
+- Core platform channel communication
+
+### Enhanced Features
+[**ezviz_flutter_cam**](https://github.com/thanhdang198/ezviz_flutter_cam) by thanhdang198
+- Audio and intercom functionality
+- Recording and screenshot capabilities
+- Wi-Fi configuration features
+- Enhanced UI components and controls
+- Advanced playback controls (pause/resume)
+
+We extend our gratitude to the original authors and contributors of these repositories for their excellent work in EZVIZ SDK integration. This library combines the best features from both implementations to provide a comprehensive Flutter plugin for EZVIZ camera integration.
+
+### Original Repositories
+- 🔗 [ezviz_flutter_cam](https://github.com/thanhdang198/ezviz_flutter_cam) - Enhanced camera features and UI components
+- 📁 [flutter_ezviz](https://github.com/pam3ec555/flutter_ezviz) - Core native SDK implementation
+
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
