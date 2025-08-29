@@ -4,8 +4,8 @@ A Flutter plugin for EZVIZ camera integration with live streaming, device manage
 
 [![pub package](https://img.shields.io/pub/v/ezviz_flutter.svg)](https://pub.dev/packages/ezviz_flutter)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Tests](https://github.com/akshaycm/ezviz_flutter/workflows/Tests/badge.svg)](https://github.com/akshaycm/ezviz_flutter/actions)
-[![codecov](https://codecov.io/gh/akshaycm/ezviz_flutter/branch/main/graph/badge.svg)](https://codecov.io/gh/akshaycm/ezviz_flutter)
+[![Tests](https://github.com/akshaynexus/ezviz_flutter/workflows/Tests/badge.svg)](https://github.com/akshaynexus/ezviz_flutter/actions)
+[![codecov](https://codecov.io/gh/akshaynexus/ezviz_flutter/branch/main/graph/badge.svg)](https://codecov.io/gh/akshaynexus/ezviz_flutter)
 
 ## ⚡ Quick Start
 
