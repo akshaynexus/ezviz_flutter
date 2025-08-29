@@ -265,7 +265,7 @@ EzvizSimplePlayer(
 | USA | `EzvizRegion.usa` | `https://iusopen.ezvizlife.com` |
 | Custom | `EzvizRegion.custom` | Use with `baseUrl` parameter |
 
-> **Note**: If no region is configured, the library defaults to the India region endpoint.
+> **Note**: If no region is configured, the library defaults to the Global region endpoint.
 
 ## Complete API Components
 
