@@ -22,7 +22,7 @@ void main() async {
 
   try {
     print(
-      'Starting PTZ control (UP) for device: \${ApiConfig.examplePtzDeviceSerial}, channel: \$channelNo',
+      'Starting PTZ control (UP) for device: ${ApiConfig.examplePtzDeviceSerial}, channel: $channelNo',
     );
     final startPtzResponse = await ptzService.startPtz(
       ApiConfig.examplePtzDeviceSerial,
@@ -30,14 +30,14 @@ void main() async {
       direction: PtzCommand.up,
       speed: PtzSpeed.medium,
     );
-    print('Start PTZ Response: \$startPtzResponse');
+    print('Start PTZ Response: $startPtzResponse');
 
     // Let the PTZ move for a short duration
     print('Waiting for 2 seconds while PTZ moves...');
     sleep(const Duration(seconds: 2));
 
     print(
-      '\nStopping PTZ control for device: \${ApiConfig.examplePtzDeviceSerial}, channel: \$channelNo',
+      '\nStopping PTZ control for device: ${ApiConfig.examplePtzDeviceSerial}, channel: $channelNo',
     );
     final stopPtzResponse = await ptzService.stopPtz(
       ApiConfig.examplePtzDeviceSerial,
@@ -45,7 +45,7 @@ void main() async {
       direction: PtzCommand
           .up, // Direction might be optional or required by API for stop
     );
-    print('Stop PTZ Response: \$stopPtzResponse');
+    print('Stop PTZ Response: $stopPtzResponse');
 
     // Example: Add a preset (assuming presetIndex 1 is available)
     // print('\nAdding preset 1 for device: \${ApiConfig.examplePtzDeviceSerial}, channel: \$channelNo');
@@ -68,11 +68,11 @@ void main() async {
     // print('Mirror PTZ Response: \$mirrorPtzResponse');
   } catch (e) {
     if (e is EzvizAuthException) {
-      print('EZVIZ Authentication Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ Authentication Error: ${e.message} (Code: ${e.code})');
     } else if (e is EzvizApiException) {
-      print('EZVIZ API Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ API Error: ${e.message} (Code: ${e.code})');
     } else {
-      print('An unexpected error occurred: \$e');
+      print('An unexpected error occurred: $e');
     }
   }
 }

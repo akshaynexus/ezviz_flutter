@@ -7,16 +7,16 @@ import 'package:ezviz_flutter/ezviz_utils.dart';
 
 /// 插件Manager
 class EzvizManager {
-  static const MethodChannel _channel = const MethodChannel(
+  static const MethodChannel _channel = MethodChannel(
     EzvizChannelMethods.methodChannelName,
   );
 
-  static const EventChannel _eventChannel = const EventChannel(
+  static const EventChannel _eventChannel = EventChannel(
     EzvizChannelEvents.eventChannelName,
   );
 
   ///单例模式
-  static final EzvizManager _instance = new EzvizManager._init();
+  static final EzvizManager _instance = EzvizManager._init();
   factory EzvizManager.shared() => _instance;
 
   ///私有构造函数
@@ -64,9 +64,7 @@ class EzvizManager {
 
   /// 初始化SDK
   Future<bool> initSDK(EzvizInitOptions? options) async {
-    if (options == null) {
-      options = EzvizInitOptions();
-    }
+    options ??= EzvizInitOptions();
     try {
       final bool result = await _channel.invokeMethod(
         EzvizChannelMethods.initSDK,
@@ -121,10 +119,10 @@ class EzvizManager {
       EzvizChannelMethods.deviceInfoList,
     );
     if (result != null) {
-      List<EzvizDeviceInfo> deviceList = [];
-      result.forEach((item) {
+      final deviceList = <EzvizDeviceInfo>[];
+      for (final item in result) {
         deviceList.add(EzvizDeviceInfo.fromJson(item));
-      });
+      }
       return deviceList;
     } else {
       return null;

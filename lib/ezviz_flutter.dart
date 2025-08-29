@@ -1,8 +1,8 @@
-/// EZVIZ Flutter SDK - A comprehensive Flutter plugin for EZVIZ camera integration
-///
-/// This library provides native Android and iOS SDK integration for EZVIZ cameras,
-/// including device management, live streaming, PTZ control, and video playback.
-library ezviz_flutter;
+// EZVIZ Flutter SDK - A comprehensive Flutter plugin for EZVIZ camera integration
+//
+// This library provides native Android and iOS SDK integration for EZVIZ cameras,
+// including device management, live streaming, PTZ control, and video playback.
+// Library directive removed as it is unnecessary in modern Dart
 
 // Export all EZVIZ SDK components
 export 'package:ezviz_flutter/ezviz_definition.dart';

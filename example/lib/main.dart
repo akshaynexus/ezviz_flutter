@@ -7,12 +7,14 @@ import 'comprehensive_sdk_example.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -46,14 +48,16 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -264,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(color: Colors.grey[600]),
               )
             else
-              ..._devices.map((device) => _buildDeviceItem(device)).toList(),
+              ..._devices.map((device) => _buildDeviceItem(device)),
           ],
         ),
       ),
@@ -392,7 +396,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HttpApiDemoPage()),
+                  MaterialPageRoute(builder: (context) => const HttpApiDemoPage()),
                 );
               },
             ),
@@ -404,7 +408,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AudioTestExample()),
+                  MaterialPageRoute(builder: (context) => const AudioTestExample()),
                 );
               },
             ),
@@ -416,7 +420,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ComprehensiveSDKExample()),
+                  MaterialPageRoute(builder: (context) => const ComprehensiveSDKExample()),
                 );
               },
             ),
@@ -431,10 +435,10 @@ class _HomePageState extends State<HomePage> {
 class LiveStreamPage extends StatefulWidget {
   final EzvizDeviceInfo device;
 
-  LiveStreamPage({required this.device});
+  const LiveStreamPage({required this.device, super.key});
 
   @override
-  _LiveStreamPageState createState() => _LiveStreamPageState();
+  State<LiveStreamPage> createState() => _LiveStreamPageState();
 }
 
 class _LiveStreamPageState extends State<LiveStreamPage> {
@@ -677,6 +681,7 @@ class PTZControlPage extends StatelessWidget {
 
 // Demo Pages
 class LiveStreamDemoPage extends StatelessWidget {
+  const LiveStreamDemoPage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -691,6 +696,7 @@ class LiveStreamDemoPage extends StatelessWidget {
 }
 
 class PTZDemoPage extends StatelessWidget {
+  const PTZDemoPage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -705,6 +711,7 @@ class PTZDemoPage extends StatelessWidget {
 }
 
 class HttpApiDemoPage extends StatelessWidget {
+  const HttpApiDemoPage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,8 +1,8 @@
 /// 插件事件处理
-typedef void EzvizOnEvent(EzvizEvent event);
+typedef EzvizOnEvent = void Function(EzvizEvent event);
 
 /// 插件事件异常
-typedef void EzvizOnError(error);
+typedef EzvizOnError = void Function(Object error);
 
 /// 初始化SDK参数对象
 class EzvizInitOptions {
@@ -21,13 +21,14 @@ class EzvizInitOptions {
   });
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['appKey'] = this.appKey;
-    data['accessToken'] = this.accessToken;
-    data['enableLog'] = this.enableLog;
-    data['enableP2P'] = this.enableP2P;
-    if (this.baseUrl != null) {
-      data['baseUrl'] = this.baseUrl;
+    final data = <String, dynamic>{
+      'appKey': appKey,
+      'accessToken': accessToken,
+      'enableLog': enableLog,
+      'enableP2P': enableP2P,
+    };
+    if (baseUrl != null) {
+      data['baseUrl'] = baseUrl;
     }
     return data;
   }
@@ -121,7 +122,7 @@ class EzvizEvent {
   static EzvizEvent? init(Map<String, dynamic> data) {
     if (data['eventType'] == null) return null;
 
-    return new EzvizEvent(data['eventType'] as String, data['msg'] as String);
+    return EzvizEvent(data['eventType'] as String, data['msg'] as String);
   }
 }
 
@@ -146,9 +147,9 @@ class EzvizPlayerStatus {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
-    return data;
+    return <String, dynamic>{
+      'status': status,
+      'message': message,
+    };
   }
 }

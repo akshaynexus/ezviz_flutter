@@ -6,7 +6,7 @@ import 'package:ezviz_flutter/ezviz_definition.dart';
 
 /// Device Management functionality for EZVIZ SDK
 class EzvizDeviceManager {
-  static const MethodChannel _channel = const MethodChannel(
+  static const MethodChannel _channel = MethodChannel(
     EzvizChannelMethods.methodChannelName,
   );
 
@@ -210,7 +210,7 @@ class EzvizDeviceManager {
 
 /// WiFi Configuration Manager
 class EzvizWifiManager {
-  static const MethodChannel _channel = const MethodChannel(
+  static const MethodChannel _channel = MethodChannel(
     EzvizChannelMethods.methodChannelName,
   );
 

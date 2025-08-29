@@ -82,3 +82,4 @@ class EzvizStreamTypes {
     return types.contains(type);
   }
 }
+// ignore_for_file: constant_identifier_names

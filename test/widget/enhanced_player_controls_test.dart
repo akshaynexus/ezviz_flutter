@@ -273,6 +273,7 @@ void main() {
     });
     
     testWidgets('handles quality change', (tester) async {
+      // ignore: unused_local_variable
       var lastQualityChanged = -1;
       
       await tester.pumpWidget(

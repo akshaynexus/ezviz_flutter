@@ -19,18 +19,18 @@ void main() async {
 
   try {
     print(
-      'Fetching detector list for A1 Hub: \${ApiConfig.exampleA1HubSerial}...',
+      'Fetching detector list for A1 Hub: ${ApiConfig.exampleA1HubSerial}...',
     );
     final detectorListResponse = await detectorService.getDetectorList(
       ApiConfig.exampleA1HubSerial,
     );
-    print('Detector List Response: \$detectorListResponse');
+    print('Detector List Response: $detectorListResponse');
 
     if (ApiConfig.exampleLinkedDetectorSerial.isNotEmpty &&
         ApiConfig.exampleLinkedDetectorSerial !=
             'YOUR_LINKED_DETECTOR_SERIAL') {
       print(
-        '\nSetting detector (\${ApiConfig.exampleLinkedDetectorSerial}) status to Away & Enabled...',
+        '\nSetting detector (${ApiConfig.exampleLinkedDetectorSerial}) status to Away & Enabled...',
       );
       final setStatusResponse = await detectorService.setDetectorStatus(
         ApiConfig.exampleA1HubSerial,
@@ -38,7 +38,7 @@ void main() async {
         DetectorSafeMode.away,
         true,
       );
-      print('Set Detector Status Response: \$setStatusResponse');
+      print('Set Detector Status Response: $setStatusResponse');
 
       // Example: Edit detector name
       // print('\nEditing name for detector \${ApiConfig.exampleLinkedDetectorSerial}...');
@@ -57,11 +57,11 @@ void main() async {
     // print('Clear Alarms Response: \$clearAlarmsResponse');
   } catch (e) {
     if (e is EzvizAuthException) {
-      print('EZVIZ Authentication Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ Authentication Error: ${e.message} (Code: ${e.code})');
     } else if (e is EzvizApiException) {
-      print('EZVIZ API Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ API Error: ${e.message} (Code: ${e.code})');
     } else {
-      print('An unexpected error occurred: \$e');
+      print('An unexpected error occurred: $e');
     }
   }
 }

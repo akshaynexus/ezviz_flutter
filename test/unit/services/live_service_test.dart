@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ezviz_flutter/src/live/live_service.dart';
-import 'package:ezviz_flutter/src/ezviz_client.dart';
+// Removed unused import
 import '../../../test/test_utils.dart';
 
 void main() {
@@ -79,7 +79,7 @@ void main() {
         final expectedResponse = {'url': 'rtmp://test.com/live'};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await liveService.getPlayAddress(
+        await liveService.getPlayAddress(
           'TEST123',
           code: 'CODE123',
           password: 'PASS456',
@@ -141,7 +141,7 @@ void main() {
         final expectedResponse = {'success': true};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await liveService.invalidatePlayAddress(
+        await liveService.invalidatePlayAddress(
           'TEST123',
           channelNo: 2,
           urlId: 'url123',
@@ -222,7 +222,7 @@ void main() {
         final expectedResponse = {'url': 'rtmp://test.com/live'};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await liveService.getPlayAddressWithPassword(
+        await liveService.getPlayAddressWithPassword(
           'TEST123',
           'password123',
           channelNo: 2,

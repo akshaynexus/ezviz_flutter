@@ -17,13 +17,12 @@ void main() async {
   // The password for sub-accounts is MD5 hashed: LowerCase(MD5(AppKey#PasswordPlaintext))
   // Ensure your mainAppKey is correctly used if you manually compute this for 'createRamAccount' or 'updateRamAccountPassword'.
 
-  String?
-  newAccountId; // To store the ID of a newly created account for further operations
+  // String? newAccountId; // To store the ID of a newly created account for further operations
 
   try {
     print('Listing RAM accounts (first page)...');
     final listResponse = await ramService.getRamAccountList(pageSize: 5);
-    print('RAM Account List: \$listResponse');
+    print('RAM Account List: $listResponse');
 
     // Example: Create a new RAM account
     // const String newRamAccountName = 'testSubAccount123';
@@ -73,11 +72,11 @@ void main() async {
     // }
   } catch (e) {
     if (e is EzvizAuthException) {
-      print('EZVIZ Authentication Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ Authentication Error: ${e.message} (Code: ${e.code})');
     } else if (e is EzvizApiException) {
-      print('EZVIZ API Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ API Error: ${e.message} (Code: ${e.code})');
     } else {
-      print('An unexpected error occurred: \$e');
+      print('An unexpected error occurred: $e');
     }
   }
 }

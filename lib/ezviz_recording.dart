@@ -5,7 +5,7 @@ import 'package:ezviz_flutter/ezviz_utils.dart';
 
 /// Recording and Screenshot functionality
 class EzvizRecording {
-  static const MethodChannel _channel = const MethodChannel(
+  static const MethodChannel _channel = MethodChannel(
     EzvizChannelMethods.methodChannelName,
   );
 

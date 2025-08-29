@@ -446,22 +446,16 @@ class _ComprehensiveSDKExampleState extends State<ComprehensiveSDKExample> {
                               device.isSupportPTZ
                                   ? Icons.videocam
                                   : Icons.camera_alt,
-                              color: device.status == 1
-                                  ? Colors.green
-                                  : Colors.grey,
+                              // Status is not available on EzvizDeviceInfo; use theme color
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             title: Text(device.deviceName),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('Serial: ${device.deviceSerial}'),
-                                Text('Status: ${device.status == 1 ? "Online" : "Offline"}'),
-                                if (device.isEncrypt == 1)
-                                  const Text(
-                                    'Encrypted',
-                                    style: TextStyle(color: Colors.orange),
-                                  ),
-                                Text('Cameras: ${device.cameraInfoList?.length ?? 0}'),
+                                Text('PTZ: ${device.isSupportPTZ ? "Yes" : "No"}'),
+                                Text('Cameras: ${device.cameraNum}'),
                               ],
                             ),
                             trailing: PopupMenuButton<String>(

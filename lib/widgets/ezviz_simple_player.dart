@@ -131,7 +131,6 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
   // Add connection attempt tracking
   int _connectionAttempts = 0;
   static const int _maxConnectionAttempts = 3;
-  static const Duration _connectionTimeout = Duration(seconds: 15);
   Timer? _connectionTimer;
   bool _isConnecting = false;
   bool _isPlayerInitialized = false;
@@ -140,8 +139,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
   bool _showControls = false; // Start hidden
   Timer? _controlsTimer;
 
-  // Track if player widget has been created
-  bool _playerCreated = false;
+  // Track if player widget has been created (removed unused field)
 
   /// Check if we're in fullscreen (landscape mode)
   bool get isFullScreen =>
@@ -883,10 +881,10 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.black.withOpacity(0.7),
+            Colors.black.withValues(alpha: 0.7),
             Colors.transparent,
             Colors.transparent,
-            Colors.black.withOpacity(0.7),
+            Colors.black.withValues(alpha: 0.7),
           ],
           stops: const [0.0, 0.2, 0.8, 1.0],
         ),
@@ -914,7 +912,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
@@ -1029,10 +1027,12 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
     
     if (isFullScreen) {
       // Fullscreen mode - return a widget that takes over the parent's constraints
-      return WillPopScope(
-        onWillPop: () async {
-          _toggleFullscreen();
-          return false;
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) {
+            _toggleFullscreen();
+          }
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -1130,7 +1130,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
                   _startLiveStream();
                 }
               });
-              _playerCreated = true;
+              // Player widget created
             }
           },
         ),
@@ -1213,7 +1213,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: _getStateColor(_state).withOpacity(0.15),
+                color: _getStateColor(_state).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: _getStateColor(_state), width: 0.5),
               ),
@@ -1397,10 +1397,12 @@ class _FullscreenPlayerOverlayState extends State<_FullscreenPlayerOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        _exitFullscreen();
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _exitFullscreen();
+        }
       },
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -1431,10 +1433,10 @@ class _FullscreenPlayerOverlayState extends State<_FullscreenPlayerOverlay> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withOpacity(0.7),
+                      Colors.black.withValues(alpha: 0.7),
                       Colors.transparent,
                       Colors.transparent,
-                      Colors.black.withOpacity(0.7),
+                      Colors.black.withValues(alpha: 0.7),
                     ],
                     stops: const [0.0, 0.2, 0.8, 1.0],
                   ),
@@ -1465,7 +1467,7 @@ class _FullscreenPlayerOverlayState extends State<_FullscreenPlayerOverlay> {
                             width: 80,
                             height: 80,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(

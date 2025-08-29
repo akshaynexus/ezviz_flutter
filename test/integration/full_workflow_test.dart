@@ -124,7 +124,7 @@ class EzvizWorkflowTestAppState extends State<EzvizWorkflowTestApp> {
   
   void _createClient() {
     try {
-      final client = EzvizClient(
+      EzvizClient(
         appKey: 'test_key',
         appSecret: 'test_secret',
       );

@@ -5,7 +5,7 @@ import 'package:ezviz_flutter/ezviz_utils.dart';
 
 /// Authentication and Area Management for EZVIZ SDK
 class EzvizAuthManager {
-  static const MethodChannel _channel = const MethodChannel(
+  static const MethodChannel _channel = MethodChannel(
     EzvizChannelMethods.methodChannelName,
   );
 

@@ -5,7 +5,7 @@ import 'package:ezviz_flutter/ezviz_utils.dart';
 
 /// Audio and Intercom functionality
 class EzvizAudio {
-  static const MethodChannel _channel = const MethodChannel(
+  static const MethodChannel _channel = MethodChannel(
     EzvizChannelMethods.methodChannelName,
   );
 

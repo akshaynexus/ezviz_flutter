@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ezviz_flutter/src/device/device_service.dart';
-import 'package:ezviz_flutter/src/ezviz_client.dart';
+// Removed unused import
 import '../../../test/test_utils.dart';
 
 void main() {
@@ -232,7 +232,7 @@ void main() {
         final expectedResponse = {'success': true};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await deviceService.setAudioPromptStatus(
+        await deviceService.setAudioPromptStatus(
           'TEST123',
           false,
           channelNo: 2,
@@ -252,7 +252,7 @@ void main() {
         final expectedResponse = {'success': true};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await deviceService.setDeviceTimezone(
+        await deviceService.setDeviceTimezone(
           'TEST123',
           'America/New_York',
           timeFormat: 1,
@@ -292,7 +292,7 @@ void main() {
         final expectedResponse = {'success': true};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await deviceService.playRingtone('TEST123', '200');
+        await deviceService.playRingtone('TEST123', '200');
 
         mockClient.lastEndpoint.expectMeaningful(
           equals('/api/v3/device/audition?voiceIndex=200'),
@@ -304,7 +304,7 @@ void main() {
         final expectedResponse = {'success': true};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await deviceService.playRingtone(
+        await deviceService.playRingtone(
           'TEST123',
           '201',
           volume: '50',

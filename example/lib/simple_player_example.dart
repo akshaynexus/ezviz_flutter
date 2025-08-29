@@ -65,7 +65,7 @@ class _SimplePlayerExampleState extends State<SimplePlayerExample> {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
-                  controlsBackgroundColor: Colors.black.withOpacity(0.8),
+                  controlsBackgroundColor: Colors.black.withValues(alpha: 0.8),
                   controlsIconColor: Colors.white,
                 ),
                 onStateChanged: (state) {

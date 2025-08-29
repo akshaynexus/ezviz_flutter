@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:ezviz_flutter/ezviz_methods.dart';
 import 'package:ezviz_flutter/ezviz_utils.dart';
 import 'package:ezviz_flutter/ezviz_player.dart';
 

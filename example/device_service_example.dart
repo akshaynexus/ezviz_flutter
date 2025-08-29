@@ -12,34 +12,34 @@ void main() async {
   try {
     print('Fetching device list...');
     final deviceListResponse = await deviceService.getDeviceList(pageSize: 5);
-    print('Device List: \$deviceListResponse');
+    print('Device List: $deviceListResponse');
 
     if (ApiConfig.exampleDeviceSerial.isNotEmpty &&
         ApiConfig.exampleDeviceSerial != 'YOUR_DEVICE_SERIAL') {
-      print('\nFetching info for device: \${ApiConfig.exampleDeviceSerial}...');
+      print('\nFetching info for device: ${ApiConfig.exampleDeviceSerial}...');
       final deviceInfoResponse = await deviceService.getDeviceInfo(
         ApiConfig.exampleDeviceSerial,
       );
       print(
-        'Device Info (\${ApiConfig.exampleDeviceSerial}): \$deviceInfoResponse',
+        'Device Info (${ApiConfig.exampleDeviceSerial}): $deviceInfoResponse',
       );
 
       print(
-        '\nCapturing picture from device: \${ApiConfig.exampleDeviceSerial}...',
+        '\nCapturing picture from device: ${ApiConfig.exampleDeviceSerial}...',
       );
       final captureResponse = await deviceService.capturePicture(
         ApiConfig.exampleDeviceSerial,
         channelNo: 1,
       );
-      print('Capture Picture Response: \$captureResponse');
+      print('Capture Picture Response: $captureResponse');
 
       print(
-        '\nGetting audio prompt status for device: \${ApiConfig.exampleDeviceSerial}...',
+        '\nGetting audio prompt status for device: ${ApiConfig.exampleDeviceSerial}...',
       );
       final audioPromptStatus = await deviceService.getAudioPromptStatus(
         ApiConfig.exampleDeviceSerial,
       );
-      print('Audio Prompt Status: \$audioPromptStatus');
+      print('Audio Prompt Status: $audioPromptStatus');
 
       // Example: Set defence mode (Arming)
       // print('\nSetting defence mode (Arm) for device: \${ApiConfig.exampleDeviceSerial}...');
@@ -59,14 +59,14 @@ void main() async {
 
     print('\nFetching timezone list...');
     final timezoneList = await deviceService.getTimezoneList();
-    print('Timezone List: \$timezoneList');
+    print('Timezone List: $timezoneList');
   } catch (e) {
     if (e is EzvizAuthException) {
-      print('EZVIZ Authentication Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ Authentication Error: ${e.message} (Code: ${e.code})');
     } else if (e is EzvizApiException) {
-      print('EZVIZ API Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ API Error: ${e.message} (Code: ${e.code})');
     } else {
-      print('An unexpected error occurred: \$e');
+      print('An unexpected error occurred: $e');
     }
   }
 }

@@ -19,12 +19,12 @@ void main() async {
 
   try {
     print(
-      'Fetching cloud storage info for device: \${ApiConfig.exampleDeviceSerial}...',
+      'Fetching cloud storage info for device: ${ApiConfig.exampleDeviceSerial}...',
     );
     final cloudInfoResponse = await cloudService.getCloudStorageInfo(
       ApiConfig.exampleDeviceSerial,
     );
-    print('Cloud Storage Info Response: \$cloudInfoResponse');
+    print('Cloud Storage Info Response: $cloudInfoResponse');
 
     // Example: Enable cloud storage (Use with caution and a valid, unused card password)
     // if (ApiConfig.exampleCloudCardPassword.isNotEmpty && ApiConfig.exampleCloudCardPassword != 'YOUR_CLOUD_CARD_PASSWORD') {
@@ -43,11 +43,11 @@ void main() async {
     // }
   } catch (e) {
     if (e is EzvizAuthException) {
-      print('EZVIZ Authentication Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ Authentication Error: ${e.message} (Code: ${e.code})');
     } else if (e is EzvizApiException) {
-      print('EZVIZ API Error: \${e.message} (Code: \${e.code})');
+      print('EZVIZ API Error: ${e.message} (Code: ${e.code})');
     } else {
-      print('An unexpected error occurred: \$e');
+      print('An unexpected error occurred: $e');
     }
   }
 }

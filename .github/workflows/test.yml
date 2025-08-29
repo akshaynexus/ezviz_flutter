@@ -65,7 +65,7 @@ jobs:
         echo "Coverage: ${COVERAGE}%"
 
         # Check if coverage meets threshold (15%)
-        if (( $(echo "$COVERAGE < 15 | bc -l) )); then
+        if (( $(echo "$COVERAGE < 15" | bc -l) )); then
           echo "Error: Coverage ${COVERAGE}% is below required 15%"
           exit 1
         else

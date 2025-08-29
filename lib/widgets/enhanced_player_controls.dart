@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ezviz_flutter/ezviz_recording.dart';
-import 'package:ezviz_flutter/ezviz_audio.dart';
 
 /// Enhanced Player Controls with recording, screenshot, and audio features
 class EnhancedPlayerControls extends StatefulWidget {
@@ -18,7 +16,7 @@ class EnhancedPlayerControls extends StatefulWidget {
   final int currentQuality;
 
   const EnhancedPlayerControls({
-    Key? key,
+    super.key,
     required this.isPlaying,
     this.isRecording = false,
     this.soundEnabled = false,
@@ -31,10 +29,10 @@ class EnhancedPlayerControls extends StatefulWidget {
     this.onFullScreenToggle,
     this.onQualityChange,
     this.currentQuality = 2,
-  }) : super(key: key);
+  });
 
   @override
-  _EnhancedPlayerControlsState createState() => _EnhancedPlayerControlsState();
+  State<EnhancedPlayerControls> createState() => _EnhancedPlayerControlsState();
 }
 
 class _EnhancedPlayerControlsState extends State<EnhancedPlayerControls>

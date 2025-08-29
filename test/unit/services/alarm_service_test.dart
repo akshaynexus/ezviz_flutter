@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ezviz_flutter/src/alarm/alarm_service.dart';
-import 'package:ezviz_flutter/src/ezviz_client.dart';
+// Removed unused import
 import '../../../test/test_utils.dart';
 
 void main() {
@@ -83,7 +83,7 @@ void main() {
         final expectedResponse = {'alarms': [], 'total': 0};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await alarmService.getAlarmList(
+        await alarmService.getAlarmList(
           deviceSerial: 'TEST123',
           status: 1, // Read
         );
@@ -103,7 +103,7 @@ void main() {
         final expectedResponse = {'alarms': [], 'total': 0};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await alarmService.getAlarmList(
+        await alarmService.getAlarmList(
           startTime: 1640995200000,
           endTime: 1672531199000,
         );
@@ -124,7 +124,7 @@ void main() {
         final expectedResponse = {'alarms': [], 'total': 0};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await alarmService.getAlarmList(
+        await alarmService.getAlarmList(
           alarmType: 5,
           status: 2,
         );
@@ -143,7 +143,7 @@ void main() {
         final expectedResponse = {'alarms': [], 'total': 0};
         mockClient.mockResponse = expectedResponse;
 
-        final result = await alarmService.getAlarmList(
+        await alarmService.getAlarmList(
           pageStart: 10,
           pageSize: 50,
         );
@@ -296,7 +296,7 @@ void main() {
         mockClient.mockResponse = {'alarms': [], 'total': 0};
 
         // Get alarms for specific device with time range
-        final result = await alarmService.getAlarmList(
+        await alarmService.getAlarmList(
           deviceSerial: 'CAMERA001',
           startTime: 1640995200000,
           endTime: 1672531199000,

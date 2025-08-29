@@ -34,11 +34,11 @@ class EzvizWifiConfigResult {
 
 /// Wi-Fi Configuration functionality for EZVIZ devices
 class EzvizWifiConfig {
-  static const MethodChannel _channel = const MethodChannel(
+  static const MethodChannel _channel = MethodChannel(
     EzvizChannelMethods.methodChannelName,
   );
 
-  static const EventChannel _configEventChannel = const EventChannel(
+  static const EventChannel _configEventChannel = EventChannel(
     'ezviz_flutter_wifi_config_event',
   );
 

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ezviz_flutter/src/ptz/ptz_service.dart';
-import 'package:ezviz_flutter/src/ezviz_client.dart';
+// Removed unused import
 import '../../../test/test_utils.dart';
 
 void main() {

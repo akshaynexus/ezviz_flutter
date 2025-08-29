@@ -1,7 +1,6 @@
 // Mock class for http.Client - manually created for testing
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
 

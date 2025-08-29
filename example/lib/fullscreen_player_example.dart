@@ -12,14 +12,14 @@ class FullscreenPlayerExample extends StatefulWidget {
   final String? encryptionPassword;
 
   const FullscreenPlayerExample({
-    Key? key,
+    super.key,
     required this.appKey,
     required this.appSecret,
     required this.accessToken,
     required this.deviceSerial,
     required this.channelNo,
     this.encryptionPassword,
-  }) : super(key: key);
+  });
 
   @override
   State<FullscreenPlayerExample> createState() => _FullscreenPlayerExampleState();
@@ -144,7 +144,7 @@ class _FullscreenPlayerExampleState extends State<FullscreenPlayerExample> {
 
 /// Usage example for the fullscreen player
 class FullscreenPlayerUsageExample extends StatelessWidget {
-  const FullscreenPlayerUsageExample({Key? key}) : super(key: key);
+  const FullscreenPlayerUsageExample({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -14,7 +14,7 @@ class PTZControlPanel extends StatefulWidget {
   final Widget? centerIcon;
 
   const PTZControlPanel({
-    Key? key,
+    super.key,
     this.onDirectionStart,
     this.onDirectionStop,
     this.onCenterTap,
@@ -23,10 +23,10 @@ class PTZControlPanel extends StatefulWidget {
     this.activeColor = Colors.blue,
     this.borderColor = Colors.white,
     this.centerIcon,
-  }) : super(key: key);
+  });
 
   @override
-  _PTZControlPanelState createState() => _PTZControlPanelState();
+  State<PTZControlPanel> createState() => _PTZControlPanelState();
 }
 
 class _PTZControlPanelState extends State<PTZControlPanel> {

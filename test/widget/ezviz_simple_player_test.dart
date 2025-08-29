@@ -262,8 +262,11 @@ void main() {
     });
     
     testWidgets('handles player callbacks', (tester) async {
+      // ignore: unused_local_variable
       var stateChangeCalled = false;
+      // ignore: unused_local_variable
       var passwordRequiredCalled = false;
+      // ignore: unused_local_variable
       var errorCalled = false;
       
       await tester.pumpWidget(

@@ -100,6 +100,7 @@ void main() {
     });
     
     testWidgets('responds to pan gestures', (tester) async {
+      // ignore: unused_local_variable
       var gestureDetected = false;
       
       await tester.pumpWidget(
