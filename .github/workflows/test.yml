@@ -1,0 +1,89 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: 3.24.0
+        channel: stable
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Analyze code
+      run: flutter analyze
+      
+    - name: Run tests with coverage
+      run: flutter test --coverage --reporter=expanded
+      
+    - name: Check for prohibited test patterns
+      run: |
+        # Check for skipped tests
+        if grep -r "skip:\|@Skip\|@Ignore\|\.skip" test/; then
+          echo "Error: Skipped tests found. All tests must run."
+          exit 1
+        fi
+        
+        # Check for trivial assertions
+        if grep -r "expect(true,\s*isTrue)\|expect(false,\s*isFalse)" test/; then
+          echo "Error: Trivial assertions found. Use meaningful assertions."
+          exit 1
+        fi
+        
+        # Check for mockito usage without justification
+        if find test/ -name "*.dart" -exec grep -l "import.*mockito" {} \; | while read file; do
+          if ! grep -q "MOCK-JUSTIFICATION:" "$file"; then
+            echo "Error: Mockito usage in $file lacks justification comment"
+            exit 1
+          fi
+        done; then
+          echo "All mockito usage properly justified"
+        fi
+      
+    - name: Verify coverage threshold
+      run: |
+        # Install lcov for coverage parsing
+        sudo apt-get update
+        sudo apt-get install -y lcov
+        
+        # Generate coverage report
+        genhtml coverage/lcov.info -o coverage/html
+        
+        # Parse coverage percentage
+        COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep "lines" | grep -o '[0-9.]*%' | head -1 | sed 's/%//')
+        echo "Coverage: ${COVERAGE}%"
+        
+        # Check if coverage meets threshold (92%)
+        if (( $(echo "$COVERAGE < 92.0" | bc -l) )); then
+          echo "Error: Coverage ${COVERAGE}% is below required 92%"
+          exit 1
+        else
+          echo "Coverage ${COVERAGE}% meets requirement"
+        fi
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: coverage/lcov.info
+        flags: unittests
+        fail_ci_if_error: false
+        
+    - name: Archive coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage/html
