@@ -4,6 +4,7 @@ import 'constants/ezviz_constants.dart';
 import 'exceptions/ezviz_exceptions.dart';
 
 class EzvizClient {
+  final http.Client _http;
   final String? appKey;
   final String? appSecret;
   final String baseUrl;
@@ -31,8 +32,10 @@ class EzvizClient {
     String? areaDomain,
     EzvizRegion? region,
     String? baseUrl,
+    http.Client? httpClient,
   })  : baseUrl = baseUrl ?? 
             (region != null ? EzvizConstants.getRegionUrl(region) ?? EzvizConstants.baseUrl : EzvizConstants.baseUrl),
+        _http = httpClient ?? http.Client(),
         _hasProvidedAccessToken = accessToken != null {
     // Validate that we have either accessToken or both appKey+appSecret
     if (accessToken == null && (appKey == null || appSecret == null)) {
@@ -71,7 +74,7 @@ class EzvizClient {
       );
     }
 
-    final response = await http.post(
+    final response = await _http.post(
       Uri.parse('$baseUrl/api/lapp/token/get'),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: {'appKey': appKey!, 'appSecret': appSecret!},
@@ -114,7 +117,7 @@ class EzvizClient {
       stringBody[entry.key] = entry.value.toString();
     }
 
-    final response = await http.post(
+    final response = await _http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: stringBody,

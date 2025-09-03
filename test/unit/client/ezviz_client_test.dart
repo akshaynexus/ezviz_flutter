@@ -4,6 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:ezviz_flutter/ezviz_flutter.dart';
 import '../../test_utils.dart';
+import 'dart:convert';
 
 // MOCK-JUSTIFICATION: HTTP client mocking is necessary because real HTTP requests
 // would be non-deterministic and require external network connectivity.
@@ -15,7 +16,111 @@ void main() {
   group('EzvizClient', () {
     late MockClient mockHttpClient;
     late TestClock testClock;
-    
+    group('authentication and post()', () {
+      test('authenticates successfully with appKey/appSecret', () async {
+        final mock = MockClient();
+        when(mock.post(
+          Uri.parse('${EzvizConstants.baseUrl}/api/lapp/token/get'),
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response(
+            jsonEncode({
+              'code': '200',
+              'msg': 'OK',
+              'data': {
+                'accessToken': 'tok',
+                'areaDomain': 'https://area.example.com',
+                'expireTime': DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch
+              }
+            }),
+            200));
+
+        when(mock.post(
+          Uri.parse('https://area.example.com/api/test'),
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response(
+            jsonEncode({
+              'code': '200',
+              'msg': 'OK',
+              'data': {'ok': true}
+            }),
+            200));
+
+        final client = EzvizClient(
+          appKey: 'key',
+          appSecret: 'secret',
+          httpClient: mock,
+        );
+
+        final res = await client.post('/api/test', {'x': 1});
+        expect(res['code'], '200');
+      });
+
+      test('post retries auth on token error when not provided token', () async {
+        final mock = MockClient();
+        // first auth
+        when(mock.post(
+          Uri.parse('${EzvizConstants.baseUrl}/api/lapp/token/get'),
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response(
+            jsonEncode({
+              'code': '200',
+              'msg': 'OK',
+              'data': {
+                'accessToken': 'tok1',
+                'areaDomain': null,
+                'expireTime': DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch
+              }
+            }),
+            200));
+
+        // first request returns token error; then second succeeds
+        int call = 0;
+        when(mock.post(
+          Uri.parse('${EzvizConstants.baseUrl}/api/failfirst'),
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async {
+          call++;
+          if (call == 1) {
+            return http.Response(jsonEncode({'code': '10001', 'msg': 'invalid token'}), 200);
+          }
+          return http.Response(jsonEncode({'code': '200', 'msg': 'OK', 'data': {}}), 200);
+        });
+
+        final client = EzvizClient(appKey: 'k', appSecret: 's', httpClient: mock);
+        final res = await client.post('/api/failfirst', {});
+        expect(res['code'], '200');
+        expect(call, 2);
+      });
+
+      test('post throws auth exception when provided token is invalid', () async {
+        final mock = MockClient();
+        when(mock.post(
+          Uri.parse('${EzvizConstants.baseUrl}/api/any'),
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response(
+            jsonEncode({'code': '10002', 'msg': 'expired'}), 200));
+
+        final client = EzvizClient(accessToken: 'tok', httpClient: mock);
+        expect(() => client.post('/api/any', {}), throwsA(isA<EzvizAuthException>()));
+      });
+
+      test('post throws api exception on non-200 http', () async {
+        final mock = MockClient();
+        when(mock.post(
+          Uri.parse('${EzvizConstants.baseUrl}/api/any'),
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('fail', 500));
+
+        final client = EzvizClient(accessToken: 'tok', httpClient: mock);
+        expect(() => client.post('/api/any', {}), throwsA(isA<EzvizApiException>()));
+      });
+    });
     setUp(() {
       mockHttpClient = MockClient();
       testClock = TestClock();
