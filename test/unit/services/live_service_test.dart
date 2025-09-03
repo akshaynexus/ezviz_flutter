@@ -114,6 +114,21 @@ void main() {
           reason: 'Should still include device serial with debug enabled',
         );
       });
+
+      test('debug prints branch when no code/password provided', () async {
+        final expectedResponse = {'url': 'rtmp://test.com/live'};
+        mockClient.mockResponse = expectedResponse;
+
+        await liveService.getPlayAddress(
+          'TEST123',
+          debug: true,
+        );
+
+        mockClient.lastBody.expectMeaningful(
+          equals({'deviceSerial': 'TEST123'}),
+          reason: 'No code/password branch should keep minimal body',
+        );
+      });
     });
 
     group('invalidatePlayAddress', () {

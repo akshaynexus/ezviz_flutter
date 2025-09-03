@@ -49,9 +49,8 @@ class EzvizAuthManager {
   /// Returns EzvizAccessToken object or null if no token cached
   static Future<EzvizAccessToken?> getAccessToken() async {
     try {
-      final Map<String, dynamic>? result = await _channel.invokeMethod(
-        EzvizChannelMethods.getAccessToken,
-      );
+      final result = await _channel
+          .invokeMapMethod<String, dynamic>(EzvizChannelMethods.getAccessToken);
 
       if (result != null) {
         return EzvizAccessToken.fromJson(result);
@@ -75,7 +74,8 @@ class EzvizAuthManager {
       );
 
       return result.map((areaData) {
-        return EzvizAreaInfo.fromJson(areaData as Map<String, dynamic>);
+        final map = Map<String, dynamic>.from(areaData as Map);
+        return EzvizAreaInfo.fromJson(map);
       }).toList();
     } catch (e) {
       ezvizLog('Error getting area list: $e');
