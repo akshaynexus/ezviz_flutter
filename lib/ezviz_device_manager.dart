@@ -161,7 +161,8 @@ class EzvizDeviceManager {
       );
 
       return result.map((recordData) {
-        return EzvizCloudRecordFile.fromJson(recordData as Map<String, dynamic>);
+        final map = Map<String, dynamic>.from(recordData as Map);
+        return EzvizCloudRecordFile.fromJson(map);
       }).toList();
     } catch (e) {
       ezvizLog('Error searching cloud record files: $e');
@@ -196,7 +197,8 @@ class EzvizDeviceManager {
       );
 
       return result.map((recordData) {
-        return EzvizDeviceRecordFile.fromJson(recordData as Map<String, dynamic>);
+        final map = Map<String, dynamic>.from(recordData as Map);
+        return EzvizDeviceRecordFile.fromJson(map);
       }).toList();
     } catch (e) {
       ezvizLog('Error searching device record files: $e');
