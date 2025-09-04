@@ -31,7 +31,8 @@ class EzvizDeviceManager {
       );
 
       return result.map<EzvizDeviceInfo>((deviceData) {
-        return EzvizDeviceInfo.fromJson(deviceData as Map<String, dynamic>);
+        final map = Map<String, dynamic>.from(deviceData as Map);
+        return EzvizDeviceInfo.fromJson(map);
       }).toList();
     } catch (e) {
       ezvizLog('Error getting device list: $e');
@@ -96,11 +97,9 @@ class EzvizDeviceManager {
   /// Returns EzvizProbeDeviceInfo object or null if failed
   static Future<EzvizProbeDeviceInfo?> probeDeviceInfo(String deviceSerial) async {
     try {
-      final Map<String, dynamic>? result = await _channel.invokeMethod(
+      final result = await _channel.invokeMapMethod<String, dynamic>(
         EzvizChannelMethods.probeDeviceInfo,
-        {
-          'deviceSerial': deviceSerial,
-        },
+        {'deviceSerial': deviceSerial},
       );
 
       if (result != null) {
@@ -121,13 +120,11 @@ class EzvizDeviceManager {
   /// Returns detailed device information
   static Future<Map<String, dynamic>?> getDeviceDetailInfo(String deviceSerial) async {
     try {
-      final Map<String, dynamic>? result = await _channel.invokeMethod(
+      final result = await _channel.invokeMapMethod<String, dynamic>(
         EzvizChannelMethods.getDeviceDetailInfo,
-        {
-          'deviceSerial': deviceSerial,
-        },
+        {'deviceSerial': deviceSerial},
       );
-      return result;
+      return result == null ? null : Map<String, dynamic>.from(result);
     } catch (e) {
       ezvizLog('Error getting device detail info: $e');
       return null;
