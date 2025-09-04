@@ -49,7 +49,7 @@ void main() {
     expect(await controller.stopLocalRecord(), isTrue);
     expect(await controller.isLocalRecording(), isTrue);
     expect(await controller.captureImage(), '/tmp/test.png');
-    expect(await controller.scalePlayWindow(1.2, 0.8), isTrue);
+    expect(await controller.scalePlayWindow(scaleX: 1.2, scaleY: 0.8), isTrue);
 
     // Error path
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -62,7 +62,7 @@ void main() {
     expect(await controller.stopLocalRecord(), isFalse);
     expect(await controller.isLocalRecording(), isFalse);
     expect(await controller.captureImage(), isNull);
-    expect(await controller.scalePlayWindow(1.0, 1.0), isFalse);
+    expect(await controller.scalePlayWindow(scaleX: 1.0, scaleY: 1.0), isFalse);
   });
 
   group('Playback utils', () {
@@ -99,4 +99,3 @@ void main() {
     });
   });
 }
-

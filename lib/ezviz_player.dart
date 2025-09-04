@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:core';
 
 import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
@@ -326,7 +327,12 @@ class _EzvizPlayerState extends State<EzvizPlayer>
   }
 
   Widget nativeView() {
-    if (defaultTargetPlatform == TargetPlatform.android) {
+    // Support both dart:io Platform and Flutter's defaultTargetPlatform to
+    // keep behavior correct across devices and host environments.
+    final bool isAndroid = !kIsWeb && (Platform.isAndroid || defaultTargetPlatform == TargetPlatform.android);
+    final bool isIOS = !kIsWeb && (Platform.isIOS || defaultTargetPlatform == TargetPlatform.iOS);
+
+    if (isAndroid) {
       return AndroidView(
         viewType: EzvizPlayerChannelMethods.methodChannelName,
         onPlatformViewCreated: onPlatformViewCreated,
@@ -334,7 +340,7 @@ class _EzvizPlayerState extends State<EzvizPlayer>
         hitTestBehavior: PlatformViewHitTestBehavior.opaque,
         gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{},
       );
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+    } else if (isIOS) {
       return UiKitView(
         viewType: EzvizPlayerChannelMethods.methodChannelName,
         onPlatformViewCreated: onPlatformViewCreated,
@@ -344,7 +350,7 @@ class _EzvizPlayerState extends State<EzvizPlayer>
       );
     } else {
       return Text(
-        '$defaultTargetPlatform is not yet supported by this plugin',
+        (kIsWeb ? 'web' : 'Current platform') + ' is not yet supported by this plugin',
       );
     }
   }
