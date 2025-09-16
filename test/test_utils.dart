@@ -213,6 +213,7 @@ class MockEzvizClient extends EzvizClient {
   }
 }
 
+
 /// Widget test helpers for pumping frames deterministically
 class WidgetTestHelpers {
   /// Pump frames for animation testing with fixed duration

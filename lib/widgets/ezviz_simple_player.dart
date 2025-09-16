@@ -799,7 +799,9 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
     }
     
     // Force a rebuild to recreate the video area
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
     
     debugPrint('🎆 Fullscreen toggle complete - was playing: $currentlyPlaying, state: $currentState');
   }
@@ -820,9 +822,11 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
     // Show controls initially and start auto-hide timer
-    setState(() {
-      _showControls = true;
-    });
+    if (mounted) {
+      setState(() {
+        _showControls = true;
+      });
+    }
     _startFullscreenControlsTimer();
     
     // If we were playing, ensure stream continues in fullscreen
@@ -849,9 +853,11 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
 
     // Reset controls
     _controlsTimer?.cancel();
-    setState(() {
-      _showControls = true;
-    });
+    if (mounted) {
+      setState(() {
+        _showControls = true;
+      });
+    }
     
     // If we were playing, ensure stream continues in portrait mode
     if (_state == EzvizSimplePlayerState.playing && _controller != null && !_isConnecting) {
