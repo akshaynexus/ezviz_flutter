@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - China: `https://open.ys7.com`
   - Singapore: `https://apiisgp.ezvizlife.com`
   - Americas: `https://isgpopen.ezviz.com`
+- **Background State Handling**: Fixed crash when toggling fullscreen while app is in background
 
 ### Changed
 - **⚠️ Breaking**: Region URLs updated to official endpoints (existing configurations may need updates)
