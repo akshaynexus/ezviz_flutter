@@ -8,12 +8,11 @@ import 'dart:io';
 class EzvizPlayerConfig {
   /// EZVIZ API configuration
   final String appKey;
-  final String appSecret;
+  final String? accessToken;
   final String? baseUrl;
   final EzvizRegion? region;
 
   /// Authentication credentials
-  final String? accessToken;
   final String? account;
   final String? password;
 
@@ -40,10 +39,9 @@ class EzvizPlayerConfig {
 
   const EzvizPlayerConfig({
     required this.appKey,
-    required this.appSecret,
     this.baseUrl,
     this.region,
-    this.accessToken,
+    required this.accessToken,
     this.account,
     this.password,
     this.autoPlay = true,
@@ -116,7 +114,7 @@ enum EzvizSimplePlayerState {
   passwordRequired,
 }
 
-class _EzvizSimplePlayerState extends State<EzvizSimplePlayer> 
+class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
     with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
   EzvizPlayerController? _controller;
   EzvizSimplePlayerState _state = EzvizSimplePlayerState.initializing;
@@ -162,7 +160,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
   void dispose() {
     _isDisposed = true;
     WidgetsBinding.instance.removeObserver(this);
-    
+
     // Cancel all timers first
     _connectionTimer?.cancel();
     _controlsTimer?.cancel();
@@ -181,11 +179,11 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    
+
     if (_isDisposed) return;
-    
+
     debugPrint('🔄 App lifecycle state changed: $state');
-    
+
     switch (state) {
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
@@ -197,11 +195,13 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
           _controller?.stopRealPlay();
         }
         break;
-        
+
       case AppLifecycleState.resumed:
         // App coming back to foreground
         debugPrint('🔄 App resuming - restoring state');
-        if (_controller != null && _wasPlayingBeforeBackground && !_isDisposed) {
+        if (_controller != null &&
+            _wasPlayingBeforeBackground &&
+            !_isDisposed) {
           Future.delayed(const Duration(milliseconds: 500), () {
             if (mounted && !_isDisposed) {
               _setupPlayerEventHandlers();
@@ -210,13 +210,13 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
           });
         }
         break;
-        
+
       case AppLifecycleState.inactive:
         // App temporarily inactive (e.g., during screen lock)
         debugPrint('🔄 App inactive - pausing operations');
         _controller?.removePlayerEventHandler();
         break;
-        
+
       case AppLifecycleState.hidden:
         // App hidden but still running
         debugPrint('🔄 App hidden - maintaining minimal state');
@@ -241,7 +241,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
       if (effectiveBaseUrl == null && widget.config.region != null) {
         effectiveBaseUrl = EzvizConstants.getRegionUrl(widget.config.region!);
       }
-      
+
       final initOptions = EzvizInitOptions(
         appKey: widget.config.appKey,
         accessToken: widget.config.accessToken ?? "",
@@ -421,7 +421,9 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
   /// Start live stream
   Future<void> _startLiveStream() async {
     if (_controller == null || _isConnecting || !mounted) {
-      debugPrint('⚠️ Cannot start stream: controller=${_controller != null}, connecting=$_isConnecting, mounted=$mounted');
+      debugPrint(
+        '⚠️ Cannot start stream: controller=${_controller != null}, connecting=$_isConnecting, mounted=$mounted',
+      );
       return;
     }
 
@@ -511,7 +513,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
     try {
       _connectionTimer?.cancel();
       _isConnecting = false;
-      
+
       // Stop the stream
       final success = await _controller!.stopRealPlay();
       if (success) {
@@ -651,7 +653,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
 
   /// Public getter for audio state - can be accessed from external widgets
   bool get isAudioEnabled => _soundEnabled;
-  
+
   /// Public getter for the controller - can be accessed from external widgets
   EzvizPlayerController? get controller => _controller;
 
@@ -789,7 +791,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
     // Store current state before transition
     final currentlyPlaying = _isPlaying;
     final currentState = _state;
-    
+
     if (isFullScreen) {
       // Exit fullscreen
       await _exitFullscreen();
@@ -797,19 +799,23 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
       // Enter fullscreen
       await _enterFullscreen();
     }
-    
+
     // Force a rebuild to recreate the video area
     if (mounted) {
       setState(() {});
     }
-    
-    debugPrint('🎆 Fullscreen toggle complete - was playing: $currentlyPlaying, state: $currentState');
+
+    debugPrint(
+      '🎆 Fullscreen toggle complete - was playing: $currentlyPlaying, state: $currentState',
+    );
   }
 
   /// Enter fullscreen mode
   Future<void> _enterFullscreen() async {
-    debugPrint('🎆 Entering fullscreen mode - current state: $_state, isPlaying: $_isPlaying');
-    
+    debugPrint(
+      '🎆 Entering fullscreen mode - current state: $_state, isPlaying: $_isPlaying',
+    );
+
     // Set landscape orientation
     DeviceOrientation deviceOrientation = DeviceOrientation.landscapeLeft;
     if (Platform.isIOS) {
@@ -828,17 +834,21 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
       });
     }
     _startFullscreenControlsTimer();
-    
+
     // If we were playing, ensure stream continues in fullscreen
-    if (_state == EzvizSimplePlayerState.playing && _controller != null && !_isConnecting) {
+    if (_state == EzvizSimplePlayerState.playing &&
+        _controller != null &&
+        !_isConnecting) {
       debugPrint('🎆 Stream was playing, ensuring continuation in fullscreen');
     }
   }
 
   /// Exit fullscreen mode
   Future<void> _exitFullscreen() async {
-    debugPrint('🎆 Exiting fullscreen mode - current state: $_state, isPlaying: $_isPlaying');
-    
+    debugPrint(
+      '🎆 Exiting fullscreen mode - current state: $_state, isPlaying: $_isPlaying',
+    );
+
     // Restore portrait orientation
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -858,10 +868,14 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
         _showControls = true;
       });
     }
-    
+
     // If we were playing, ensure stream continues in portrait mode
-    if (_state == EzvizSimplePlayerState.playing && _controller != null && !_isConnecting) {
-      debugPrint('🎆 Stream was playing, ensuring continuation in portrait mode');
+    if (_state == EzvizSimplePlayerState.playing &&
+        _controller != null &&
+        !_isConnecting) {
+      debugPrint(
+        '🎆 Stream was playing, ensuring continuation in portrait mode',
+      );
     }
   }
 
@@ -1026,11 +1040,11 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
+
     if (_isDisposed) {
       return Container(color: Colors.black);
     }
-    
+
     if (isFullScreen) {
       // Fullscreen mode - return a widget that takes over the parent's constraints
       return PopScope(
@@ -1093,7 +1107,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
     if (_isDisposed) {
       return Container(color: Colors.black);
     }
-    
+
     if (_state == EzvizSimplePlayerState.error) {
       return _buildErrorWidget();
     } else if (_state == EzvizSimplePlayerState.initializing ||
@@ -1104,7 +1118,7 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
       return _buildSafePlatformView();
     }
   }
-  
+
   /// Build safe platform view with error handling
   Widget _buildSafePlatformView() {
     try {
@@ -1118,21 +1132,25 @@ class _EzvizSimplePlayerState extends State<EzvizSimplePlayer>
         child: EzvizPlayer(
           onCreated: (controller) {
             if (_isDisposed) return;
-            
+
             // Always reinitialize if controller is null or different
             // This handles fullscreen transitions properly
             if (_controller == null || _controller != controller) {
               final wasPlaying = _isPlaying;
               debugPrint('🎆 Creating new controller, wasPlaying: $wasPlaying');
-              
+
               _controller = controller;
               _setupPlayerEventHandlers();
               _initializePlayer().then((_) {
                 if (_isDisposed) return;
-                
+
                 // If we were playing before, restart the stream
-                if (wasPlaying && _state != EzvizSimplePlayerState.playing && !_isConnecting) {
-                  debugPrint('🎆 Restarting stream after controller recreation');
+                if (wasPlaying &&
+                    _state != EzvizSimplePlayerState.playing &&
+                    !_isConnecting) {
+                  debugPrint(
+                    '🎆 Restarting stream after controller recreation',
+                  );
                   _startLiveStream();
                 }
               });

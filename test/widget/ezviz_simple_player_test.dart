@@ -9,13 +9,13 @@ void main() {
   group('EzvizSimplePlayer Widget', () {
     const testConfig = EzvizPlayerConfig(
       appKey: 'test_key',
-      appSecret: 'test_secret',
+      accessToken: 'test_access_token',
       autoPlay: false, // Disable auto-play for testing
     );
-    
+
     const testDeviceSerial = 'TEST123456';
     const testChannelNo = 1;
-    
+
     testWidgets('renders with minimal required properties', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -28,22 +28,22 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'EzvizSimplePlayer should be rendered',
       );
     });
-    
+
     testWidgets('renders with region configuration', (tester) async {
       const regionConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         region: EzvizRegion.usa,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -55,22 +55,22 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'EzvizSimplePlayer should render with region config',
       );
     });
-    
+
     testWidgets('renders with custom base URL', (tester) async {
       const customConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         baseUrl: 'https://custom.example.com',
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -82,22 +82,21 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'EzvizSimplePlayer should render with custom base URL',
       );
     });
-    
+
     testWidgets('renders with access token authentication', (tester) async {
       const tokenConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
         accessToken: 'test_access_token',
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -109,23 +108,23 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'EzvizSimplePlayer should render with access token',
       );
     });
-    
+
     testWidgets('renders with account/password authentication', (tester) async {
       const credentialsConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         account: 'test@example.com',
         password: 'test_password',
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -137,22 +136,22 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'EzvizSimplePlayer should render with account/password',
       );
     });
-    
+
     testWidgets('shows controls when enabled', (tester) async {
       const configWithControls = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         showControls: true,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -164,7 +163,7 @@ void main() {
           ),
         ),
       );
-      
+
       // Should contain player widget
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
@@ -172,15 +171,15 @@ void main() {
         reason: 'Player should render with controls enabled',
       );
     });
-    
+
     testWidgets('hides controls when disabled', (tester) async {
       const configWithoutControls = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         showControls: false,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -192,26 +191,26 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with controls disabled',
       );
     });
-    
+
     testWidgets('renders with custom loading widget', (tester) async {
       const customLoadingWidget = CircularProgressIndicator(
         key: Key('custom_loading'),
       );
-      
+
       const configWithCustomLoading = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         loadingWidget: customLoadingWidget,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -223,27 +222,24 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with custom loading widget',
       );
     });
-    
+
     testWidgets('renders with custom error widget', (tester) async {
-      const customErrorWidget = Icon(
-        Icons.error,
-        key: Key('custom_error'),
-      );
-      
+      const customErrorWidget = Icon(Icons.error, key: Key('custom_error'));
+
       const configWithCustomError = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         errorWidget: customErrorWidget,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -255,14 +251,14 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with custom error widget',
       );
     });
-    
+
     testWidgets('handles player callbacks', (tester) async {
       // ignore: unused_local_variable
       var stateChangeCalled = false;
@@ -270,7 +266,7 @@ void main() {
       var passwordRequiredCalled = false;
       // ignore: unused_local_variable
       var errorCalled = false;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -288,26 +284,26 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with callbacks configured',
       );
-      
+
       // Test that callbacks are properly assigned (can't easily trigger them in unit tests)
       // This tests that the widget accepts the callbacks without errors
     });
-    
+
     testWidgets('renders with fullscreen settings', (tester) async {
       const fullscreenConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         allowFullscreen: true,
         autoRotate: true,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -319,24 +315,24 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with fullscreen settings',
       );
     });
-    
+
     testWidgets('renders with gesture settings', (tester) async {
       const gestureConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         enableDoubleTapSeek: true,
         enableSwipeSeek: true,
         hideControlsOnTap: true,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -348,22 +344,22 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with gesture settings',
       );
     });
-    
+
     testWidgets('renders with audio settings', (tester) async {
       const audioConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         enableAudio: true,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -375,23 +371,23 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with audio enabled',
       );
     });
-    
+
     testWidgets('renders with compact controls', (tester) async {
       const compactConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         compactControls: true,
         showControls: true,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -403,22 +399,22 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with compact controls',
       );
     });
-    
+
     testWidgets('renders with device info enabled', (tester) async {
       const deviceInfoConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         showDeviceInfo: true,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -430,23 +426,23 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with device info enabled',
       );
     });
-    
+
     testWidgets('renders with custom UI colors', (tester) async {
       const colorConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         controlsBackgroundColor: Colors.black54,
         controlsIconColor: Colors.white,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -458,14 +454,14 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render with custom colors',
       );
     });
-    
+
     testWidgets('handles widget disposal correctly', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -478,26 +474,20 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should render initially',
       );
-      
+
       // Remove the widget to test disposal
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Container(),
-          ),
-        ),
-      );
-      
+      await tester.pumpWidget(MaterialApp(home: Scaffold(body: Container())));
+
       // Should dispose without errors
       await tester.pump();
     });
-    
+
     testWidgets('maintains state during configuration updates', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -510,15 +500,15 @@ void main() {
           ),
         ),
       );
-      
+
       // Update with different configuration
       const updatedConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         enableAudio: false,
         autoPlay: false,
       );
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -530,14 +520,14 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
         reason: 'Player should handle configuration updates',
       );
     });
-    
+
     testWidgets('validates required parameters', (tester) async {
       // Test that the widget requires essential parameters
       await tester.pumpWidget(
@@ -551,7 +541,7 @@ void main() {
           ),
         ),
       );
-      
+
       final playerFinder = find.byType(EzvizSimplePlayer);
       playerFinder.expectMeaningful(
         findsOneWidget,
@@ -559,48 +549,47 @@ void main() {
       );
     });
   });
-  
+
   group('EzvizPlayerConfig', () {
     test('creates config with minimal required parameters', () {
       const config = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
       );
-      
+
       config.appKey.expectMeaningful(
         equals('test_key'),
         reason: 'Config should store appKey',
       );
-      
-      config.appSecret.expectMeaningful(
-        equals('test_secret'),
-        reason: 'Config should store appSecret',
+
+      config.accessToken.expectMeaningful(
+        equals('test_access_token'),
+        reason: 'Config should store accessToken',
       );
-      
+
       // Test defaults
       config.autoPlay.expectMeaningful(
         isTrue,
         reason: 'autoPlay should default to true',
       );
-      
+
       config.enableAudio.expectMeaningful(
         isTrue,
         reason: 'enableAudio should default to true',
       );
-      
+
       config.showControls.expectMeaningful(
         isTrue,
         reason: 'showControls should default to true',
       );
     });
-    
+
     test('creates config with all parameters', () {
       const config = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         baseUrl: 'https://custom.example.com',
         region: EzvizRegion.usa,
-        accessToken: 'test_token',
         account: 'test@example.com',
         password: 'test_password',
         autoPlay: false,
@@ -618,22 +607,22 @@ void main() {
         controlsIconColor: Colors.white,
         controlsHideTimeout: Duration(seconds: 5),
       );
-      
+
       config.baseUrl.expectMeaningful(
         equals('https://custom.example.com'),
         reason: 'Config should store custom baseUrl',
       );
-      
+
       config.region.expectMeaningful(
         equals(EzvizRegion.usa),
         reason: 'Config should store region',
       );
-      
+
       config.autoPlay.expectMeaningful(
         isFalse,
         reason: 'Config should respect autoPlay setting',
       );
-      
+
       config.compactControls.expectMeaningful(
         isTrue,
         reason: 'Config should respect compactControls setting',
@@ -642,14 +631,16 @@ void main() {
   });
 
   group('Fullscreen Edge Cases', () {
-    testWidgets('setState calls are protected with mounted checks', (tester) async {
+    testWidgets('setState calls are protected with mounted checks', (
+      tester,
+    ) async {
       // This test verifies that our fix prevents the null check operator crash
       // by ensuring setState is only called when the widget is mounted
       // The test simulates a scenario where the widget is disposed during async operations
 
       const testConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         autoPlay: false,
         allowFullscreen: true,
         showControls: false, // Disable external controls
@@ -704,8 +695,12 @@ void main() {
           await Future.delayed(const Duration(milliseconds: 50));
           if (playerState.mounted) {
             // This simulates what _enterFullscreen does
-            await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-            await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+            await SystemChrome.setPreferredOrientations([
+              DeviceOrientation.landscapeLeft,
+            ]);
+            await SystemChrome.setEnabledSystemUIMode(
+              SystemUiMode.immersiveSticky,
+            );
           }
         });
 
@@ -723,12 +718,14 @@ void main() {
       expect(find.byType(EzvizSimplePlayer), findsNothing);
     });
 
-    testWidgets('handles widget disposal during async operations', (tester) async {
+    testWidgets('handles widget disposal during async operations', (
+      tester,
+    ) async {
       // Test that the widget handles disposal gracefully during async operations
 
       const testConfig = EzvizPlayerConfig(
         appKey: 'test_key',
-        appSecret: 'test_secret',
+        accessToken: 'test_access_token',
         autoPlay: false,
         allowFullscreen: true,
         showControls: false,
@@ -753,9 +750,7 @@ void main() {
       // This simulates what happens when user navigates during fullscreen transitions
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: Center(child: Text('Widget Disposed')),
-          ),
+          home: Scaffold(body: Center(child: Text('Widget Disposed'))),
         ),
       );
 
