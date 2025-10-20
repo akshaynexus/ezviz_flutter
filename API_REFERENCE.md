@@ -93,7 +93,6 @@ EzvizSimplePlayer(
   channelNo: 1,
   config: EzvizPlayerConfig(
     appKey: 'APP_KEY',
-    appSecret: 'APP_SECRET',
     accessToken: 'ACCESS_TOKEN',
     autoPlay: true,
     enableAudio: true,

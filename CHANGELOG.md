@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.2.6] - 2025-10-21
+### Changed
+- **⚠️ Breaking**: Removed `appSecret` parameter from `EzvizPlayerConfig`
+  - `appSecret` was not being used internally and has been removed to simplify configuration
+  - Only `appKey` and `accessToken` are now required for `EzvizPlayerConfig`
+  - This only affects `EzvizSimplePlayer` and `EzvizPlayer` - `EzvizClient` still requires `appSecret`
+
+
 ## [1.2.5] 2025-08-30
 ### Added
 - **Region Configuration System**: Simple enum-based region selection

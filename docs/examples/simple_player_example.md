@@ -33,7 +33,6 @@ class MinimalVideoPlayer extends StatelessWidget {
         channelNo: 1,
         config: EzvizPlayerConfig(
           appKey: 'YOUR_APP_KEY',
-          appSecret: 'YOUR_APP_SECRET',
           accessToken: 'YOUR_ACCESS_TOKEN',
         ),
       ),
@@ -57,7 +56,6 @@ class StandardVideoPlayer extends StatelessWidget {
         channelNo: 1,
         config: EzvizPlayerConfig(
           appKey: 'YOUR_APP_KEY',
-          appSecret: 'YOUR_APP_SECRET',
           accessToken: 'YOUR_ACCESS_TOKEN',
           autoPlay: true,
           enableAudio: true,
@@ -159,7 +157,6 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
               channelNo: 1,
               config: EzvizPlayerConfig(
                 appKey: 'YOUR_APP_KEY',
-                appSecret: 'YOUR_APP_SECRET',
                 accessToken: 'YOUR_ACCESS_TOKEN',
                 autoPlay: true,
                 enableAudio: true,
@@ -429,15 +426,14 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
 EzvizPlayerConfig(
   // Required credentials
   appKey: 'YOUR_APP_KEY',
-  appSecret: 'YOUR_APP_SECRET', 
   accessToken: 'YOUR_ACCESS_TOKEN',
-  
+
   // Behavior settings
   autoPlay: true,              // Start playing automatically
   enableAudio: true,           // Enable audio by default
   showControls: true,          // Show built-in controls
   enableEncryptionDialog: true, // Auto-handle encrypted cameras
-  
+
   // UI customization
   loadingWidget: CustomWidget(),     // Custom loading indicator
   errorWidget: CustomErrorWidget(),  // Custom error display
@@ -478,7 +474,6 @@ class _StateAwarePlayerState extends State<StateAwarePlayer> {
       channelNo: 1,
       config: EzvizPlayerConfig(
         appKey: 'YOUR_APP_KEY',
-        appSecret: 'YOUR_APP_SECRET',
         accessToken: 'YOUR_ACCESS_TOKEN',
       ),
       onStateChanged: (state) {
@@ -577,12 +572,10 @@ class CredentialManager {
   
   static Future<EzvizPlayerConfig> loadConfig() async {
     final appKey = await _storage.read(key: 'ezviz_app_key');
-    final appSecret = await _storage.read(key: 'ezviz_app_secret');
     final accessToken = await _storage.read(key: 'ezviz_access_token');
-    
+
     return EzvizPlayerConfig(
       appKey: appKey ?? '',
-      appSecret: appSecret ?? '',
       accessToken: accessToken ?? '',
     );
   }
@@ -614,7 +607,6 @@ class _OptimizedPlayerState extends State<OptimizedPlayer>
       channelNo: 1,
       config: EzvizPlayerConfig(
         appKey: 'YOUR_APP_KEY',
-        appSecret: 'YOUR_APP_SECRET',
         accessToken: 'YOUR_ACCESS_TOKEN',
         autoPlay: false, // Don't auto-play for better control
       ),
@@ -652,7 +644,6 @@ class MultiCameraView extends StatelessWidget {
             channelNo: 1,
             config: EzvizPlayerConfig(
               appKey: 'YOUR_APP_KEY',
-              appSecret: 'YOUR_APP_SECRET',
               accessToken: 'YOUR_ACCESS_TOKEN',
               autoPlay: true,
               enableAudio: false, // Disable audio for multi-camera
@@ -683,7 +674,6 @@ class FullscreenPlayer extends StatelessWidget {
               channelNo: 1,
               config: EzvizPlayerConfig(
                 appKey: 'YOUR_APP_KEY',
-                appSecret: 'YOUR_APP_SECRET',
                 accessToken: 'YOUR_ACCESS_TOKEN',
                 autoPlay: true,
                 enableAudio: true,

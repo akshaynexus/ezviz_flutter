@@ -51,7 +51,6 @@ class _SimplePlayerExampleState extends State<SimplePlayerExample> {
                 channelNo: 1,
                 config: EzvizPlayerConfig(
                   appKey: 'YOUR_APP_KEY', // Replace with your app key
-                  appSecret: 'YOUR_APP_SECRET', // Replace with your app secret
                   accessToken:
                       'YOUR_ACCESS_TOKEN', // Replace with your access token
                   autoPlay: true,
@@ -192,7 +191,6 @@ class MinimalPlayerExample extends StatelessWidget {
         channelNo: 1,
         config: const EzvizPlayerConfig(
           appKey: 'YOUR_APP_KEY',
-          appSecret: 'YOUR_APP_SECRET',
           accessToken: 'YOUR_ACCESS_TOKEN',
           allowFullscreen: true, // Enable fullscreen support
         ),
@@ -245,7 +243,6 @@ class _AdvancedPlayerExampleState extends State<AdvancedPlayerExample> {
               channelNo: 1,
               config: EzvizPlayerConfig(
                 appKey: 'YOUR_APP_KEY',
-                appSecret: 'YOUR_APP_SECRET',
                 accessToken: 'YOUR_ACCESS_TOKEN',
                 autoPlay: true,
                 enableAudio: true,

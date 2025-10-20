@@ -32,7 +32,7 @@ EzvizSimplePlayer(
   channelNo: 1,
   config: EzvizPlayerConfig(
     appKey: 'YOUR_APP_KEY',
-    appSecret: 'YOUR_APP_SECRET',
+    accessToken: 'YOUR_ACCESS_TOKEN',
     region: EzvizRegion.usa,  // Optional: per-instance region
   ),
 )
