@@ -13,10 +13,10 @@ EzvizConstants.setRegion(EzvizRegion.europe);  // Match your account region!
 
 **Quick region guide** (Official EZVIZ domains):
 - Europe/UK/Germany → `EzvizRegion.europe`
-- USA/Canada/North America → `EzvizRegion.usa` 
+- USA/Canada/North America → `EzvizRegion.northAmerica`
 - India/South Asia → `EzvizRegion.india`
 - Singapore/Southeast Asia → `EzvizRegion.singapore`
-- Americas General → `EzvizRegion.americas`
+- Mexico/Brazil/South America → `EzvizRegion.southAmerica`
 - China → `EzvizRegion.china`
 - Russia → `EzvizRegion.russia`
 
@@ -61,8 +61,11 @@ EzvizConstants.setRegion(EzvizRegion.europe);  // Match your account region!
 // If account created in Europe/Germany/UK/etc
 EzvizConstants.setRegion(EzvizRegion.europe);
 
-// If account created in USA/Americas
-EzvizConstants.setRegion(EzvizRegion.usa);
+// If account created in USA/Canada/North America
+EzvizConstants.setRegion(EzvizRegion.northAmerica);
+
+// If account created in Mexico/Brazil/South America
+EzvizConstants.setRegion(EzvizRegion.southAmerica);
 
 // If account created in India/Singapore/South Asia
 EzvizConstants.setRegion(EzvizRegion.india);
@@ -248,10 +251,10 @@ EzvizConstants.setRegion(EzvizRegion.russia);
 | Account Created In | Use Region | Example Countries | Official Domain |
 |-------------------|------------|-------------------|-----------------|
 | Europe/EU | `EzvizRegion.europe` | Germany, UK, France, Netherlands, Spain | `open.ezvizlife.com` |
-| USA/North America | `EzvizRegion.usa` | USA, Canada | `apius.ezvizlife.com` |
+| USA/North America | `EzvizRegion.northAmerica` | USA, Canada | `apius.ezvizlife.com` |
 | India/South Asia | `EzvizRegion.india` | India, Bangladesh, Sri Lanka | `iindiaopen.ezvizlife.com` |
 | Singapore/SEA | `EzvizRegion.singapore` | Singapore, Malaysia, Thailand | `apiisgp.ezvizlife.com` |
-| Americas General | `EzvizRegion.americas` | Mexico, Brazil, Latin America | `isgpopen.ezviz.com` |
+| Mexico/South America | `EzvizRegion.southAmerica` | Mexico, Brazil, Argentina, Colombia | `isgpopen.ezviz.com` |
 | China | `EzvizRegion.china` | China, Hong Kong | `open.ys7.com` |
 | Russia/CIS | `EzvizRegion.russia` | Russia, Kazakhstan, Belarus | `iruopen.ezvizlife.com` |
 
@@ -267,7 +270,7 @@ EzvizConstants.setRegion(EzvizRegion.europe);  // Example for EU accounts
 EzvizClient(
   appKey: 'KEY',
   appSecret: 'SECRET',
-  region: EzvizRegion.usa,  // Example for US accounts
+  region: EzvizRegion.northAmerica,  // Example for US accounts
 )
 ```
 
@@ -281,9 +284,9 @@ EzvizClient(
 - `EzvizRegion.india` - India, South Asia
 - `EzvizRegion.china` - China (mainland)
 - `EzvizRegion.europe` - European regions
-- `EzvizRegion.usa` - USA, North America  
+- `EzvizRegion.northAmerica` - USA, Canada, North America
 - `EzvizRegion.singapore` - Singapore, Southeast Asia
-- `EzvizRegion.americas` - General Americas coverage
+- `EzvizRegion.southAmerica` - Mexico, Brazil, South America
 - `EzvizRegion.russia` - Russia, CIS countries
 
 **Q: Custom endpoint needed?**

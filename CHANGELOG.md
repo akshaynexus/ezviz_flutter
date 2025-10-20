@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Region Configuration System**: Simple enum-based region selection
   - Added `EzvizConstants.setRegion(EzvizRegion.europe)` for easy global configuration
   - Added `region` parameter to `EzvizClient` and `EzvizSimplePlayer` constructors
-- **New Regions**: Added `EzvizRegion.singapore` and `EzvizRegion.americas` support
+- **New Regions**: Added `EzvizRegion.singapore`, `EzvizRegion.northAmerica`, and `EzvizRegion.southAmerica` support
 
 ### Fixed
 - **API Endpoints**: Updated all region URLs to official EZVIZ domains

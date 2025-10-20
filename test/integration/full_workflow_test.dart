@@ -3,40 +3,42 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ezviz_flutter/ezviz_flutter.dart';
 
 void main() {
-  
   group('Full Workflow Integration Tests', () {
     testWidgets('Complete EZVIZ region configuration workflow', (tester) async {
       await tester.pumpWidget(EzvizWorkflowTestApp());
       await tester.pumpAndSettle();
-      
+
       // Initial state - should show default region
       expect(find.text('Current Region: EUROPE'), findsOneWidget);
       expect(find.text('URL: https://open.ezvizlife.com'), findsOneWidget);
-      
+
       // Test region change to India
       await tester.tap(find.byKey(Key('india_button')));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Current Region: INDIA'), findsOneWidget);
-      expect(find.text('URL: https://iindiaopen.ezvizlife.com'), findsOneWidget);
-      
-      // Test region change to USA
-      await tester.tap(find.byKey(Key('usa_button')));
+      expect(
+        find.text('URL: https://iindiaopen.ezvizlife.com'),
+        findsOneWidget,
+      );
+
+      // Test region change to North America
+      await tester.tap(find.byKey(Key('north_america_button')));
       await tester.pumpAndSettle();
-      
-      expect(find.text('Current Region: USA'), findsOneWidget);
-      expect(find.text('URL: https://apius.ezvizlife.com'), findsOneWidget);
-      
+
+      expect(find.text('Current Region: North America'), findsOneWidget);
+      expect(find.text('URL: https://iusopen.ezvizlife.com'), findsOneWidget);
+
       // Test custom URL
       await tester.tap(find.byKey(Key('custom_url_button')));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('URL: https://custom.example.com'), findsOneWidget);
-      
+
       // Test client creation with different configurations
       await tester.tap(find.byKey(Key('create_client_button')));
       await tester.pumpAndSettle();
-      
+
       // Check what text is actually displayed
       final clientTextWidgets = find.textContaining('Client');
       if (clientTextWidgets.evaluate().isEmpty) {
@@ -47,50 +49,50 @@ void main() {
         expect(clientTextWidgets, findsAtLeastNWidgets(1));
       }
     });
-    
+
     testWidgets('PTZ control panel interaction workflow', (tester) async {
       await tester.pumpWidget(PTZTestApp());
       await tester.pumpAndSettle();
-      
+
       // Initial state
       expect(find.byType(PTZControlPanel), findsOneWidget);
       expect(find.text('No Direction'), findsOneWidget);
-      
+
       // Test that the PTZ control panel is interactive
       final ptzPanel = find.byType(PTZControlPanel);
-      
+
       // Test center tap - verify tap gesture is detected
       await tester.tap(ptzPanel);
       await tester.pumpAndSettle();
-      
-      // Test drag gesture - verify drag is handled without crashes  
+
+      // Test drag gesture - verify drag is handled without crashes
       await tester.drag(ptzPanel, Offset(50, 0));
       await tester.pumpAndSettle();
-      
+
       // Widget should remain functional and stable after interactions
       expect(find.byType(PTZControlPanel), findsOneWidget);
     });
-    
+
     testWidgets('Exception handling workflow', (tester) async {
       await tester.pumpWidget(ExceptionTestApp());
       await tester.pumpAndSettle();
-      
+
       // Test authentication exception
       await tester.tap(find.byKey(Key('auth_exception_button')));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Auth Error: Authentication failed'), findsOneWidget);
-      
+
       // Test API exception
       await tester.tap(find.byKey(Key('api_exception_button')));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('API Error: Server unavailable'), findsOneWidget);
-      
+
       // Test generic exception
       await tester.tap(find.byKey(Key('generic_exception_button')));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Generic Error: Unknown error'), findsOneWidget);
     });
   });
@@ -105,7 +107,7 @@ class EzvizWorkflowTestAppState extends State<EzvizWorkflowTestApp> {
   String currentRegion = 'EUROPE';
   String currentUrl = EzvizConstants.baseUrl;
   String clientStatus = 'No Client';
-  
+
   void _setRegion(EzvizRegion region, String name) {
     EzvizConstants.setRegion(region);
     setState(() {
@@ -113,7 +115,7 @@ class EzvizWorkflowTestAppState extends State<EzvizWorkflowTestApp> {
       currentUrl = EzvizConstants.baseUrl;
     });
   }
-  
+
   void _setCustomUrl() {
     const customUrl = 'https://custom.example.com';
     EzvizConstants.setBaseUrl(customUrl);
@@ -121,13 +123,10 @@ class EzvizWorkflowTestAppState extends State<EzvizWorkflowTestApp> {
       currentUrl = customUrl;
     });
   }
-  
+
   void _createClient() {
     try {
-      EzvizClient(
-        appKey: 'test_key',
-        appSecret: 'test_secret',
-      );
+      EzvizClient(appKey: 'test_key', appSecret: 'test_secret');
       setState(() {
         clientStatus = 'Client Created Successfully';
       });
@@ -137,7 +136,7 @@ class EzvizWorkflowTestAppState extends State<EzvizWorkflowTestApp> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -157,9 +156,10 @@ class EzvizWorkflowTestAppState extends State<EzvizWorkflowTestApp> {
                 child: Text('Set India'),
               ),
               ElevatedButton(
-                key: Key('usa_button'),
-                onPressed: () => _setRegion(EzvizRegion.usa, 'USA'),
-                child: Text('Set USA'),
+                key: Key('north_america_button'),
+                onPressed: () =>
+                    _setRegion(EzvizRegion.northAmerica, 'North America'),
+                child: Text('Set North America'),
               ),
               ElevatedButton(
                 key: Key('custom_url_button'),
@@ -186,7 +186,7 @@ class PTZTestApp extends StatefulWidget {
 
 class PTZTestAppState extends State<PTZTestApp> {
   String status = 'No Direction';
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -231,7 +231,7 @@ class ExceptionTestApp extends StatefulWidget {
 
 class ExceptionTestAppState extends State<ExceptionTestApp> {
   String errorMessage = 'No Error';
-  
+
   void _testAuthException() {
     try {
       throw EzvizAuthException('Authentication failed', code: '10001');
@@ -241,7 +241,7 @@ class ExceptionTestAppState extends State<ExceptionTestApp> {
       });
     }
   }
-  
+
   void _testApiException() {
     try {
       throw EzvizApiException('Server unavailable', code: '30003');
@@ -251,7 +251,7 @@ class ExceptionTestAppState extends State<ExceptionTestApp> {
       });
     }
   }
-  
+
   void _testGenericException() {
     try {
       throw EzvizException('Unknown error');
@@ -261,7 +261,7 @@ class ExceptionTestAppState extends State<ExceptionTestApp> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

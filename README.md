@@ -33,7 +33,7 @@ EzvizSimplePlayer(
   config: EzvizPlayerConfig(
     appKey: 'YOUR_APP_KEY',
     accessToken: 'YOUR_ACCESS_TOKEN',
-    region: EzvizRegion.usa,  // Optional: per-instance region
+    region: EzvizRegion.northAmerica,  // Optional: per-instance region
   ),
 )
 ```
@@ -47,7 +47,7 @@ Your EZVIZ account is tied to a specific region. Set the correct one:
 ```dart
 // Choose your region
 EzvizConstants.setRegion(EzvizRegion.europe);      // Europe
-EzvizConstants.setRegion(EzvizRegion.usa);         // USA/Canada
+EzvizConstants.setRegion(EzvizRegion.northAmerica);         // USA/Canada
 EzvizConstants.setRegion(EzvizRegion.india);       // India/South Asia
 EzvizConstants.setRegion(EzvizRegion.singapore);   // Singapore/SEA
 EzvizConstants.setRegion(EzvizRegion.china);       // China

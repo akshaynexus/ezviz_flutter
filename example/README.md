@@ -25,7 +25,7 @@ EzvizSimplePlayer(
   config: EzvizPlayerConfig(
     appKey: 'YOUR_APP_KEY',
     accessToken: 'YOUR_ACCESS_TOKEN',
-    region: EzvizRegion.usa,  // Or configure per-instance
+    region: EzvizRegion.northAmerica,  // Or configure per-instance
   ),
 )
 ```
@@ -56,7 +56,7 @@ EzvizSimplePlayer(
 - `EzvizRegion.china` - China region  
 - `EzvizRegion.europe` - Europe region
 - `EzvizRegion.russia` - Russia region
-- `EzvizRegion.usa` - USA region
+- `EzvizRegion.northAmerica` - USA/Canada/North America region
 
 ### Configuration Methods
 
@@ -75,7 +75,7 @@ EzvizConstants.setBaseUrl('https://custom.ezvizlife.com');
 final client = EzvizClient(
   appKey: 'YOUR_APP_KEY',
   appSecret: 'YOUR_APP_SECRET',
-  region: EzvizRegion.usa,
+  region: EzvizRegion.northAmerica,
 );
 
 // For EzvizSimplePlayer

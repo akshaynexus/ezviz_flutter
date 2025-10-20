@@ -81,7 +81,6 @@ class _FullscreenPlayerExampleState extends State<FullscreenPlayerExample> {
             channelNo: widget.channelNo,
             config: EzvizPlayerConfig(
               appKey: widget.appKey,
-              appSecret: widget.appSecret,
               accessToken: widget.accessToken,
               autoPlay: true,
               enableAudio: true,

@@ -40,7 +40,7 @@ void main() {
       const regionConfig = EzvizPlayerConfig(
         appKey: 'test_key',
         accessToken: 'test_access_token',
-        region: EzvizRegion.usa,
+        region: EzvizRegion.northAmerica,
         autoPlay: false,
       );
 
@@ -589,7 +589,7 @@ void main() {
         appKey: 'test_key',
         accessToken: 'test_access_token',
         baseUrl: 'https://custom.example.com',
-        region: EzvizRegion.usa,
+        region: EzvizRegion.northAmerica,
         account: 'test@example.com',
         password: 'test_password',
         autoPlay: false,
@@ -614,7 +614,7 @@ void main() {
       );
 
       config.region.expectMeaningful(
-        equals(EzvizRegion.usa),
+        equals(EzvizRegion.northAmerica),
         reason: 'Config should store region',
       );
 

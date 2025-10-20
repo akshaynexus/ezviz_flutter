@@ -1,5 +1,14 @@
 /// EZVIZ API regions
-enum EzvizRegion { india, china, europe, russia, usa, singapore, americas, custom }
+enum EzvizRegion {
+  india,
+  china,
+  europe,
+  russia,
+  singapore,
+  southAmerica,
+  northAmerica,
+  custom,
+}
 
 class EzvizConstants {
   static String _baseUrl = 'https://open.ezvizlife.com';
@@ -7,13 +16,17 @@ class EzvizConstants {
 
   /// Regional API endpoints - Official EZVIZ domains
   static const Map<EzvizRegion, String> regionUrls = {
-    EzvizRegion.india: "https://iindiaopen.ezvizlife.com",  // Confirmed correct
-    EzvizRegion.china: "https://open.ys7.com",  // Updated to official
-    EzvizRegion.europe: "https://open.ezvizlife.com",  // Updated to official
-    EzvizRegion.russia: "https://iruopen.ezvizlife.com",  // Legacy - may need verification
-    EzvizRegion.usa: "https://apius.ezvizlife.com",  // Updated to official North America
-    EzvizRegion.singapore: "https://apiisgp.ezvizlife.com",  // Added official Singapore
-    EzvizRegion.americas: "https://isgpopen.ezviz.com",  // Added official Americas General
+    EzvizRegion.india: "https://iindiaopen.ezvizlife.com", // Confirmed correct
+    EzvizRegion.china: "https://open.ys7.com", // Updated to official
+    EzvizRegion.europe: "https://ieuopen.ezvizlife.com", // Updated to official
+    EzvizRegion.russia:
+        "https://iruopen.ezvizlife.com", // Legacy - may need verification
+    EzvizRegion.singapore:
+        "https://isgpopen.ezvizlife.com", // Added official Singapore
+    EzvizRegion.northAmerica:
+        "https://iusopen.ezvizlife.com", // Added official North America
+    EzvizRegion.southAmerica:
+        "https://isaopen.ezvizlife.com", // Added official South America
   };
 
   /// Gets the current base URL for EZVIZ API
