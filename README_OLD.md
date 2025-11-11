@@ -115,25 +115,25 @@ IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 
 ## 📚 Examples & Documentation
 
-All example code has been organized into comprehensive documentation. See the **[docs](docs/)** folder for detailed examples:
+All example code has been organized into comprehensive documentation. See the **[docs](doc/)** folder for detailed examples:
 
 ### 🎯 Quick Links to Examples
 
 | Feature | Example | Description |
 |---------|---------|-------------|
-| **Simple Integration** | [Simple Player Examples](docs/examples/simple_player_example.md) | EzvizSimplePlayer - 3 lines to get started |
-| **Complete SDK** | [Comprehensive SDK Integration](docs/examples/comprehensive_sdk_example.md) | Full device management with authentication |
-| **Multi-Region** | [Global SDK Support](docs/examples/global_sdk_example.md) | Multi-region deployment and area selection |
-| **Advanced Playback** | [Advanced Playback Controls](docs/examples/advanced_playback_example.md) | Enhanced video playback with all features |
-| **Camera Control** | [PTZ Control Examples](docs/examples/ptz_control_example.md) | Pan-Tilt-Zoom camera control |
-| **Audio/Intercom** | [Audio & Intercom Examples](docs/examples/audio_intercom_example.md) | Two-way audio communication |
-| **WiFi Setup** | [WiFi Configuration](docs/examples/wifi_config_example.md) | Device network configuration |
-| **Recording** | [Recording & Screenshots](docs/examples/recording_screenshots_example.md) | Video recording and image capture |
-| **Professional UI** | [Enhanced Video Playback](docs/examples/enhanced_video_playback_example.md) | Professional video player interface |
-| **Live Streaming** | [Live Streaming Examples](docs/examples/live_streaming_example.md) | Real-time streaming with controls |
+| **Simple Integration** | [Simple Player Examples](doc/examples/simple_player_example.md) | EzvizSimplePlayer - 3 lines to get started |
+| **Complete SDK** | [Comprehensive SDK Integration](doc/examples/comprehensive_sdk_example.md) | Full device management with authentication |
+| **Multi-Region** | [Global SDK Support](doc/examples/global_sdk_example.md) | Multi-region deployment and area selection |
+| **Advanced Playback** | [Advanced Playback Controls](doc/examples/advanced_playback_example.md) | Enhanced video playback with all features |
+| **Camera Control** | [PTZ Control Examples](doc/examples/ptz_control_example.md) | Pan-Tilt-Zoom camera control |
+| **Audio/Intercom** | [Audio & Intercom Examples](doc/examples/audio_intercom_example.md) | Two-way audio communication |
+| **WiFi Setup** | [WiFi Configuration](doc/examples/wifi_config_example.md) | Device network configuration |
+| **Recording** | [Recording & Screenshots](doc/examples/recording_screenshots_example.md) | Video recording and image capture |
+| **Professional UI** | [Enhanced Video Playback](doc/examples/enhanced_video_playback_example.md) | Professional video player interface |
+| **Live Streaming** | [Live Streaming Examples](doc/examples/live_streaming_example.md) | Real-time streaming with controls |
 
 ### 📖 Complete Documentation
-- **[Documentation Index](docs/README.md)** - Complete overview of all examples and guides
+- **[Documentation Index](doc/README.md)** - Complete overview of all examples and guides
 - **Implementation Levels** - From 3-line simple integration to professional implementations
 - **Best Practices** - Error handling, performance optimization, and resource management
 - **Troubleshooting** - Common issues and solutions for each feature
@@ -157,7 +157,7 @@ EzvizSimplePlayer(
 )
 ```
 
-**🎯 [View Complete Simple Player Examples →](docs/examples/simple_player_example.md)**
+**🎯 [View Complete Simple Player Examples →](doc/examples/simple_player_example.md)**
 
 #### Level 2: Standard Integration
 Full-featured implementation with state management:
@@ -173,18 +173,18 @@ EzvizSimplePlayer(
 )
 ```
 
-**🎯 [View Comprehensive SDK Integration →](docs/examples/comprehensive_sdk_example.md)**
+**🎯 [View Comprehensive SDK Integration →](doc/examples/comprehensive_sdk_example.md)**
 
 #### Level 3: Advanced Integration
 Professional implementations with custom UI and advanced features:
 
-**🎯 [View All Advanced Examples →](docs/examples/)**
+**🎯 [View All Advanced Examples →](doc/examples/)**
 
 ### 🎯 Choose Your Starting Point
 
-- **New to EZVIZ?** Start with [Simple Player Examples](docs/examples/simple_player_example.md)
-- **Need full device management?** See [Comprehensive SDK Integration](docs/examples/comprehensive_sdk_example.md)  
-- **Building professional app?** Browse [Advanced Examples](docs/examples/) for your specific needs
+- **New to EZVIZ?** Start with [Simple Player Examples](doc/examples/simple_player_example.md)
+- **Need full device management?** See [Comprehensive SDK Integration](doc/examples/comprehensive_sdk_example.md)  
+- **Building professional app?** Browse [Advanced Examples](doc/examples/) for your specific needs
 
 ### ✨ Key Features Available
 
