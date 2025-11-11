@@ -12,7 +12,8 @@ import 'package:ezviz_flutter/ezviz_definition.dart';
 import 'package:ezviz_flutter/ezviz_methods.dart';
 import 'package:ezviz_flutter/ezviz_utils.dart';
 
-typedef EzvizPlayerCreatedCallback = void Function(EzvizPlayerController controller);
+typedef EzvizPlayerCreatedCallback =
+    void Function(EzvizPlayerController controller);
 
 ///用与和原生代码关联 播放器管理类
 class EzvizPlayerController {
@@ -71,7 +72,10 @@ class EzvizPlayerController {
             } catch (e) {
               ezvizLog("Error parsing player status: $e");
               // Create a default status if parsing fails
-              ezvizEvent.data = EzvizPlayerStatus(status: 5, message: "Parse error: $e");
+              ezvizEvent.data = EzvizPlayerStatus(
+                status: 5,
+                message: "Parse error: $e",
+              );
             }
           }
           event(ezvizEvent);
@@ -255,7 +259,7 @@ class EzvizPlayer extends StatefulWidget {
   State<EzvizPlayer> createState() => _EzvizPlayerState();
 }
 
-class _EzvizPlayerState extends State<EzvizPlayer> 
+class _EzvizPlayerState extends State<EzvizPlayer>
     with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
   bool _isDisposed = false;
   EzvizPlayerController? _controller;
@@ -281,7 +285,8 @@ class _EzvizPlayerState extends State<EzvizPlayer>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     // Handle app lifecycle to prevent surface issues
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
       _controller?.removePlayerEventHandler();
     }
   }
@@ -292,12 +297,10 @@ class _EzvizPlayerState extends State<EzvizPlayer>
     if (_isDisposed) {
       return Container(color: Colors.black);
     }
-    
+
     return Container(
-      color: Colors.black45, 
-      child: SafeArea(
-        child: _buildSafePlatformView()
-      )
+      color: Colors.black45,
+      child: SafeArea(child: _buildSafePlatformView()),
     );
   }
 
@@ -329,8 +332,12 @@ class _EzvizPlayerState extends State<EzvizPlayer>
   Widget nativeView() {
     // Support both dart:io Platform and Flutter's defaultTargetPlatform to
     // keep behavior correct across devices and host environments.
-    final bool isAndroid = !kIsWeb && (Platform.isAndroid || defaultTargetPlatform == TargetPlatform.android);
-    final bool isIOS = !kIsWeb && (Platform.isIOS || defaultTargetPlatform == TargetPlatform.iOS);
+    final bool isAndroid =
+        !kIsWeb &&
+        (Platform.isAndroid || defaultTargetPlatform == TargetPlatform.android);
+    final bool isIOS =
+        !kIsWeb &&
+        (Platform.isIOS || defaultTargetPlatform == TargetPlatform.iOS);
 
     if (isAndroid) {
       return AndroidView(
@@ -350,14 +357,14 @@ class _EzvizPlayerState extends State<EzvizPlayer>
       );
     } else {
       return Text(
-        (kIsWeb ? 'web' : 'Current platform') + ' is not yet supported by this plugin',
+        '${kIsWeb ? 'web' : 'Current platform'} is not yet supported by this plugin',
       );
     }
   }
 
   Future<void> onPlatformViewCreated(id) async {
     if (_isDisposed) return;
-    
+
     try {
       _controller = EzvizPlayerController(id);
       widget.onCreated(_controller!);

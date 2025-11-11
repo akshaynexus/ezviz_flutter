@@ -8,13 +8,20 @@ import 'package:ezviz_flutter/ezviz_methods.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  Future<T> withMockChannels<T>(int id, Future<T> Function(EzvizPlayerController c) body,
-      {dynamic Function(MethodCall call)? onCall, Stream<dynamic>? eventStream}) async {
+  Future<T> withMockChannels<T>(
+    int id,
+    Future<T> Function(EzvizPlayerController c) body, {
+    dynamic Function(MethodCall call)? onCall,
+    Stream<dynamic>? eventStream,
+  }) async {
     final channelName = '${EzvizPlayerChannelMethods.methodChannelName}_$id';
     final eventName = '${EzvizPlayerChannelEvents.eventChannelName}_$id';
-    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 
-    messenger.setMockMethodCallHandler(MethodChannel(channelName), (call) async {
+    messenger.setMockMethodCallHandler(MethodChannel(channelName), (
+      call,
+    ) async {
       if (onCall != null) return onCall(call);
       return true; // default truthy
     });
@@ -37,28 +44,35 @@ void main() {
 
   group('EzvizPlayerController basic calls', () {
     test('init and basic methods success', () async {
-      await withMockChannels(1, (c) async {
-        await c.initPlayerByDevice('D', 1);
-        await c.initPlayerByUrl('url');
-        await c.initPlayerByUser(1, 1, 1);
-        expect(await c.startRealPlay(), isTrue);
-        expect(await c.stopRealPlay(), isTrue);
-        expect(await c.startReplay(DateTime(2024), DateTime(2024, 1, 2)), isTrue);
-        expect(await c.stopReplay(), isTrue);
-        await c.setPlayVerifyCode('code');
-        expect(await c.pausePlayback(), isTrue);
-        expect(await c.resumePlayback(), isTrue);
-        expect(await c.openSound(), isTrue);
-        expect(await c.closeSound(), isTrue);
-        expect(await c.capturePicture(), isA<String?>());
-        expect(await c.startRecording(), isTrue);
-        expect(await c.stopRecording(), isTrue);
-        expect(await c.isRecording(), isTrue);
-        await c.release();
-      }, onCall: (call) async {
-        if (call.method == 'capturePicture') return 'path.jpg';
-        return true;
-      });
+      await withMockChannels(
+        1,
+        (c) async {
+          await c.initPlayerByDevice('D', 1);
+          await c.initPlayerByUrl('url');
+          await c.initPlayerByUser(1, 1, 1);
+          expect(await c.startRealPlay(), isTrue);
+          expect(await c.stopRealPlay(), isTrue);
+          expect(
+            await c.startReplay(DateTime(2024), DateTime(2024, 1, 2)),
+            isTrue,
+          );
+          expect(await c.stopReplay(), isTrue);
+          await c.setPlayVerifyCode('code');
+          expect(await c.pausePlayback(), isTrue);
+          expect(await c.resumePlayback(), isTrue);
+          expect(await c.openSound(), isTrue);
+          expect(await c.closeSound(), isTrue);
+          expect(await c.capturePicture(), isA<String?>());
+          expect(await c.startRecording(), isTrue);
+          expect(await c.stopRecording(), isTrue);
+          expect(await c.isRecording(), isTrue);
+          await c.release();
+        },
+        onCall: (call) async {
+          if (call.method == 'capturePicture') return 'path.jpg';
+          return true;
+        },
+      );
     });
 
     test('invalid stream type path logs and returns', () async {
@@ -69,17 +83,34 @@ void main() {
     });
 
     test('error branches return safe defaults', () async {
-      Future<dynamic> err(MethodCall call) async => Future.error(PlatformException(code: 'ERR'));
-      final nullPic = await withMockChannels(50, (c) async => await c.capturePicture(), onCall: err);
+      Future<dynamic> err(MethodCall call) async =>
+          Future.error(PlatformException(code: 'ERR'));
+      final nullPic = await withMockChannels(
+        50,
+        (c) async => await c.capturePicture(),
+        onCall: err,
+      );
       expect(nullPic, isNull);
 
-      final recStart = await withMockChannels(51, (c) async => await c.startRecording(), onCall: err);
+      final recStart = await withMockChannels(
+        51,
+        (c) async => await c.startRecording(),
+        onCall: err,
+      );
       expect(recStart, isFalse);
 
-      final recStop = await withMockChannels(52, (c) async => await c.stopRecording(), onCall: err);
+      final recStop = await withMockChannels(
+        52,
+        (c) async => await c.stopRecording(),
+        onCall: err,
+      );
       expect(recStop, isFalse);
 
-      final isRec = await withMockChannels(53, (c) async => await c.isRecording(), onCall: err);
+      final isRec = await withMockChannels(
+        53,
+        (c) async => await c.isRecording(),
+        onCall: err,
+      );
       expect(isRec, isFalse);
     });
   });
@@ -89,9 +120,13 @@ void main() {
       final id = 4;
       final channelName = '${EzvizPlayerChannelMethods.methodChannelName}_$id';
       final eventName = '${EzvizPlayerChannelEvents.eventChannelName}_$id';
-      final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 
-      messenger.setMockMethodCallHandler(MethodChannel(channelName), (_) async => true);
+      messenger.setMockMethodCallHandler(
+        MethodChannel(channelName),
+        (_) async => true,
+      );
       final controller = EzvizPlayerController(id);
 
       // Set handler and manually add events by calling the stream listener via binary messenger
@@ -101,7 +136,7 @@ void main() {
       // Simulate event as Map
       final mapEvent = {
         'eventType': EzvizPlayerChannelEvents.playerStatusChange,
-        'data': {'status': 1, 'message': 'ok'}
+        'data': {'status': 1, 'message': 'ok'},
       };
       // Simulate event as String JSON
       final stringEvent = json.encode(mapEvent);
